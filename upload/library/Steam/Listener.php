@@ -41,6 +41,7 @@ class Steam_Listener {
 				$template->preloadTemplate('steam_message_user_info');
 				$template->preloadTemplate('steam_js');
 				$template->preloadTemplate('steam_member_view_info');
+				$template->preloadTemplate('steam_message_content');
 				break;
 		}
 	}
@@ -64,6 +65,9 @@ class Steam_Listener {
 				break;
 			case 'page_container_head':
 				$contents .= $template->create('steam_js', $hookParams);
+				break;
+			case 'message_content':
+				$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
 				break;
 		}
 	}

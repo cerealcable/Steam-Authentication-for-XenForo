@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.0.0" version_id="1" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.0.1" version_id="2" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -15,17 +15,23 @@
   <optiongroups>
     <group group_id="SteamAuth" display_order="1" debug_only="0"/>
     <option option_id="steamDisplayMessageInfo" edit_format="onoff" data_type="boolean" can_backup="1">
-      <default_value>true</default_value>
+      <default_value>1</default_value>
       <edit_format_params></edit_format_params>
       <sub_options></sub_options>
       <relation group_id="SteamAuth" display_order="1"/>
     </option>
     <option option_id="steamDisplayProfile" edit_format="onoff" data_type="boolean" can_backup="1">
-      <default_value>true</default_value>
+      <default_value>1</default_value>
       <edit_format_params></edit_format_params>
       <sub_options></sub_options>
       <relation group_id="SteamAuth" display_order="1"/>
     </option>
+	<option option_id="steamDisplayMessageContent" edit_format="onoff" data_type="boolean" can_backup="1">
+	  <default_value>0</default_value>
+	  <edit_format_params></edit_format_params>
+	  <sub_options></sub_options>
+	  <relation group_id="SteamAuth" display_order="1"/>
+	</option>
   </optiongroups>
   <permissions>
     <permission_groups/>
@@ -40,9 +46,11 @@
     <phrase title="option_group_SteamAuth" version_id="1" version_string="1.0.0"><![CDATA[Steam Integration]]></phrase>
     <phrase title="option_group_SteamAuth_description" version_id="1" version_string="1.0.0"><![CDATA[Settings for integrating the online gaming service Steam as an authentication source and information source for XenForo Forums.]]></phrase>
     <phrase title="option_steamDisplayMessageInfo" version_id="1" version_string="1.0.0"><![CDATA[Display in Messages]]></phrase>
-    <phrase title="option_steamDisplayMessageInfo_explain" version_id="1" version_string="1.0.0"><![CDATA[Display an informational/status block display on messages.]]></phrase>
+    <phrase title="option_steamDisplayMessageInfo_explain" version_id="2" version_string="1.0.1"><![CDATA[Display an informational/status block on messages user information.]]></phrase>
     <phrase title="option_steamDisplayProfile" version_id="1" version_string="1.0.0"><![CDATA[Display in Profile]]></phrase>
-    <phrase title="option_steamDisplayProfile_explain" version_id="1" version_string="1.0.0"><![CDATA[Display an informational/status block display in Profile.]]></phrase>
+    <phrase title="option_steamDisplayProfile_explain" version_id="2" version_string="1.0.1"><![CDATA[Display an informational/status block in Profile.]]></phrase>
+	<phrase title="option_steamDisplayMessageContent" version_id="1" version_string="1.0.0"><![CDATA[Display in message content (top right).]]></phrase>
+	<phrase title="option_steamDisplayMessageContent_explain" version_id="1" version_string="1.0.0"><![CDATA[Display an informational/status block in the message content portion (top right).]]></phrase>
     <phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
     <phrase title="sign_in_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign in with Steam]]></phrase>
     <phrase title="sign_up_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign up with Steam]]></phrase>
@@ -232,6 +240,7 @@
 </a></li>]]></template>
     <template title="steam_message_user_info" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayMessageInfo} AND {$user.steam_auth_id} > 0"><dd><div class="steamprofile" title="{$user.steam_auth_id}"></div></dd></xen:if>]]></template>
 	<template title="steam_member_view_info" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayProfile} AND {$user.steam_auth_id} > 0"><dd><div class="steamprofile" title="{$user.steam_auth_id}"></div></dd></xen:if>]]></template>
+	<template title="steam_message_content" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayMessageContent} AND {$message.steam_auth_id} > 0"><div class="steamprofile" style="width: 225px; float: right;" title="{$message.steam_auth_id}"></div></xen:if>]]></template>
     <template title="steam_navigation_visitor_tab_link" version_id="1" version_string="1.0.0"><![CDATA[<li><a href="{xen:link account/steam}">{xen:phrase steam_integration}</a></li>]]></template>
   </templates>
   <bb_code_media_sites/>
