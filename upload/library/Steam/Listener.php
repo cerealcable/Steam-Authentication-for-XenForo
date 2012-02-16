@@ -42,6 +42,7 @@ class Steam_Listener {
 				$template->preloadTemplate('steam_js');
 				$template->preloadTemplate('steam_member_view_info');
 				$template->preloadTemplate('steam_message_content');
+				$template->preloadTemplate('steam_helper_criteria_privs');
 				break;
 		}
 	}
@@ -68,6 +69,9 @@ class Steam_Listener {
 				break;
 			case 'message_content':
 				$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
+				break;
+			case 'user_criteria_privs':
+				$contents .= $template->create('steam_helper_criteria_privs', array_merge($hookParams, $template->getParams()));
 				break;
 		}
 	}

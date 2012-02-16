@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.0.1" version_id="2" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.0.2" version_id="3" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
-  <admin_templates/>
+  <admin_templates>
+    <template title="steam_helper_criteria_privs"><![CDATA[<li>
+    <label><input type="checkbox" name="user_criteria[steam_state][rule]" value="steam_state" class="Disabler" id="ucrit_steam_state" {xen:checked $userCriteria.steam_state} />{xen:phrase steam_state_is}:</label>
+    <div class="criteriaQualifier" id="ucrit_steam_state_Disabler">
+        <xen:select name="user_criteria[steam_state][data][state]" value="{$userCriteria.steam_state.state}" inputclass="autoSize">
+            <xen:option value="associated">{xen:phrase steam_state_associated}</xen:option>
+            <xen:option value="deassociated">{xen:phrase steam_state_deassociated}</xen:option>
+        </xen:select>
+    </div>
+</li>]]></template>
+  </admin_templates>
   <code_events/>
   <code_event_listeners>
+	<listener event_id="criteria_user" execute_order="10" callback_class="Steam_Helper_Criteria" callback_method="criteriaUser" active="1" description=""/>
     <listener event_id="load_class_controller" execute_order="10" callback_class="Steam_Listener" callback_method="loadClassController" active="1" description=""/>
     <listener event_id="template_create" execute_order="10" callback_class="Steam_Listener" callback_method="templateCreate" active="1" description=""/>
     <listener event_id="template_hook" execute_order="10" callback_class="Steam_Listener" callback_method="templateHook" active="1" description=""/>
@@ -56,6 +67,9 @@
     <phrase title="sign_up_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign up with Steam]]></phrase>
     <phrase title="steam_integration" version_id="1" version_string="1.0..0"><![CDATA[Steam Integration]]></phrase>
     <phrase title="your_account_is_not_currently_associated_with_steam_account" version_id="1" version_string="1.2.0"><![CDATA[Your account is not currently associated with a Steam account.]]></phrase>
+	<phrase title="steam_state_is" version_id="1" version_string="1.0.0"><![CDATA[Steam state is]]></phrase>
+	<phrase title="steam_state_associated" version_id="1" version_string="1.0.0"><![CDATA[Associated]]></phrase>
+	<phrase title="steam_state_deassociated" version_id="1" version_string="1.0.0"><![CDATA[Not Associated]]></phrase>
   </phrases>
   <route_prefixes/>
   <style_properties/>
