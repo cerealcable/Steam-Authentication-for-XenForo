@@ -244,6 +244,7 @@
 
 <input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
 <input type="hidden" name="redirect" value="{$redirect}" />
+<input type="hidden" name="location" value="{$location}" />
 </form>]]></template>
     <template title="steam_account_wrapper_sidebar_settings" version_id="1" version_string="1.0.0"><![CDATA[<li><a
 	class="{xen:if "{$selectedKey} == 'account/steam'", 'secondaryContent', 'primaryContent'}"

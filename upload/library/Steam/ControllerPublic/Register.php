@@ -81,6 +81,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
 		if(!empty($xml)) {
 			$username = $xml->steamID;
+			$location = $xml->location;
 		}
 
 		$i = 2;
@@ -93,12 +94,13 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		return $this->responseView('XenForo_ViewPublic_Register_Steam', 'register_steam', array(
 			'username'		=> $username,
 			'redirect'		=> $redirect,
-			'customeFields'	=> $this->_getFieldModel()->prepareUserFields(
+			'customFields'	=> $this->_getFieldModel()->prepareUserFields(
 				$this->_getFieldModel()->getUserFields(array('registration' => true)),
 				true
 			),
 			'timeZones'		=> XenForo_Helper_TimeZone::getTimeZones(),
-			'tosUrl'		=> XenForo_Dependencies_Public::getTosUrl()
+			'tosUrl'		=> XenForo_Dependencies_Public::getTosUrl(),
+			'location'		=> $location
 		), $this->_getRegistrationContainerParams());
 	}
 
@@ -159,6 +161,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			'timezone'	=> XenForo_Input::STRING,
 			'email'		=> XenForo_Input::STRING,
 			'gender'	=> XenForo_Input::STRING,
+			'location'	=> XenForo_Input::STRING,
 			'dob_day'	=> XenForo_Input::UINT,
 			'dob_month'	=> XenForo_Input::UINT,
 			'dob_year'	=> XenForo_Input::UINT
