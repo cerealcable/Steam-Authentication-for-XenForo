@@ -22,7 +22,7 @@
 class Steam_ControllerAdmin_SteamStats extends XenForo_ControllerAdmin_Stats {
 
 	public function _preDispatch($action) {
-		$this->assertAdminPermission('viewStatisticS');
+		$this->assertAdminPermission('viewStatistics');
 	}
 
 	public function actionSteam() {
