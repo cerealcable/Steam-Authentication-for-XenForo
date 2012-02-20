@@ -147,6 +147,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 
 			$session->changeUserId($userId);
 			XenForo_Visitor::setup($userId);
+			$this->updateUserStats($userId, $id);
 
 			return $this->responseRedirect(
 				XenForo_ControllerResponse_Redirect::SUCCESS,
@@ -233,6 +234,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		XenForo_Model_Ip::log($user['user_id'], 'user', $user['user_id'], 'register');
 		$session->changeUserId($user['user_id']);
 		XenForo_Visitor::setup($user['user_id']);
+		$this->updateUserStats($user['user_id'], $id);
 
 		$redirect = $this->_input->filterSingle('redirect', XenForo_Input::STRING);
 
@@ -318,6 +320,25 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 
 		// Return our final value
 		return preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? $steamID64 : '';
+	}
+
+	private function updateUserStats($userId, $steamId) {
+        $db = XenForo_Application::get('db');
+        $games = Steam_Helper_Steam::getUserGames($steamId);
+        foreach($games as $id => $data) {
+			// game info
+			$db->query("INSERT IGNORE INTO xf_steam_games(game_id, game_name, game_logo, game_link) VALUES($id, '{$data['name']}', '{$data['logo']}', '{$data['link']}');");
+
+			// update
+			$r = $db->fetchRow("SELECT * FROM xf_user_steam_games WHERE user_id = $userId AND game_id = $id;");
+			if($r == NULL) {
+				// Insert
+				$db->insert("xf_user_steam_games", array('user_id'=>$userId, 'game_id'=>$id, 'game_hours'=>$data['hours']));
+			} else {
+				// Update
+				$db->query("UPDATE xf_user_steam_games SET game_hours = {$data['hours']} WHERE user_id = $userId AND game_id = $id;");
+			}
+		}
 	}
 }
 
