@@ -28,6 +28,9 @@ class Steam_Listener {
 			case 'XenForo_ControllerPublic_Account':
 				$extend[] = 'Steam_ControllerPublic_Account';
 				break;
+			case 'XenForo_ControllerAdmin_Stats':
+				$extend[] = 'Steam_ControllerAdmin_SteamStats';
+				break;
 		}
 	}
 

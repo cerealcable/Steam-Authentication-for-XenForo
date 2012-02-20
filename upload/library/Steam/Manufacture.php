@@ -72,6 +72,29 @@ class Steam_Manufacture {
 		$db->query("UPDATE xf_user_profile p1 JOIN xf_user_external_auth p2 ON(p1.user_id = p2.user_id) SET p1.steam_auth_id = p2.provider_key WHERE provider = 'steam'");
 	}
 
+	protected function _installVersion4() {
+		$db = $this->_getDb();
+
+		// Create the steam game table
+		$db->query("CREATE TABLE IF NOT EXISTS xf_steam_games (
+						game_id int(10) unsigned PRIMARY KEY,
+						game_name VARCHAR(256) NOT NULL,
+						game_logo VARCHAR(256) NOT NULL,
+						game_link VARCHAR(256)
+					)");
+
+		// Create the steam user games table
+		$db->query("CREATE TABLE IF NOT EXISTS xf_user_steam_games (
+						user_id int(10) unsigned NOT NULL,
+						game_id int(10) unsigned NOT NULL,
+						game_hours int unsigned NOT NULL,
+						PRIMARY KEY (user_id, game_id)
+					)");
+
+		// Run Initial Cron Job for Steam!
+		Steam_Cron::update();
+	}
+
 	public static function destroy() {
 		$lastUninstallStep = 1;
 
@@ -91,6 +114,16 @@ class Steam_Manufacture {
 		$db = $this->_getDb();
 
 		$db->query("ALTER TABLE xf_user_profile DROP steam_auth_id");
+	}
+
+	protected function _uninstallStep4() {
+		$db = $this->_getDb();
+
+		// Drop xf_steam_games
+		$db->query("DROP TABLE xf_steam_games");
+		
+		// Drop xf_user_steam_games
+		$db->query("DROP TABLE xf_user_steam_games");
 	}
 
 }

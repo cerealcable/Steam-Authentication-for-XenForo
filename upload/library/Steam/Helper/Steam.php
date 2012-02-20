@@ -42,6 +42,56 @@ class Steam_Helper_Steam {
 		$st = getUserInfo($id);
 		return $st['avatar'];
 	}
+
+    public static function getUserGames($steam_id) {
+        $games = array();
+
+        $xml = simplexml_load_file("http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+        if(!empty($xml)) {
+			if(isset($xml->games)) {
+	            foreach($xml->games->children() as $game) {
+                	$appId = isset($game->appID) ? $game->appID : 0;
+            	    $appName = isset($game->name) ? addslashes($game->name) : "";
+        	        $appLogo = isset($game->logo) ? addslashes($game->logo) : "";
+    	            $appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
+	                $hours = isset($game->hoursOnRecord) ? $game->hoursOnRecord : 0;
+
+            	    if($appId == 0 || $appName == "") {
+        	            continue;
+    	            }
+
+	                $games["$appId"] = array (
+                    	'name'  => $appName,
+                	    'logo'  => $appLogo,
+            	        'link'  => $appLink,
+        	            'hours' => $hours
+    	            );
+	            }
+			}
+        }
+
+        return $games;
+    }
+
+	public static function deleteSteamData($user_id) {
+        $db = XenForo_Application::get('db');
+		$db->query("DELETE FROM xf_user_steam_games WHERE user_id = $user_id");
+	}
+
+	public static function getGameStatistics() {
+		$rVal = array();
+		$db = XenForo_Application::get('db');
+		$results = $db->fetchAll("SELECT g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC;");
+        foreach($results as $row) {
+			$rVal[$row['game_name']] = array(
+				'count' => $row['count'],
+				'logo' => $row['game_logo'],
+				'link' => $row['game_link']
+			);
+		}
+
+		return $rVal;
+	}
 }
 
 ?>

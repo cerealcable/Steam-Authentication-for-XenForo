@@ -35,8 +35,8 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
 				'disassociate_confirm' => XenForo_Input::STRING
 			));
 			if($disassociate['disassociate'] && $disassociate['disassociate_confirm']) {
-				//Twitter_Helper_Twitter::setUidCookie(0);
 				$this->getModelFromCache('XenForo_Model_UserExternal')->deleteExternalAuthAssociation('steam', $visitor['steam_auth_id'], $visitor['user_id']);
+				Steam_Helper_Steam::deleteSteamData($visitor['user_id']);
 
 				if(!$auth->hasPassword()) {
 					$this->getModelFromCache('XenForo_Model_UserConfirmation')->resetPassword($visitor['user_id']);
@@ -66,7 +66,6 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
 			);
 		}
 	}
-
 }
 
 ?>
