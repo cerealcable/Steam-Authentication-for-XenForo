@@ -46,7 +46,7 @@ class Steam_Helper_Criteria {
 				}
 				break;
 			case 'steam_game':
-				if($user['steam_auth_id'] > 0) {
+				if(array_key_exists('steam_auth_id', $user) && $user['steam_auth_id'] > 0) {
 					// check if game is in users games table
 					$games = implode(",", $data['games']);
 					$db = XenForo_Application::get('db');
@@ -62,7 +62,7 @@ class Steam_Helper_Criteria {
 				}
 				break;
 			case 'steam_not_game':
-				if($user['steam_auth_id'] > 0) {
+				if(array_key_exists('steam_auth_id', $user) && $user['steam_auth_id'] > 0) {
 					// check if game is NOT in users games table
 					$games = implode(",", $data['games']);
 					$db = XenForo_Application::get('db');
