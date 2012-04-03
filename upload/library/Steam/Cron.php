@@ -23,9 +23,10 @@ class Steam_Cron {
 
 	public static function update() {
 		$db = XenForo_Application::get('db');
+		$sHelper = new Steam_Helper_Steam();
 		$results = $db->fetchAll("SELECT user_id, steam_auth_id FROM xf_user_profile WHERE steam_auth_id > 0");
 		foreach($results as $row) {
-			$games = Steam_Helper_Steam::getUserGames($row['steam_auth_id']);
+			$games = $sHelper->getUserGames($row['steam_auth_id']);
 			foreach($games as $id => $data) {
 				// game info
 				$db->query("INSERT IGNORE INTO xf_steam_games(game_id, game_name, game_logo, game_link) VALUES($id, '{$data['name']}', '{$data['logo']}', '{$data['link']}');");

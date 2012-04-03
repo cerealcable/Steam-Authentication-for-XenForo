@@ -134,7 +134,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			$loginModel = $this->_getLoginModel();
 
 			if($loginModel->requireLoginCaptcha($associate['associate_login'])) {
-				return $this->repsonseError(new XenForo_Phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
+				return $this->responseError(new XenForo_Phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
 			}
 
 			$userId = $userModel->validateAuthentication($associate['associate_login'], $associate['associate_password'], $error);
@@ -324,7 +324,8 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 
 	private function updateUserStats($userId, $steamId) {
         $db = XenForo_Application::get('db');
-        $games = Steam_Helper_Steam::getUserGames($steamId);
+		$sHelper = new Steam_Helper_Steam();
+        $games = $sHelper->getUserGames($steamId);
         foreach($games as $id => $data) {
 			// game info
 			$db->query("INSERT IGNORE INTO xf_steam_games(game_id, game_name, game_logo, game_link) VALUES($id, '{$data['name']}', '{$data['logo']}', '{$data['link']}');");

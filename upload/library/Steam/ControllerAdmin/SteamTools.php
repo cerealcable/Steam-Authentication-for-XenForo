@@ -19,19 +19,20 @@
  *      along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Steam_ControllerAdmin_SteamStats extends XenForo_ControllerAdmin_Stats {
+class Steam_ControllerAdmin_SteamTools extends XenForo_ControllerAdmin_Tools {
 
 	public function _preDispatch($action) {
 		$this->assertAdminPermission('viewStatistics');
 	}
 
-	public function actionSteam() {
+	public function actionSteamTop25() {
+		$sHelper = new Steam_Helper_Steam();
 
 		$viewParams = array(
-			'gameStats' => Steam_Helper_Steam::getGameStatistics()
+			'gameStats' => $sHelper->getGameStatistics()
 		);
 
-		return $this->responseView('XenForo_ViewAdmin_Stats_Steam', 'stats_steam', $viewParams);
+		return $this->responseView('XenForo_ViewAdmin_Tools_SteamTop25', 'tools_steam_top25', $viewParams);
 	}
 }
 

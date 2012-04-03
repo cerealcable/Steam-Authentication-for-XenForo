@@ -28,8 +28,8 @@ class Steam_Listener {
 			case 'XenForo_ControllerPublic_Account':
 				$extend[] = 'Steam_ControllerPublic_Account';
 				break;
-			case 'XenForo_ControllerAdmin_Stats':
-				$extend[] = 'Steam_ControllerAdmin_SteamStats';
+			case 'XenForo_ControllerAdmin_Tools':
+				$extend[] = 'Steam_ControllerAdmin_SteamTools';
 				break;
 		}
 	}
@@ -37,10 +37,10 @@ class Steam_Listener {
 	public static function templateCreate($templateName, array &$params, XenForo_Template_Abstract $template) {
 		switch($templateName) {
 			case 'PAGE_CONTAINER':
-            	$params['eAuth'] = 1;
-        	    $template->preloadTemplate('steam_login_bar_item');
-    	        $template->preloadTemplate('steam_navigation_visitor_tab_link');
-	            $template->preloadTemplate('steam_account_wrapper_sidebar_settings');
+				$params['eAuth'] = 1;
+				$template->preloadTemplate('steam_login_bar_item');
+				$template->preloadTemplate('steam_navigation_visitor_tab_link');
+				$template->preloadTemplate('steam_account_wrapper_sidebar_settings');
 				$template->preloadTemplate('steam_message_user_info');
 				$template->preloadTemplate('steam_js');
 				$template->preloadTemplate('steam_member_view_info');
@@ -73,8 +73,9 @@ class Steam_Listener {
 			case 'message_content':
 				$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
 				break;
-			case 'user_criteria_privs':
-				$contents .= $template->create('steam_helper_criteria_privs', array_merge($hookParams, $template->getParams()));
+			case 'user_criteria_extra':
+				$s = new Steam_Helper_Steam();
+				$contents .= $template->create('steam_helper_criteria_privs', array_merge($hookParams, $template->getParams(), array_merge($hookParams, $template->getParams(), array("steam_games" => $s->getAvailableGames()))));
 				break;
 		}
 	}

@@ -20,8 +20,23 @@
  */
 
 class Steam_Helper_Steam {
-	public static function getUserInfo($id) {
-        $xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
+
+	// cURL Variable
+	private $ch = null;
+
+	public function __construct() {
+		// Setup cURL
+		$this->ch = curl_init();
+		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($this->ch, CURLOPT_TIMEOUT, 4);
+	}	
+
+	public function getUserInfo($steam_id) {
+		// cURL
+		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/{$steam_id}/?xml=1");
+		$result = curl_exec($this->ch);
+		$xml = simplexml_load_string($result);
+
         if(!empty($xml)) {
 			return array(
     	        'username' => $xml->steamID,
@@ -38,15 +53,14 @@ class Steam_Helper_Steam {
 		}
 	}
 
-	public static function getUserPicture($id) {
-		$st = getUserInfo($id);
-		return $st['avatar'];
-	}
-
-    public static function getUserGames($steam_id) {
+    public function getUserGames($steam_id) {
         $games = array();
 
-        $xml = simplexml_load_file("http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+		// cURL
+		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+		$result = curl_exec($this->ch);
+		$xml = simplexml_load_string($result);
+
         if(!empty($xml)) {
 			if(isset($xml->games)) {
 	            foreach($xml->games->children() as $game) {
@@ -73,15 +87,15 @@ class Steam_Helper_Steam {
         return $games;
     }
 
-	public static function deleteSteamData($user_id) {
+	public function deleteSteamData($user_id) {
         $db = XenForo_Application::get('db');
 		$db->query("DELETE FROM xf_user_steam_games WHERE user_id = $user_id");
 	}
 
-	public static function getGameStatistics() {
+	public function getGameStatistics($limit=25) {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC;");
+		$results = $db->fetchAll("SELECT g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
         foreach($results as $row) {
 			$rVal[$row['game_name']] = array(
 				'count' => $row['count'],
@@ -90,6 +104,16 @@ class Steam_Helper_Steam {
 			);
 		}
 
+		return $rVal;
+	}
+
+	public function getAvailableGames() {
+		$rVal = array();
+		$db = XenForo_Application::get('db');
+		$results = $db->fetchAll("SELECT game_id, game_name FROM xf_steam_games ORDER BY game_name;");
+		foreach($results as $row) {
+			$rVal[] = array( 'id' => $row['game_id'], 'name' => $row['game_name'] );
+		}
 		return $rVal;
 	}
 }

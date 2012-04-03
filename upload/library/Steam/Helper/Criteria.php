@@ -45,6 +45,38 @@ class Steam_Helper_Criteria {
 					}
 				}
 				break;
+			case 'steam_game':
+				if($user['steam_auth_id'] > 0) {
+					// check if game is in users games table
+					$games = implode(",", $data['games']);
+					$db = XenForo_Application::get('db');
+					$results = $db->fetchAll("SELECT COUNT(*) AS count FROM xf_user_steam_games WHERE user_id = {$user['user_id']} AND game_id IN ($games);");
+					foreach($results as $row) {
+						if($row['count'] > 0) {
+							$returnValue = true;
+						} else {
+							$returnValue = false;
+						}
+						break;
+					}
+				}
+				break;
+			case 'steam_not_game':
+				if($user['steam_auth_id'] > 0) {
+					// check if game is NOT in users games table
+					$games = implode(",", $data['games']);
+					$db = XenForo_Application::get('db');
+					$results = $db->fetchAll("SELECT COUNT(*) AS count FROM xf_user_steam_games WHERE user_id = {$user['user_id']} AND game_id IN ($games);");
+					foreach($results as $row) {
+						if($row['count'] > 0) {
+							$returnValue = false;
+						} else {
+							$returnValue = true;
+						}
+						break;
+					}
+				}
+				break;
 		}
 	}
 }

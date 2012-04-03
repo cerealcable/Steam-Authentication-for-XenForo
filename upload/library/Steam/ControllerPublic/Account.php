@@ -22,6 +22,7 @@
 class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account {
 
 	public function actionSteam() {
+		$sHelper = new Steam_Helper_Steam();
 		$visitor = XenForo_Visitor::getInstance();
 
 		$auth = $this->_getUserModel()->getUserAuthenticationObjectByUserId($visitor['user_id']);
@@ -36,7 +37,7 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
 			));
 			if($disassociate['disassociate'] && $disassociate['disassociate_confirm']) {
 				$this->getModelFromCache('XenForo_Model_UserExternal')->deleteExternalAuthAssociation('steam', $visitor['steam_auth_id'], $visitor['user_id']);
-				Steam_Helper_Steam::deleteSteamData($visitor['user_id']);
+				$sHelper->deleteSteamData($visitor['user_id']);
 
 				if(!$auth->hasPassword()) {
 					$this->getModelFromCache('XenForo_Model_UserConfirmation')->resetPassword($visitor['user_id']);
@@ -49,7 +50,7 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
 			);
 		} else {
 			if($visitor['steam_auth_id']) {
-				$stUser = Steam_Helper_Steam::getUserInfo($visitor['steam_auth_id']);
+				$stUser = $sHelper->getUserInfo($visitor['steam_auth_id']);
 			} else {
 				$stUser = false;
 			}

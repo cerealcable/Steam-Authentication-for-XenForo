@@ -1,25 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.0.4" version_id="5" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="Steam" title="Steam Auth" version_string="1.0.5" version_id="6" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
-    <navigation navigation_id="steam_statistics" parent_navigation_id="stats" display_order="20" link="stats/steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_statistics" parent_navigation_id="tools" display_order="400" link="" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_stats" parent_navigation_id="steam_statistics" display_order="20" link="tools/steam/top25" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
   </admin_navigation>
   <admin_permissions/>
   <admin_style_properties/>
   <admin_templates>
-    <template title="stats_steam"><![CDATA[<xen:title>{xen:phrase steam_statistics}</xen:title>
+    <template title="steam_helper_criteria_privs"><![CDATA[<dl class="ctrlUnit">
+	<dt>{xen:phrase steam_integration}:</dt>
+	<dd>
+		<li>
+			<label><input type="checkbox" name="user_criteria[steam_state][rule]" value="steam_state" class="Disabler" id="ucrit_steam_state" {xen:checked $userCriteria.steam_state} />{xen:phrase steam_state_is}:</label>
+			<div class="criteriaQualifier" id="ucrit_steam_state_Disabler">
+				<xen:select name="user_criteria[steam_state][data][state]" value="{$userCriteria.steam_state.state}" inputclass="autoSize">
+					<xen:option value="associated">{xen:phrase steam_state_associated}</xen:option>
+					<xen:option value="deassociated">{xen:phrase steam_state_deassociated}</xen:option>
+				</xen:select>
+			</div>
+		</li>
+		<li>
+			<label><input type="checkbox" name="user_criteria[steam_game][rule]" value="steam_game" class="Disabler" id="ucrit_steam_game" {xen:checked $userCriteria.steam_game} />{xen:phrase steam_game_owned}:</label>
+			<div class="criteriaQualifier" id="ucrit_steam_game_Disabler">
+				<xen:select name="user_criteria[steam_game][data][games]" size="8" multiple="true">
+					<xen:foreach loop="$steam_games" value="$_criteriaUg">
+						<xen:option value="{$_criteriaUg.id}" selected="{$userCriteria.steam_game.games} AND in_array({$_criteriaUg.id}, {$userCriteria.steam_game.games})">{$_criteriaUg.name}</xen:option>
+					</xen:foreach>
+				</xen:select>
+			</div>
+		</li>
+		<li>
+			<label><input type="checkbox" name="user_criteria[steam_not_game][rule]" value="steam_not_game" class="Disabler" id="ucrit_steam_not_game" {xen:checked $userCriteria.steam_not_game} />{xen:phrase steam_game_not_owned}:</label>
+			<div class="criteriaQualifier" id="ucrit_steam_not_game_Disabler">
+				<xen:select name="user_criteria[steam_not_game][data][games]" size="8" multiple="true">
+					<xen:foreach loop="$steam_games" value="$_criteriaUg">
+						<xen:option value="{$_criteriaUg.id}" selected="{$userCriteria.steam_not_game.games} AND in_array({$_criteriaUg.id}, {$userCriteria.steam_not_game.games})">{$_criteriaUg.name}</xen:option>
+					</xen:foreach>
+				</xen:select>
+			</div>
+		</li>
+	</dd>
+</dl>]]></template>
+    <template title="tools_steam_top25"><![CDATA[<xen:title>{xen:phrase tools_steam_top25}</xen:title>
 <div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;">{xen:phrase steam_statistics_game}</span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{xen:phrase steam_statistics_count}<span></div>
 <xen:foreach loop="{$gameStats}" key="$key" value="$value">
 <div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;"><a href="{$value.link}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$key}</a></span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{$value.count}<span></div>
 </xen:foreach>]]></template>
-    <template title="steam_helper_criteria_privs"><![CDATA[<li>
-    <label><input type="checkbox" name="user_criteria[steam_state][rule]" value="steam_state" class="Disabler" id="ucrit_steam_state" {xen:checked $userCriteria.steam_state} />{xen:phrase steam_state_is}:</label>
-    <div class="criteriaQualifier" id="ucrit_steam_state_Disabler">
-        <xen:select name="user_criteria[steam_state][data][state]" value="{$userCriteria.steam_state.state}" inputclass="autoSize">
-            <xen:option value="associated">{xen:phrase steam_state_associated}</xen:option>
-            <xen:option value="deassociated">{xen:phrase steam_state_deassociated}</xen:option>
-        </xen:select>
-    </div>
-</li>]]></template>
   </admin_templates>
   <code_events/>
   <code_event_listeners>
@@ -36,20 +62,20 @@
     <group group_id="SteamAuth" display_order="1" debug_only="0"/>
     <option option_id="steamDisplayMessageContent" edit_format="onoff" data_type="boolean" can_backup="1">
       <default_value>0</default_value>
-      <edit_format_params/>
-      <sub_options/>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
       <relation group_id="SteamAuth" display_order="1"/>
     </option>
     <option option_id="steamDisplayMessageInfo" edit_format="onoff" data_type="boolean" can_backup="1">
       <default_value>1</default_value>
-      <edit_format_params/>
-      <sub_options/>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
       <relation group_id="SteamAuth" display_order="1"/>
     </option>
     <option option_id="steamDisplayProfile" edit_format="onoff" data_type="boolean" can_backup="1">
       <default_value>1</default_value>
-      <edit_format_params/>
-      <sub_options/>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
       <relation group_id="SteamAuth" display_order="1"/>
     </option>
   </optiongroups>
@@ -60,6 +86,7 @@
   </permissions>
   <phrases>
     <phrase title="admin_navigation_steam_statistics" version_id="4" version_string="1.0.2"><![CDATA[Steam Statistics]]></phrase>
+    <phrase title="admin_navigation_steam_stats" version_id="4" version_string="1.0.2"><![CDATA[Top 25 Games]]></phrase>
     <phrase title="associated_steam_account" version_id="1" version_string="1.0.0"><![CDATA[Associated Steam Account]]></phrase>
     <phrase title="associate_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Associate with Steam]]></phrase>
     <phrase title="cron_entry_steam_user_poll" version_id="4" version_string="1.0.2"><![CDATA[Steam User Polling]]></phrase>
@@ -76,13 +103,13 @@
     <phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
     <phrase title="sign_in_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign in with Steam]]></phrase>
     <phrase title="sign_up_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign up with Steam]]></phrase>
+    <phrase title="steam_game_not_owned" version_id="4" version_string="1.0.2"><![CDATA[Games NOT owned]]></phrase>
+    <phrase title="steam_game_owned" version_id="4" version_string="1.0.2"><![CDATA[Games owned]]></phrase>
     <phrase title="steam_integration" version_id="1" version_string="1.0..0"><![CDATA[Steam Integration]]></phrase>
     <phrase title="steam_state_associated" version_id="1" version_string="1.0.0"><![CDATA[Associated]]></phrase>
     <phrase title="steam_state_deassociated" version_id="1" version_string="1.0.0"><![CDATA[Not Associated]]></phrase>
     <phrase title="steam_state_is" version_id="1" version_string="1.0.0"><![CDATA[Steam state is]]></phrase>
-    <phrase title="steam_statistics" version_id="4" version_string="1.0.2"><![CDATA[Steam Statistics]]></phrase>
-	<phrase title="steam_statistics_game" version_id="4" version_string="1.0.2"><![CDATA[Game]]></phrase>
-	<phrase title="steam_statistics_count" version_id="4" version_string="1.0.2"><![CDATA[Count]]></phrase>
+    <phrase title="tools_steam_top25" version_id="4" version_string="1.0.2"><![CDATA[Top 25 Games]]></phrase>
     <phrase title="your_account_is_not_currently_associated_with_steam_account" version_id="1" version_string="1.2.0"><![CDATA[Your account is not currently associated with a Steam account.]]></phrase>
   </phrases>
   <route_prefixes/>
