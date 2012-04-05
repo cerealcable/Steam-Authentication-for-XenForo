@@ -69,6 +69,7 @@ class Steam_Helper_Steam {
         	        $appLogo = isset($game->logo) ? addslashes($game->logo) : "";
     	            $appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
 	                $hours = isset($game->hoursOnRecord) ? $game->hoursOnRecord : 0;
+					$hoursRecent = isset($game->hoursLast2Weeks) ? $game->hoursLast2Weeks : 0;
 
             	    if($appId == 0 || $appName == "") {
         	            continue;
@@ -78,7 +79,8 @@ class Steam_Helper_Steam {
                     	'name'  => $appName,
                 	    'logo'  => $appLogo,
             	        'link'  => $appLink,
-        	            'hours' => $hours
+        	            'hours' => $hours,
+						'hours_recent' => $hoursRecent
     	            );
 	            }
 			}
@@ -92,12 +94,42 @@ class Steam_Helper_Steam {
 		$db->query("DELETE FROM xf_user_steam_games WHERE user_id = $user_id");
 	}
 
+	public function getGameInfo($id) {
+		$db = XenForo_Application::get('db');
+		$row = $db->fetchRow("SELECT game_id, game_name, game_logo, game_link FROM xf_steam_games WHERE game_id = $id");
+		$rVal = array(
+			'id' => $row['game_id'],
+			'name' => $row['game_name'],
+			'logo' => $row['game_logo'],
+			'link' => $row['game_link']
+		);
+
+        return $rVal;
+	}
+
+	public function getGameOwners($id) {
+		$rVal = array();
+		$db = XenForo_Application::get('db');
+		$results = $db->fetchAll("SELECT u.user_id, u.username, g.game_hours, g.game_hours_recent FROM xf_user_steam_games g, xf_user u WHERE g.user_id = u.user_id AND g.game_id = $id");
+		foreach($results as $row) {
+			$rVal[] = array(
+				'user_id' => $row['user_id'],
+				'username' => $row['username'],
+				'hours' => $row['game_hours'],
+				'hours_recent' => $row['game_hours_recent']
+			);
+		}
+
+		return $rVal;
+	}
+
 	public function getGameStatistics($limit=25) {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
+		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
         foreach($results as $row) {
-			$rVal[$row['game_name']] = array(
+			$rVal[$row['game_id']] = array(
+				'name' => $row['game_name'],
 				'count' => $row['count'],
 				'logo' => $row['game_logo'],
 				'link' => $row['game_link']
@@ -107,15 +139,80 @@ class Steam_Helper_Steam {
 		return $rVal;
 	}
 
+	public function getGamePlayedStatistics($limit=25) {
+		$rVal = array();
+		$db = XenForo_Application::get('db');
+		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+		foreach($results as $row) {
+			$rVal[$row['game_id']] = array(
+				'name' => $row['game_name'],
+				'hours' => $row['hours'],
+				'logo' => $row['game_logo'],
+				'link' => $row['game_link']
+			);
+		}
+
+		return $rVal;
+	}
+
+	public function getGamePlayedRecentStatistics($limit=25) {
+        $rVal = array();
+        $db = XenForo_Application::get('db');
+        $results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+        foreach($results as $row) {
+            $rVal[$row['game_id']] = array(
+                'name' => $row['game_name'],
+                'hours' => $row['hours'],
+                'logo' => $row['game_logo'],
+                'link' => $row['game_link']
+            );
+        }
+
+        return $rVal;
+	}
+
 	public function getAvailableGames() {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT game_id, game_name FROM xf_steam_games ORDER BY game_name;");
+		$results = $db->fetchAll("SELECT game_id, game_name, game_link, game_logo FROM xf_steam_games ORDER BY game_name;");
 		foreach($results as $row) {
-			$rVal[] = array( 'id' => $row['game_id'], 'name' => $row['game_name'] );
+			$rVal[] = array(
+				'id' => $row['game_id'],
+				'name' => $row['game_name'],
+				'link' => $row['game_link'],
+				'logo' => $row['game_logo']
+			);
 		}
 		return $rVal;
 	}
+
+	public function getSteamUsers() {
+		$rVal = array();
+		$db = XenForo_Application::get('db');
+		$results = $db->fetchAll("SELECT u.user_id, u.username, p.steam_auth_id FROM xf_user u, xf_user_profile p WHERE u.user_id = p.user_id AND p.steam_auth_id > 0 ORDER BY u.username;");
+		foreach($results as $row) {
+			$rVal[] = array(
+				'id' => Steam_Helper_Steam::convertIdToString($row['steam_auth_id']),
+				'id64' => $row['steam_auth_id'],
+				'username' => $row['username'],
+				'user_id' => $row['user_id']
+			);
+		}
+		return $rVal;
+	}
+
+	public static function convertIdToString($id) {
+        $steamId1  = substr($id, -1) % 2;
+        $steamId2a = intval(substr($id, 0, 4)) - 7656;
+        $steamId2b = substr($id, 4) - 1197960265728;
+        $steamId2b = $steamId2b - $steamId1;
+
+        if($steamId2a <= 0 && $steamId2b <= 0) {
+            throw new SteamCondenserException("SteamID $id is too small.");
+        }
+
+        return "STEAM_0:$steamId1:" . (($steamId2a + $steamId2b) / 2);
+    }
 }
 
 ?>

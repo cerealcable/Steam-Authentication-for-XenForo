@@ -35,10 +35,10 @@ class Steam_Cron {
 				$r = $db->fetchRow("SELECT * FROM xf_user_steam_games WHERE user_id = {$row['user_id']} AND game_id = $id;");
 				if($r == NULL) {
 					// Insert
-					$db->insert("xf_user_steam_games", array('user_id'=>$row['user_id'], 'game_id'=>$id, 'game_hours'=>$data['hours']));
+					$db->insert("xf_user_steam_games", array('user_id'=>$row['user_id'], 'game_id'=>$id, 'game_hours'=>$data['hours'], 'game_hours_recent'=>$data['hours_recent']));
 				} else {
 					// Update
-					$db->query("UPDATE xf_user_steam_games SET game_hours = {$data['hours']} WHERE user_id = {$row['user_id']} AND game_id = $id;");
+					$db->query("UPDATE xf_user_steam_games SET game_hours = {$data['hours']}, game_hours_recent = {$data['hours_recent']} WHERE user_id = {$row['user_id']} AND game_id = $id;");
 				}
 			}
 		}

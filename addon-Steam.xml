@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.0.6" version_id="7" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.0.7" version_id="8" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam_statistics" parent_navigation_id="tools" display_order="400" link="" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
-    <navigation navigation_id="steam_stats" parent_navigation_id="steam_statistics" display_order="20" link="tools/steam/top25" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_top_owned" parent_navigation_id="steam_statistics" display_order="10" link="tools/steam/topOwned" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_top_played" parent_navigation_id="steam_statistics" display_order="20" link="tools/steam/topPlayed" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_top_playedRecent" parent_navigation_id="steam_statistics" display_order="30" link="tools/steam/topPlayedRecent" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
   </admin_navigation>
   <admin_permissions/>
   <admin_style_properties/>
@@ -41,10 +43,20 @@
 		</li>
 	</dd>
 </dl>]]></template>
-    <template title="tools_steam_top25"><![CDATA[<xen:title>{xen:phrase tools_steam_top25}</xen:title>
-<div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;">{xen:phrase tools_steam_top25_game}</span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{xen:phrase tools_steam_top25_count}<span></div>
+    <template title="tools_steam_topOwned"><![CDATA[<xen:title>{xen:phrase tools_steam_topOwned}</xen:title>
+<div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;">{xen:phrase tools_steam_topOwned_game}</span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{xen:phrase tools_steam_topOwned_count}<span></div>
 <xen:foreach loop="{$gameStats}" key="$key" value="$value">
-<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;"><a href="{$value.link}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$key}</a></span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{$value.count}<span></div>
+<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;"><a href="{$value.link}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$value.name}</a></span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{$value.count}<span></div>
+</xen:foreach>]]></template>
+    <template title="tools_steam_topPlayed"><![CDATA[<xen:title>{xen:phrase tools_steam_topPlayed}</xen:title>
+<div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;">{xen:phrase tools_steam_topPlayed_game}</span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{xen:phrase tools_steam_topPlayed_hours}<span></div>
+<xen:foreach loop="{$gameStats}" key="$key" value="$value">
+<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;"><a href="{$value.link}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$value.name}</a></span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{$value.hours}<span></div>
+</xen:foreach>]]></template>
+    <template title="tools_steam_topPlayedRecent"><![CDATA[<xen:title>{xen:phrase tools_steam_topPlayedRecent}</xen:title>
+<div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;">{xen:phrase tools_steam_topPlayedRecent_game}</span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{xen:phrase tools_steam_topPlayedRecent_hours}<span></div>
+<xen:foreach loop="{$gameStats}" key="$key" value="$value">
+<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;"><a href="{$value.link}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$value.name}</a></span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{$value.hours}<span></div>
 </xen:foreach>]]></template>
   </admin_templates>
   <code_events/>
@@ -86,7 +98,9 @@
   </permissions>
   <phrases>
     <phrase title="admin_navigation_steam_statistics" version_id="4" version_string="1.0.2"><![CDATA[Steam Statistics]]></phrase>
-    <phrase title="admin_navigation_steam_stats" version_id="4" version_string="1.0.2"><![CDATA[Top 25 Games]]></phrase>
+    <phrase title="admin_navigation_steam_top_owned" version_id="7" version_string="1.0.6"><![CDATA[Top Owned]]></phrase>
+    <phrase title="admin_navigation_steam_top_played" version_id="7" version_string="1.0.6"><![CDATA[Top Played]]></phrase>
+    <phrase title="admin_navigation_steam_top_playedRecent" version_id="8" version_string="1.0.7"><![CDATA[Top Recently Played]]></phrase>
     <phrase title="associated_steam_account" version_id="1" version_string="1.0.0"><![CDATA[Associated Steam Account]]></phrase>
     <phrase title="associate_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Associate with Steam]]></phrase>
     <phrase title="cron_entry_steam_user_poll" version_id="4" version_string="1.0.2"><![CDATA[Steam User Polling]]></phrase>
@@ -109,9 +123,15 @@
     <phrase title="steam_state_associated" version_id="1" version_string="1.0.0"><![CDATA[Associated]]></phrase>
     <phrase title="steam_state_deassociated" version_id="1" version_string="1.0.0"><![CDATA[Not Associated]]></phrase>
     <phrase title="steam_state_is" version_id="1" version_string="1.0.0"><![CDATA[Steam state is]]></phrase>
-    <phrase title="tools_steam_top25" version_id="4" version_string="1.0.2"><![CDATA[Top 25 Games]]></phrase>
-    <phrase title="tools_steam_top25_count" version_id="0" version_string=""><![CDATA[Count]]></phrase>
-    <phrase title="tools_steam_top25_game" version_id="0" version_string=""><![CDATA[Game]]></phrase>
+    <phrase title="tools_steam_topOwned" version_id="7" version_string="1.0.6"><![CDATA[Top Owned Games]]></phrase>
+    <phrase title="tools_steam_topOwned_count" version_id="7" version_string="1.0.6"><![CDATA[Count]]></phrase>
+    <phrase title="tools_steam_topOwned_game" version_id="7" version_string="1.0.6"><![CDATA[Game]]></phrase>
+    <phrase title="tools_steam_topPlayed" version_id="7" version_string="1.0.6"><![CDATA[Top Played Games]]></phrase>
+    <phrase title="tools_steam_topPlayedRecent" version_id="8" version_string="1.0.7"><![CDATA[Top Recently Played Games]]></phrase>
+    <phrase title="tools_steam_topPlayedRecent_game" version_id="8" version_string="1.0.7"><![CDATA[Game]]></phrase>
+    <phrase title="tools_steam_topPlayedRecent_hours" version_id="8" version_string="1.0.7"><![CDATA[Hours]]></phrase>
+    <phrase title="tools_steam_topPlayed_game" version_id="7" version_string="1.0.6"><![CDATA[Game]]></phrase>
+    <phrase title="tools_steam_topPlayed_hours" version_id="7" version_string="1.0.6"><![CDATA[Hours]]></phrase>
     <phrase title="your_account_is_not_currently_associated_with_steam_account" version_id="1" version_string="1.2.0"><![CDATA[Your account is not currently associated with a Steam account.]]></phrase>
   </phrases>
   <route_prefixes/>
