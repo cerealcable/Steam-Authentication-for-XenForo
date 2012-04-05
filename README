@@ -1,0 +1,107 @@
+Steam Authentication & Integration
+  A XenForo Addon
+
+== Description ==
+This addon provides Steam Integration allowing new & existing users to establish
+accounts via their Steam accounts. This is similar to the Twitter (New) plugin
+which adds no custom template code by hand and instead properly creates
+templates and implements them using hooks.
+
+== Prerequisites ==
+ * cURL
+ * BCMath (PHP Extension, usually installed already)
+
+== Installation Steps ==
+    1. Install Prerequisites
+         CentOS / Redhat:
+           * yum install php-bcmath
+
+         Debian / Ubuntu:
+           * apt-get install php5-curl
+
+    2. Upload files in the upload directory to your forum
+    3. Make the folder "js/steam/cache" world writable (chmod 0777)
+    4. Install using the provided "addon-Steam.xml"
+    5. Change options for "Steam Integration" as necessary
+
+== Features ==
+ * Single Sign On / Authentication via Steam
+ * Statistics
+ * Notices
+
+== Need Help? ==
+Glad you've decided to use Steam Authentication and Integration, but please do
+not ask me directly for help via a Conversation. We are all working on building
+our communities so unless you have sensitive information to share (which you
+shouldn't share with me anyways) then don't make a conversation and instead post
+in the discussion!
+
+  Steps to take BEFORE asking for help:
+    * Read your log files!
+      Don't know where they are or what they mean? Well then this is a good
+      time to research. You should be familiar with your forums environment
+      before installing an addon (and if you are not, you should become familiar
+      or consider contracting the work).
+
+    * Read your log files!
+      Pretty please???
+
+    * Read the entire description & readme file!
+      They contain instructions and hints which you may have missed or need to
+      do before you can continue!
+
+    * Read the discussions! (available on the XenForo Community / Releases)
+      Someone else probably already had the same exact issue...go hunt through
+      the thread to see if that is the case.
+
+    * Ask your question in the discussion!
+      I'll answer any questions there, and if you start a conversation asking
+      for help with your installation, I'll only tell you to post in the
+      discussion thread. I will respond in the discussion I promise!
+
+== Like this Addon? ==
+Awesome! Leave a review and tell me how much you like it and why! Feedback is
+important so you might as well give it so those who develop for this addon can
+make it better and others can see your opinions.
+
+== Common Issues (and fixes) ==
+  * Invalid profile data
+    This occurs when the AJAX calls fail when using the "steamprofile" library.
+    Check your error log to set the appropriate permissions but likely files in
+    the "js" folder are writable.
+
+  * How do I migrate from other Steam Integration Addons?
+    Uninstalling the previous addon usually leaves Steam as an external
+    authentication source if you look in xf_user_external_auth after you
+    uninstall your users will still have Steam listed). Then you'll want to
+    also remove the custom field you created for the older add-on as it is no
+    longer used then follow the install process. It will use the existing data
+    stored within the xf_user_external_auth table so once you've completed the
+    migration your users will likely not notice the change.
+
+    Also, you'll need to revert any templates you had to change such as the part
+    for the login_bar. You should just reference the old addons install steps to
+    find exactly what to remove.
+
+== License ==
+Steam Authentication for XenForo
+
+Written by Morgan Humes <morgan@lanaddict.com>
+Copyright 2012 Morgan Humes
+
+Steam Authentication for XenForo is free software: you can redistribute
+it and/or modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+Steam Authentication for XenForo is distributed in the hope that it
+will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with SteamProfile. If not, see <http://www.gnu.org/licenses/>.
+
+== Source Code ==
+Steam Authentication for XenForo is open source! Visit our git repository at
+github to fork, submit code, or even discuss the code.
