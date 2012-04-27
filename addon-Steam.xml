@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="Steam" title="Steam Auth" version_string="1.0.7b" version_id="8" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+  <admin_navigation>
+    <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_information" parent_navigation_id="steam" display_order="20" link="" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_statistics" parent_navigation_id="steam" display_order="10" link="" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_stats_games" parent_navigation_id="steam_statistics" display_order="1" link="steam/games" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_stats_topOwned" parent_navigation_id="steam_statistics" display_order="10" link="steam/topOwned" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_stats_topPlayed" parent_navigation_id="steam_statistics" display_order="20" link="steam/topPlayed" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="steam_stats_topRecent" parent_navigation_id="steam_statistics" display_order="30" link="steam/topPlayedRecent" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
+  </admin_navigation>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates>
+    <template title="steam_helper_criteria_privs"><![CDATA[<dl class="ctrlUnit">
+	<dt>{xen:phrase steam_integration}:</dt>
+	<dd>
+		<li>
+			<label><input type="checkbox" name="user_criteria[steam_state][rule]" value="steam_state" class="Disabler" id="ucrit_steam_state" {xen:checked $userCriteria.steam_state} />{xen:phrase steam_state_is}:</label>
+			<div class="criteriaQualifier" id="ucrit_steam_state_Disabler">
+				<xen:select name="user_criteria[steam_state][data][state]" value="{$userCriteria.steam_state.state}" inputclass="autoSize">
+					<xen:option value="associated">{xen:phrase steam_state_associated}</xen:option>
+					<xen:option value="deassociated">{xen:phrase steam_state_deassociated}</xen:option>
+				</xen:select>
+			</div>
+		</li>
+		<li>
+			<label><input type="checkbox" name="user_criteria[steam_game][rule]" value="steam_game" class="Disabler" id="ucrit_steam_game" {xen:checked $userCriteria.steam_game} />{xen:phrase steam_game_owned}:</label>
+			<div class="criteriaQualifier" id="ucrit_steam_game_Disabler">
+				<xen:select name="user_criteria[steam_game][data][games]" size="8" multiple="true">
+					<xen:foreach loop="$steam_games" value="$_criteriaUg">
+						<xen:option value="{$_criteriaUg.id}" selected="{$userCriteria.steam_game.games} AND in_array({$_criteriaUg.id}, {$userCriteria.steam_game.games})">{$_criteriaUg.name}</xen:option>
+					</xen:foreach>
+				</xen:select>
+			</div>
+		</li>
+		<li>
+			<label><input type="checkbox" name="user_criteria[steam_not_game][rule]" value="steam_not_game" class="Disabler" id="ucrit_steam_not_game" {xen:checked $userCriteria.steam_not_game} />{xen:phrase steam_game_not_owned}:</label>
+			<div class="criteriaQualifier" id="ucrit_steam_not_game_Disabler">
+				<xen:select name="user_criteria[steam_not_game][data][games]" size="8" multiple="true">
+					<xen:foreach loop="$steam_games" value="$_criteriaUg">
+						<xen:option value="{$_criteriaUg.id}" selected="{$userCriteria.steam_not_game.games} AND in_array({$_criteriaUg.id}, {$userCriteria.steam_not_game.games})">{$_criteriaUg.name}</xen:option>
+					</xen:foreach>
+				</xen:select>
+			</div>
+		</li>
+	</dd>
+</dl>]]></template>
+    <template title="steam_info_users"><![CDATA[<xen:title>{xen:phrase steam_info_users}</xen:title>
+<div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 65%;">{xen:phrase steam_info_users_user}</span><span class="count" style="display: block; float: right; text-align: right; width: 35%;">{xen:phrase steam_info_users_id}<span></div>
+<xen:foreach loop="{$users}" key="$key" value="$value">
+<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span style="display: block; float: left; width: 65%;">{$value.username}</span><span class="count" style="display: block; float: right; text-align: right; width: 35%;">{$value.id}<span></div>
+</xen:foreach>]]></template>
+    <template title="steam_splash"><![CDATA[<xen:title>{xen:phrase steam}</xen:title>
+
+<xen:topctrl></xen:topctrl>
+
+<xen:require css="steam_splash.css" />
+
+<div class="splash">
+	<ul class="iconic">
+	
+		<li><a href="{xen:adminlink 'steam/games'}" class="games">
+			<span class="icon"><span></span></span>
+			<span class="linkText">{xen:phrase steam_stats_games}</span>
+			</a></li>
+
+		<li><a href="{xen:adminlink 'steam/topOwned'}" class="topOwned">
+			<span class="icon"><span></span></span>
+			<span class="linkText">{xen:phrase steam_stats_topOwned}</span>
+			</a></li>
+
+		<li><a href="{xen:adminlink 'steam/topPlayed'}" class="topPlayed">
+			<span class="icon"><span></span></span>
+			<span class="linkText">{xen:phrase steam_stats_topPlayed}</span>
+			</a></li>
+
+		<li><a href="{xen:adminlink 'steam/topPlayedRecent'}" class="topPlayedRecent">
+			<span class="icon"><span></span></span>
+			<span class="linkText">{xen:phrase steam_stats_topPlayedRecent}</span>
+			</a></li>
+
+		<li><a href="{xen:adminlink 'steam/users'}" class="users">
+			<span class="icon"><span></span></span>
+			<span class="linkText">{xen:phrase steam_info_users}</span>
+			</a></li>
+
+	</ul>
+
+	<div class="sidebar"><xen:hook name="admin_sidebar_steam" /></div>	
+</div>]]></template>
+    <template title="steam_splash.css"><![CDATA[.splash
+{
+	overflow: hidden; zoom: 1;
+}
+
+	.splash .iconic
+	{
+		width: 420px;
+		/*background-color: rgb(255,255,230);*/
+		overflow: hidden; zoom: 1;
+		float: left;
+		border-right: 1px solid {xen:property primaryLighterStill};
+	}
+	
+	.iconic li
+	{
+		float: left;
+		width: 140px;
+		height: 162px; /* 120 + 2 + 28 + 10 + 2*/
+		text-align: center;
+	}
+	
+	.iconic a
+	{
+		display: block;
+		padding-bottom: 10px;
+	}
+	
+		.splash .iconic a:hover
+		{
+			text-decoration: none;
+		}
+	
+	.iconic a .icon
+	{
+		display: block;
+		width: 120px;
+		height: 120px;
+		border: 1px solid {xen:property primaryDarker};
+		border-radius: 5px;
+		
+		background-color: {xen:property primaryDark};
+		background-repeat: no-repeat;
+		background-position: center center;
+		
+		margin: 0 9px 2px;
+	}
+	
+		.splash .iconic a:hover .icon
+		{
+			background-color: {xen:property primaryLightish};
+		}
+	
+	.iconic .linkText
+	{
+		display: block;
+		height: 28px;
+		font-size: 11px;
+		font-weight: bold;
+	}
+	
+	/*
+	.iconic .list .icon { background-image: url('{xen:property imagePath}/xenforo/acp-icons/list.png'); }
+	.iconic .search .icon { background-image: url('{xen:property imagePath}/xenforo/acp-icons/search.png'); }
+	.iconic .add .icon { background-image: url('{xen:property imagePath}/xenforo/acp-icons/add.png'); }
+	.iconic .moderated .icon { background-image: url('{xen:property imagePath}/xenforo/acp-icons/moderated.png'); }
+	.iconic .permissions .icon { background-image: url('{xen:property imagePath}/xenforo/acp-icons/permissions.png'); }
+	*/
+	
+.splash .sidebar
+{
+	margin-left: 420px;
+	border-left: 1px solid {xen:property primaryLighterStill};
+	padding-left: 10px;
+}
+
+.splash .sidebar .textHeading
+{
+	font-size: 12pt;
+	color: {xen:property primaryLight};
+	padding: 0px;
+	margin-bottom: 5px;
+}
+	
+.splash .sidebar .section,
+.splash .sidebar .sectionMain
+{
+	margin-top: 0px;
+}
+
+	.splash .sidebar input.quickSearchText
+	{
+		width: 175px;
+	}
+	
+	.splash .sidebar input.quickSearchButton
+	{
+		width: 100px;
+	}
+	
+	.splash .sidebar a.quickSearchAdvanced
+	{
+		margin-left: 5px;
+		margin-top: 0px;
+		display: block;
+		font-size: 11px;
+	}
+
+.splash .sidebar .xenForm
+{
+	width: auto;
+}
+
+.splash .sidebar table
+{
+	width: 100%;
+}
+
+	.splash .sidebar table .primaryContent,
+	.splash .sidebar table .secondaryContent,
+	.splash .sidebar td a.primaryContent
+	{
+		padding: 5px 10px;
+		font-size: 11px;
+	}
+	
+		.splash .sidebar td
+		{
+			{xen:property primaryContent.border}
+		}
+	
+		.splash .sidebar td a.primaryContent
+		{
+			display: block;
+			border: none;
+		}
+		
+		.splash .sidebar td a.primaryContent:hover
+		{
+			text-decoration: none;
+			background-color: {xen:property secondaryLightest};
+		}
+	
+	.splash .sidebar table .total
+	{
+		text-align: right;
+	}
+	
+	.splash .sidebar table + .sectionFooter
+	{
+		text-align: right;
+	}
+	
+	.splash .sidebar .noContentMessage
+	{
+		font-size: 11px;
+		color: {xen:property mutedTextColor};
+	}
+
+.splash .sidebar .statsBlock a
+{
+	display: block;
+	overflow: hidden; zoom: 1;
+	padding: 4px 8px;
+	margin: 0 -8px;
+	font-size: 11px;
+}
+
+	.splash .sidebar .statsBlock a:hover
+	{
+		background-color: {xen:property primaryLighterStill};
+		text-decoration: none;
+		border-radius: 5px;
+	}	
+	
+
+.splash .statsBlock a .label
+{
+	color: {xen:property mutedTextColor};
+	float: left;
+}
+
+.splash .statsBlock a strong
+{
+	color: {xen:property contentText};
+	float: right;
+}
+
+
+.splash .icon span
+{
+	display: block;
+	width: 120px;
+	height: 120px;
+	background: transparent none no-repeat center center;
+}
+
+/* Steam */
+
+.splash .games
+	.icon span { background-image: url('{xen:property imagePath}/xenforo/acp-icons/users_list.png'); }
+.splash .topOwned
+	.icon span { background-image: url('{xen:property imagePath}/xenforo/acp-icons/add_ons.png'); }
+.splash .topPlayed
+	.icon span { background-image: url('{xen:property imagePath}/xenforo/acp-icons/smilies.png'); }
+.splash .topPlayedRecent
+	.icon span { background-image: url('{xen:property imagePath}/xenforo/acp-icons/nodes.png'); }
+.splash .users
+	.icon span { background-image: url('{xen:property imagePath}/xenforo/acp-icons/nodes.png'); }]]></template>
+    <template title="steam_stats_games"><![CDATA[<xen:title>{xen:phrase steam_stats_games}</xen:title>
+<xen:foreach loop="{$games}" key="$key" value="$value">
+<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><a href="{xen:adminlink steam/games/}{$value.id}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$value.name}</a></div>
+</xen:foreach>]]></template>
+    <template title="steam_stats_game_view"><![CDATA[<xen:title>{$game.name}</xen:title>
+<div style="clear: both; font-size: 175%; border-bottom: solid 1px darkgray; margin-bottom: 8px;">Info</div>
+<div id="info" style="font-size: 125%;">
+	<div style="float: right;"><a href="{$game.link}"><img src="{$game.logo}" style="float: right;" /></a></div>
+	<div>{$count} users own {$game.name}</div>
+	<div>{$hours} hours total played by all users</div>
+	<div>{$hoursAvg} hours per user (average)</div>
+</div>
+<div style="clear: both; font-size: 175%; border-bottom: solid 1px darkgray; margin-bottom: 2px;">Users</div>
+<div id="users">
+	<xen:foreach loop="{$users}" value="$value">
+		<div style="font-size: 125%; height: 48px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><img src="{$value.avatar_url}" style="padding-right: 4px; vertical-align: middle;" /><span>{$value.username}</span></div>
+	</xen:foreach>
+</div>]]></template>
+    <template title="steam_stats_topOwned"><![CDATA[<xen:title>{xen:phrase steam_stats_topOwned}</xen:title>
+<div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;">{xen:phrase steam_stats_topOwned_game}</span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{xen:phrase steam_stats_topOwned_count}<span></div>
+<xen:foreach loop="{$gameStats}" key="$key" value="$value">
+<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;"><a href="{$value.link}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$value.name}</a></span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{$value.count}<span></div>
+</xen:foreach>]]></template>
+    <template title="steam_stats_topPlayed"><![CDATA[<xen:title>{xen:phrase steam_stats_topPlayed}</xen:title>
+<div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;">{xen:phrase steam_stats_topPlayed_game}</span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{xen:phrase steam_stats_topPlayed_hours}<span></div>
+<xen:foreach loop="{$gameStats}" key="$key" value="$value">
+<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;"><a href="{$value.link}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$value.name}</a></span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{$value.hours}<span></div>
+</xen:foreach>]]></template>
+    <template title="steam_stats_topPlayedRecent"><![CDATA[<xen:title>{xen:phrase steam_stats_topPlayedRecent}</xen:title>
+<div style="font-size: 150%; font-weight: bold; height: 24px; border-bottom: 2px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;">{xen:phrase steam_stats_topPlayedRecent_game}</span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{xen:phrase steam_stats_topPlayedRecent_hours}<span></div>
+<xen:foreach loop="{$gameStats}" key="$key" value="$value">
+<div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><span class="game" style="display: block; float: left; width: 90%;"><a href="{$value.link}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$value.name}</a></span><span class="count" style="display: block; float: right; text-align: right; width: 10%;">{$value.hours}<span></div>
+</xen:foreach>]]></template>
+  </admin_templates>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="criteria_user" execute_order="10" callback_class="Steam_Helper_Criteria" callback_method="criteriaUser" active="1" description=""/>
+    <listener event_id="load_class_controller" execute_order="10" callback_class="Steam_Listener" callback_method="loadClassController" active="1" description=""/>
+    <listener event_id="template_create" execute_order="10" callback_class="Steam_Listener" callback_method="templateCreate" active="1" description=""/>
+    <listener event_id="template_hook" execute_order="10" callback_class="Steam_Listener" callback_method="templateHook" active="1" description=""/>
+  </code_event_listeners>
+  <cron>
+    <entry entry_id="steam_user_poll" cron_class="Steam_Cron" cron_method="update" active="1"><![CDATA[{"day_type":"dom","dom":["-1"],"hours":["3","15"],"minutes":["0"]}]]></entry>
+  </cron>
+  <email_templates/>
+  <optiongroups>
+    <group group_id="SteamAuth" display_order="1" debug_only="0"/>
+    <option option_id="steamDisplayMessageContent" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="SteamAuth" display_order="1"/>
+    </option>
+    <option option_id="steamDisplayMessageInfo" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>1</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="SteamAuth" display_order="1"/>
+    </option>
+    <option option_id="steamDisplayProfile" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>1</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="SteamAuth" display_order="1"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="admin_navigation_steam" version_id="8" version_string="1.0.7"><![CDATA[Steam]]></phrase>
+    <phrase title="admin_navigation_steam_information" version_id="8" version_string="1.0.7"><![CDATA[Information]]></phrase>
+    <phrase title="admin_navigation_steam_info_users" version_id="8" version_string="1.0.7"><![CDATA[Users]]></phrase>
+    <phrase title="admin_navigation_steam_statistics" version_id="8" version_string="1.0.7"><![CDATA[Statistics]]></phrase>
+    <phrase title="admin_navigation_steam_stats_games" version_id="8" version_string="1.0.7"><![CDATA[Games]]></phrase>
+    <phrase title="admin_navigation_steam_stats_topOwned" version_id="8" version_string="1.0.7"><![CDATA[Top Owned]]></phrase>
+    <phrase title="admin_navigation_steam_stats_topPlayed" version_id="8" version_string="1.0.7"><![CDATA[Top Played]]></phrase>
+    <phrase title="admin_navigation_steam_stats_topRecent" version_id="8" version_string="1.0.7"><![CDATA[Top Recently Played]]></phrase>
+    <phrase title="associated_steam_account" version_id="1" version_string="1.0.0"><![CDATA[Associated Steam Account]]></phrase>
+    <phrase title="associate_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Associate with Steam]]></phrase>
+    <phrase title="cron_entry_steam_user_poll" version_id="4" version_string="1.0.2"><![CDATA[Steam User Polling]]></phrase>
+    <phrase title="disassociate_steam_account" version_id="1" version_string="1.0.0"><![CDATA[Disassociate Steam account]]></phrase>
+    <phrase title="disassociating_with_steam_will_cause_password_generated_emailed_x" version_id="1" version_string="1.0.0"><![CDATA[Disassociating with Steam will cause a password to be generated for your account and emailed to {email}.]]></phrase>
+    <phrase title="option_group_SteamAuth" version_id="1" version_string="1.0.0"><![CDATA[Steam Integration]]></phrase>
+    <phrase title="option_group_SteamAuth_description" version_id="1" version_string="1.0.0"><![CDATA[Settings for integrating the online gaming service Steam as an authentication source and information source for XenForo Forums.]]></phrase>
+    <phrase title="option_steamDisplayMessageContent" version_id="1" version_string="1.0.0"><![CDATA[Display in message content (top right).]]></phrase>
+    <phrase title="option_steamDisplayMessageContent_explain" version_id="1" version_string="1.0.0"><![CDATA[Display an informational/status block in the message content portion (top right).]]></phrase>
+    <phrase title="option_steamDisplayMessageInfo" version_id="1" version_string="1.0.0"><![CDATA[Display in Messages]]></phrase>
+    <phrase title="option_steamDisplayMessageInfo_explain" version_id="2" version_string="1.0.1"><![CDATA[Display an informational/status block on messages user information.]]></phrase>
+    <phrase title="option_steamDisplayProfile" version_id="1" version_string="1.0.0"><![CDATA[Display in Profile]]></phrase>
+    <phrase title="option_steamDisplayProfile_explain" version_id="2" version_string="1.0.1"><![CDATA[Display an informational/status block in Profile.]]></phrase>
+    <phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
+    <phrase title="sign_in_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign in with Steam]]></phrase>
+    <phrase title="sign_up_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign up with Steam]]></phrase>
+    <phrase title="steam" version_id="8" version_string="1.0.7"><![CDATA[Steam]]></phrase>
+    <phrase title="steam_game_not_owned" version_id="4" version_string="1.0.2"><![CDATA[Games NOT owned]]></phrase>
+    <phrase title="steam_game_owned" version_id="4" version_string="1.0.2"><![CDATA[Games owned]]></phrase>
+    <phrase title="steam_info_users" version_id="8" version_string="1.0.7"><![CDATA[Steam User List]]></phrase>
+    <phrase title="steam_info_users_id" version_id="8" version_string="1.0.7"><![CDATA[Steam Id]]></phrase>
+    <phrase title="steam_info_users_user" version_id="8" version_string="1.0.7"><![CDATA[Username]]></phrase>
+    <phrase title="steam_integration" version_id="1" version_string="1.0..0"><![CDATA[Steam Integration]]></phrase>
+    <phrase title="steam_state_associated" version_id="1" version_string="1.0.0"><![CDATA[Associated]]></phrase>
+    <phrase title="steam_state_deassociated" version_id="1" version_string="1.0.0"><![CDATA[Not Associated]]></phrase>
+    <phrase title="steam_state_is" version_id="1" version_string="1.0.0"><![CDATA[Steam state is]]></phrase>
+    <phrase title="steam_stats_games" version_id="8" version_string="1.0.7"><![CDATA[Games]]></phrase>
+    <phrase title="steam_stats_topOwned" version_id="8" version_string="1.0.7"><![CDATA[Top Owned Games]]></phrase>
+    <phrase title="steam_stats_topOwned_count" version_id="8" version_string="1.0.7"><![CDATA[Count]]></phrase>
+    <phrase title="steam_stats_topOwned_game" version_id="8" version_string="1.0.7"><![CDATA[Game]]></phrase>
+    <phrase title="steam_stats_topPlayed" version_id="8" version_string="1.0.7"><![CDATA[Top Played Games]]></phrase>
+    <phrase title="steam_stats_topPlayedRecent" version_id="8" version_string="1.0.7"><![CDATA[Top Recently Played Games]]></phrase>
+    <phrase title="steam_stats_topPlayedRecent_game" version_id="8" version_string="1.0.7"><![CDATA[Game]]></phrase>
+    <phrase title="steam_stats_topPlayedRecent_hours" version_id="8" version_string="1.0.7"><![CDATA[Hours]]></phrase>
+    <phrase title="steam_stats_topPlayed_game" version_id="8" version_string="1.0.7"><![CDATA[Game]]></phrase>
+    <phrase title="steam_stats_topPlayed_hours" version_id="8" version_string="1.0.7"><![CDATA[Hours]]></phrase>
+    <phrase title="your_account_is_not_currently_associated_with_steam_account" version_id="1" version_string="1.2.0"><![CDATA[Your account is not currently associated with a Steam account.]]></phrase>
+  </phrases>
+  <route_prefixes>
+    <route_type type="admin">
+      <prefix original_prefix="steam" class="Steam_Route_PrefixAdmin_Steam" build_link="all"/>
+    </route_type>
+  </route_prefixes>
+  <style_properties/>
+  <templates>
+    <template title="account_steam" version_id="1" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase steam_integration}</xen:title>
+
+<xen:if is="{$visitor.steam_auth_id}">
+	<form action="{xen:link account/steam}" method="post" class="xenForm">
+		
+		<xen:hook name="account_steam_associated">
+		<dl class="ctrlUnit">
+			<dt>{xen:phrase associated_steam_account}:</dt>
+			<dd>
+				<a href="http://steamcommunity.com/profiles/{$visitor.steam_auth_id}" class="avatar NoOverlay"><img src="{$stUser.icon}" alt="" /></a>
+				<a href="http://steamcommunity.com/profiles/{$visitor.steam_auth_id}"><xen:if is="{$stUser.username}">{$stUser.username}<xen:else />{xen:phrase unknown_account}</xen:if></a>
+			</dd>
+		</dl>
+		</xen:hook>
+		
+		<dl class="ctrlUnit submitUnit">
+			<dt></dt>
+			<dd><ul>
+				<li>
+					<label><input type="checkbox" name="disassociate" value="1" id="ctrl_disassociate" class="Disabler" /> {xen:phrase disassociate_steam_account}</label>
+					<ul id="ctrl_disassociate_Disabler">
+						<li><input type="submit" class="button" name="disassociate_confirm" value="{xen:phrase confirm_disassociation}" /></li>
+					</ul>
+					<xen:if is="!{$hasPassword}">
+						<p class="explain">{xen:phrase disassociating_with_steam_will_cause_password_generated_emailed_x, 'email={$visitor.email}'}</p>
+					</xen:if>
+				</li>
+			</ul></dd>
+		</dl>
+	
+		<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+		<input type="hidden" name="_xfConfirm" value="1" />
+                <input type="hidden" name="tw_uid" value="twUser.uid" />
+	</form>
+<xen:else />
+	<form action="{xen:link account}" method="post" class="xenForm">
+	
+		<xen:hook name="account_steam_not_associated">
+		<dl class="ctrlUnit">
+			<dt></dt>
+			<dd>{xen:string nl2br, {xen:phrase your_account_is_not_currently_associated_with_steam_account}}</dd>
+		</dl>
+		</xen:hook>
+		
+		<dl class="ctrlUnit submitUnit">
+			<dt></dt>
+			<dd><a href="{xen:link register/steam, '', 'reg=1', 'assoc={$visitor.user_id}'}" class="button primary">{xen:phrase associate_with_steam}</a></dd>		</dl>		
+	</form>
+</xen:if>]]></template>
+    <template title="register_steam" version_id="1" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase sign_up_with_steam}</xen:title>
+	
+<xen:container var="$steamSdk">1</xen:container>
+
+<form action="{xen:link 'register/steam/register'}" method="post" class="xenForm AutoValidator"
+	data-fieldValidatorUrl="{xen:link register/validate-field}"
+	data-OptInOut="OptIn"
+	data-normalSubmit="1"
+>
+
+<ul class="tabs Tabs" data-panes="#SteamTabs > li">
+	<xen:if is="!{$associateOnly}"><li><a>{xen:phrase create_new_account}</a></li></xen:if>
+	<li><a>{xen:phrase associate_existing_account}</a></li>
+</ul>
+
+<ul id="SteamTabs">
+	
+	<xen:if is="!{$associateOnly}">
+	<li>
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_username">{xen:phrase name}:</label></dt>
+			<dd>
+				<input type="text" name="username" value="{$username}" class="textCtrl OptIn" id="ctrl_username" autofocus="true" autocomplete="off" />
+				<p class="explain">{xen:phrase this_is_name_that_will_be_shown_with_your_messages}</p>
+			</dd>
+		</dl>
+	
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_email">{xen:phrase email}:</label></dt>
+			<dd><input type="text" name="email" class="textCtrl OptIn" dir="ltr" id="ctrl_email" /></dd>
+		</dl>
+	
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_timezone">{xen:phrase time_zone}:</label></dt>
+			<dd>
+				<select name="timezone" class="textCtrl AutoTimeZone OptOut" id="ctrl_timezone">
+					<xen:foreach loop="$timeZones" key="$identifier" value="$name">
+						<option value="{$identifier}" {xen:selected "{$identifier} == {$xenOptions.guestTimeZone}"}>{$name}</option>
+					</xen:foreach>
+				</select>
+			</dd>
+		</dl>
+		
+		<dl class="ctrlUnit OptOut">
+			<dt>{xen:phrase date_of_birth}:</dt>
+			<dd>
+				<xen:include template="helper_birthday_input">
+					<xen:map from="$fields" to="$user" />
+				</xen:include>
+				<xen:if is="{$dobRequired}"><p class="explain">{xen:phrase your_date_of_birth_is_required}</p></xen:if>
+			</dd>
+		</dl>
+
+		<dl class="ctrlUnit">
+			<dt>{xen:phrase gender}:</dt>
+			<dd>
+				<ul>
+					<li><label for="ctrl_gender_male"><input type="radio" name="gender" value="male" id="ctrl_gender_male" {xen:checked "{$fields.gender} == 'male'"} /> {xen:phrase male}</label></li>
+					<li><label for="ctrl_gender_female"><input type="radio" name="gender" value="female" id="ctrl_gender_female" {xen:checked "{$fields.gender} == 'female'"} /> {xen:phrase female}</label></li>
+					<li><label for="ctrl_gender_"><input type="radio" name="gender" value="" id="ctrl_gender_" {xen:checked "!{$fields.gender}"} /> ({xen:phrase unspecified})</label></li>
+				</ul>
+			</dd>
+		</dl>
+
+                <xen:include template="custom_fields_edit" />
+	
+		<dl class="ctrlUnit submitUnit">
+			<dt></dt>
+			<dd>
+                                <xen:if is="{$tosUrl}">
+					<ul>
+						<li>
+							{xen:phrase i_agree_to_terms_and_rules, 'checkbox=<input type="checkbox" name="agree" value="1" id="ctrl_agree" class="Disabler" />', 'terms_attributes=href="{$tosUrl}" target="_blank"'}
+							<ul id="ctrl_agree_Disabler">
+								<li><input type="submit" value="{xen:phrase sign_up}" accesskey="s" class="button primary" /></li>
+							</ul>						
+						</li>
+					</ul>
+				<xen:else />
+					<input type="submit" value="{xen:phrase sign_up}" accesskey="s" class="button primary" />
+				</xen:if>
+				
+			</dd>
+		</dl>
+	
+	</li>
+	</xen:if>
+
+
+	<li>
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_associate_login">{xen:phrase associate_with}:</label></dt>
+			<dd>
+				<xen:if is="{$existingUser}">
+					{$existingUser.username}
+					<input type="hidden" name="associate_login" value="{$existingUser.username}" />
+					<input type="hidden" name="force_assoc" value="1" />
+				<xen:else />
+					<input type="text" name="associate_login" class="textCtrl" id="ctrl_associate_login" />
+				</xen:if>
+			</dd>
+		</dl>
+		
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_associate_password">{xen:phrase password}:</label></dt>
+			<dd>
+				<input type="password" name="associate_password" class="textCtrl" id="ctrl_associate_password" />
+				<p class="explain">{xen:phrase password_of_x_account_wish_to_associate_with_not_steam, 'board_title={$xenOptions.boardTitle}'}</p>
+			</dd>
+		</dl>
+		
+		<dl class="ctrlUnit submitUnit">
+			<dt></dt>
+			<dd><input type="submit" value="{xen:phrase associate_account}" name="associate" accesskey="a" class="button primary" /></dd>
+		</dl>
+	</li>
+
+</ul>	
+
+<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+<input type="hidden" name="redirect" value="{$redirect}" />
+<input type="hidden" name="location" value="{$location}" />
+</form>]]></template>
+    <template title="steam_account_wrapper_sidebar_settings" version_id="1" version_string="1.0.0"><![CDATA[<li><a
+	class="{xen:if "{$selectedKey} == 'account/steam'", 'secondaryContent', 'primaryContent'}"
+	href="{xen:link account/steam}">{xen:phrase steam_integration}</a></li>]]></template>
+    <template title="steam_js" version_id="1" version_string="1.0.0"><![CDATA[<script src="js/steam/ajax/steamprofile.js"></script>]]></template>
+    <template title="steam_login_bar_item" version_id="1" version_string="1.0.0"><![CDATA[<li><a href="{xen:link register/steam, '', 'reg=1'}" style="text-decoration:none;display: inline-block;">
+   <img src="http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png" alt="Sign up with Steam"}" style="margin:0 14px;"/>
+</a></li>]]></template>
+    <template title="steam_member_view_info" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayProfile} AND {$user.steam_auth_id} > 0"><dd><div class="steamprofile" title="{$user.steam_auth_id}"></div></dd></xen:if>]]></template>
+    <template title="steam_message_content" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayMessageContent} AND {$message.steam_auth_id} > 0"><div class="steamprofile" style="width: 225px; float: right;" title="{$message.steam_auth_id}"></div></xen:if>]]></template>
+    <template title="steam_message_user_info" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayMessageInfo} AND {$user.steam_auth_id} > 0"><dd><div class="steamprofile" title="{$user.steam_auth_id}"></div></dd></xen:if>]]></template>
+    <template title="steam_navigation_visitor_tab_link" version_id="1" version_string="1.0.0"><![CDATA[<li><a href="{xen:link account/steam}">{xen:phrase steam_integration}</a></li>]]></template>
+  </templates>
+  <bb_code_media_sites/>
+</addon>
