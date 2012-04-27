@@ -92,7 +92,7 @@ class Steam_Manufacture {
 					)");
 
 		// Run Initial Cron Job for Steam!
-		Steam_Cron::update();
+		// Steam_Cron::update();
 	}
 
 	protected function _installVersion8() {
@@ -100,6 +100,8 @@ class Steam_Manufacture {
 
 		// Add columns to steam user games table
 		$db->query("ALTER TABLE xf_user_steam_games ADD game_hours_recent int unsigned NOT NULL DEFAULT 0 AFTER game_hours");
+		// Run Initial Cron Job for Steam!
+		Steam_Cron::update();
 	}
 
 	public static function destroy() {
