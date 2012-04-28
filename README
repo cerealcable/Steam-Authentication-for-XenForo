@@ -24,15 +24,16 @@ templates and implements them using hooks.
     4. Install using the provided "addon-Steam.xml"
     5. Change options for "Steam Integration" as necessary
 
-== Upgrade Steps To 1.0.7b ==
+== Upgrade Steps From 1.0.7b to 1.0.7c ==
+    1. Upload the upload directory to your forum (overwrite any files)
+    2. Upgrade the addon to using the provided "addon-Steam.xml" file
+
+== Upgrade Steps From 1.0.x To 1.0.7c ==
     1. Backup root/js/steam somewhere safe
     2. Delete root/js/steam directory
     3. Upload the upload directory to your forum (overwrite any files)
     4. chmod 777 root/js/steam/cache
-    5. Upgrade the addon to 1.0.7b using the provided "addon-Steam.xml" file
-    
-== Upgrade Steps From 1.0.7b-vx to 1.0.7b-v6 ==
-    1. Upload the upload directory to your forum (overwrite any files)
+    5. Upgrade the addon to using the provided "addon-Steam.xml" file
     
 == Features ==
  * Single Sign On / Authentication via Steam
