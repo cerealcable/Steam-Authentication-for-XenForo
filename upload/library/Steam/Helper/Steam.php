@@ -68,18 +68,18 @@ class Steam_Helper_Steam {
     public function getUserGames($steam_id) {
         $games = array();
 		
-        /*if(!ini_get('safe_mode') && !ini_get('open_basedir'))
+        if(!ini_get('safe_mode') && !ini_get('open_basedir'))
         {
             // cURL
             curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
             $result = curl_exec($this->ch);
-            $result = trim($result);
+            //$result = trim($result);
             $xml = simplexml_load_string($result);
-        }*/
-        //else
-        //{
+        }
+        else
+        {
             $xml = simplexml_load_file("http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
-        //}
+        }
 
         if(!empty($xml)) {
 			if(isset($xml->games)) {

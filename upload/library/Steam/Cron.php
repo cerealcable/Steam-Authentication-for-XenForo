@@ -44,3 +44,4 @@ class Steam_Cron {
 		}
 	}
 }
+?>
