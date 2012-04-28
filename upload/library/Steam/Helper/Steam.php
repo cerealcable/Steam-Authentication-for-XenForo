@@ -29,18 +29,26 @@ class Steam_Helper_Steam {
 		$this->ch = curl_init();
 		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($this->ch, CURLOPT_TIMEOUT, 4);
-        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        if(!ini_get('safe_mode') && !ini_get('open_basedir'))
+        {
+            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        }
 	}	
 
 	public function getUserInfo($steam_id) {
-		// cURL
-		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/{$steam_id}/?xml=1");
-		$result = curl_exec($this->ch);
-        $result = trim($result);
-		$xml = simplexml_load_string($result);
-        
-        /*$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$steam_id}/?xml=1");*/
-
+		
+		if(!ini_get('safe_mode') && !ini_get('open_basedir'))
+        {
+            // cURL
+            curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/{$steam_id}/?xml=1");
+            $result = curl_exec($this->ch);
+            $result = trim($result);
+            $xml = simplexml_load_string($result);
+        }
+        else
+        {
+            $xml = simplexml_load_file("http://steamcommunity.com/profiles/{$steam_id}/?xml=1");
+        }
         if(!empty($xml)) {
 			return array(
     	        'username' => $xml->steamID,
@@ -59,12 +67,18 @@ class Steam_Helper_Steam {
 
     public function getUserGames($steam_id) {
         $games = array();
-
-		// cURL
-		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
-		$result = curl_exec($this->ch);
-		$xml = simplexml_load_string($result);
-        //$xml = simplexml_load_file("http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+		
+        if(!ini_get('safe_mode') && !ini_get('open_basedir'))
+        {
+            // cURL
+            curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+            $result = curl_exec($this->ch);
+            $xml = simplexml_load_string($result);
+        }
+        else
+        {
+            $xml = simplexml_load_file("http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+        }
 
         if(!empty($xml)) {
 			if(isset($xml->games)) {
