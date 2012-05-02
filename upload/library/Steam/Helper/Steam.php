@@ -74,6 +74,10 @@ class Steam_Helper_Steam {
             curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
             $result = curl_exec($this->ch);
             //$result = trim($result);
+            if ( $result[0] == "?" ) 
+            {
+                $result = substr($result, 1);
+            }
             $xml = simplexml_load_string($result);
         }
         else
