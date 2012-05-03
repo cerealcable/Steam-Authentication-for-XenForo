@@ -67,24 +67,21 @@ class Steam_Helper_Steam {
 
     public function getUserGames($steam_id) {
         $games = array();
-		
         if(!ini_get('safe_mode') && !ini_get('open_basedir'))
         {
             // cURL
             curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+            ob_start();
             $result = curl_exec($this->ch);
-            //$result = trim($result);
-            if ($result[0] == "?") 
-            {
-                $result = substr($result, 1);
-            }
+            echo $result;
+            $result = ob_get_clean();
+            $result = trim($result);
             $xml = simplexml_load_string($result);
         }
         else
         {
             $xml = simplexml_load_file("http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
         }
-
         if(!empty($xml)) {
 			if(isset($xml->games)) {
 	            foreach($xml->games->children() as $game) {
@@ -94,11 +91,9 @@ class Steam_Helper_Steam {
     	            $appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
 	                $hours = isset($game->hoursOnRecord) ? $game->hoursOnRecord : 0;
 					$hoursRecent = isset($game->hoursLast2Weeks) ? $game->hoursLast2Weeks : 0;
-
             	    if($appId == 0 || $appName == "") {
         	            continue;
     	            }
-
 	                $games["$appId"] = array (
                     	'name'  => $appName,
                 	    'logo'  => $appLogo,
@@ -109,7 +104,6 @@ class Steam_Helper_Steam {
 	            }
 			}
         }
-
         return $games;
     }
 
