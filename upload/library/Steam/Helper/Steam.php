@@ -37,24 +37,17 @@ class Steam_Helper_Steam {
 
 	public function getUserInfo($steam_id) {
 		
-		if(!ini_get('safe_mode') && !ini_get('open_basedir'))
-        {
-            // cURL
-            curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/{$steam_id}/?xml=1");
-            $result = curl_exec($this->ch);
-            $result = trim($result);
-            $xml = simplexml_load_string($result);
-        }
-        else
-        {
-            $xml = simplexml_load_file("http://steamcommunity.com/profiles/{$steam_id}/?xml=1");
-        }
-        if(!empty($xml)) {
+		$options = XenForo_Application::get('options');
+		$steamapikey = $options->steamAPIKey;
+		$json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$steam_id}");
+		$json_decoded = json_decode($json_object);
+		
+		if(!empty($json_decoded)) {
 			return array(
-    	        'username' => $xml->steamID,
-	            'avatar' => $xml->avatarFull,
-				'icon' => $xml->avatarIcon,
-				'state' => $xml->onlineState
+    	        'username' =>  $json_decoded->response->players[0]->personaname,
+	            'avatar' => $json_decoded->response->players[0]->avatarfull,
+				'icon' => $json_decoded->response->players[0]->avatar,
+				'state' => $json_decoded->response->players[0]->personastate
 
 			);
         } else {
@@ -66,7 +59,11 @@ class Steam_Helper_Steam {
 	}
 
     public function getUserGames($steam_id) {
-        $games = array();
+        $options = XenForo_Application::get('options');
+		$gamestats = $options->steamGameStats;
+		if ($gamestats > 0)
+		{
+		$games = array();
         if(!ini_get('safe_mode') && !ini_get('open_basedir'))
         {
             // cURL
@@ -76,7 +73,14 @@ class Steam_Helper_Steam {
             echo $result;
             $result = ob_get_clean();
             $result = trim($result);
-            $xml = simplexml_load_string($result);
+			if (strpos($result,'<!DOCTYPE html>') !== false)
+			{
+				$xml = '';
+			}
+			else
+			{
+				$xml = simplexml_load_string($result);
+			}
         }
         else
         {
@@ -91,7 +95,11 @@ class Steam_Helper_Steam {
     	            $appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
 	                $hours = isset($game->hoursOnRecord) ? $game->hoursOnRecord : 0;
 					$hoursRecent = isset($game->hoursLast2Weeks) ? $game->hoursLast2Weeks : 0;
-            	    if($appId == 0 || $appName == "") {
+            	    
+					$hours = str_replace(",", "",$hours);
+					$hoursRecent = str_replace(",", "",$hoursRecent);
+					
+					if($appId == 0 || $appName == "") {
         	            continue;
     	            }
 	                $games["$appId"] = array (
@@ -105,6 +113,7 @@ class Steam_Helper_Steam {
 			}
         }
         return $games;
+		}
     }
 
 	public function deleteSteamData($user_id) {

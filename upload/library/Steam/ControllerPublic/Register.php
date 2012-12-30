@@ -78,10 +78,77 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		}
 
 		$username = "";
-		$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
-		if(!empty($xml)) {
-			$username = $xml->steamID;
-			$location = $xml->location;
+		//$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
+		$options = XenForo_Application::get('options');
+		$steamapikey = $options->steamAPIKey;
+		$json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+		$json_decoded = json_decode($json_object);
+		
+		if(!empty($json_decoded)) {
+			$username = $json_decoded->response->players[0]->personaname;
+			
+			if (isset($json_decoded->response->players[0]->locstatecode))
+			{
+			$location = $json_decoded->response->players[0]->locstatecode;
+			
+switch($location){
+case "AL": $location = "Alabama"; break;
+case "AK": $location = "Alaska"; break;
+case "AZ": $location = "Arizona"; break;
+case "AR": $location = "Arkansas"; break;
+case "CA": $location = "California"; break;
+case "CO": $location = "Colorado"; break;
+case "CT": $location = "Connecticut"; break;
+case "DE": $location = "Delaware"; break;
+case "FL": $location = "Florida"; break;
+case "GA": $location = "Georgia"; break;
+case "HI": $location = "Hawaii"; break;
+case "ID": $location = "Idaho"; break;
+case "IL": $location = "Illinois"; break;
+case "IN": $location = "Indiana"; break;
+case "IA": $location = "Iowa"; break;
+case "KS": $location = "Kansas"; break;
+case "KY": $location = "Kentucky"; break;
+case "LA": $location = "Louisiana"; break;
+case "ME": $location = "Maine"; break;
+case "MD": $location = "Maryland"; break;
+case "MA": $location = "Massachusetts"; break;
+case "MI": $location = "Michigan"; break;
+case "MN": $location = "Minnesota"; break;
+case "MS": $location = "Mississippi"; break;
+case "MO": $location = "Missouri"; break;
+case "MT": $location = "Montana"; break;
+case "NE": $location = "Nebraska"; break;
+case "NV": $location = "Nevada"; break;
+case "NH": $location = "New Hampshire"; break;
+case "NJ": $location = "New Jersey"; break;
+case "NM": $location = "New Mexico"; break;
+case "NY": $location = "New York"; break;
+case "NC": $location = "North Carolina"; break;
+case "ND": $location = "North Dakota"; break;
+case "OH": $location = "Ohio"; break;
+case "OK": $location = "Oklahoma"; break;
+case "OR": $location = "Oregon"; break;
+case "PA": $location = "Pennsylvania"; break;
+case "RI": $location = "Rhode Island"; break;
+case "SC": $location = "South Carolina"; break;
+case "SD": $location = "South Dakota"; break;
+case "TN": $location = "Tennessee"; break;
+case "TX": $location = "Texas"; break;
+case "UT": $location = "Utah"; break;
+case "VT": $location = "Vermont"; break;
+case "VA": $location = "Virginia"; break;
+case "WA": $location = "Washington"; break;
+case "WV": $location = "West Virginia"; break;
+case "WI": $location = "Wisconsin"; break;
+case "WY": $location = "Wyoming"; break;
+default: $location = $location;
+}
+}
+else
+{
+	$location = "Parts Unknown";
+}
 		}
 
 		$i = 2;
@@ -114,10 +181,15 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 
 		// Get User Profile Data
 		$id = $session->get('steam_id');
-		$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
-		if(!empty($xml)) {
-			$username = $xml->steamID;
-			$avatar = $xml->avatarFull;
+		//$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
+		$options = XenForo_Application::get('options');
+		$steamapikey = $options->steamAPIKey;
+		$json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+		$json_decoded = json_decode($json_object);
+		
+		if(!empty($json_decoded)) {
+			$username = $json_decoded->response->players[0]->personaname;
+			$avatar = $json_decoded->response->players[0]->avatarfull;
 		}
 
 		$userModel = $this->_getUserModel();
@@ -323,7 +395,11 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 	}
 
 	private function updateUserStats($userId, $steamId) {
-        $db = XenForo_Application::get('db');
+        $options = XenForo_Application::get('options');
+		$gamestats = $options->steamGameStats;
+		if ($gamestats > 0)
+		{
+		$db = XenForo_Application::get('db');
 		$sHelper = new Steam_Helper_Steam();
         $games = $sHelper->getUserGames($steamId);
         foreach($games as $id => $data) {
@@ -339,6 +415,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 				// Update
 				$db->query("UPDATE xf_user_steam_games SET game_hours = {$data['hours']} WHERE user_id = $userId AND game_id = $id;");
 			}
+		}
 		}
 	}
 }

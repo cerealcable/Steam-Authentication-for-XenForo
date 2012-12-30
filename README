@@ -10,6 +10,7 @@ templates and implements them using hooks.
 == Prerequisites ==
  * cURL
  * BCMath (PHP Extension, usually installed already)
+ * Steam Web API Key (http://steamcommunity.com/dev/apikey)
 
 == Installation Steps ==
     1. Install Prerequisites
@@ -20,15 +21,24 @@ templates and implements them using hooks.
            * apt-get install php5-curl
 
     2. Upload files in the upload directory to your forum
-    3. Make the folder "js/steam/cache" world writable (chmod 0777)
-    4. Install using the provided "addon-Steam.xml"
-    5. Change options for "Steam Integration" as necessary
-
-== Upgrade Steps From 1.0.7b to 1.0.7c ==
+    3. Make the folder "js/steam/cache" world writable (chmod 777)
+    4. Edit "js/steam/jsonproxy.php" to include your Steam Web API Key
+	5. Install using the provided "addon-Steam.xml"
+    6. Change options for "Steam Integration" as necessary
+	7. To adhere to the terms of using the STEM API, make the following
+	   template edit to footer
+	   
+	   Find:
+	   <div id="copyright">{xen:phrase xenforo_copyright} </div>
+	   
+	   Change to:
+	   <div id="copyright">{xen:phrase xenforo_copyright} | <a href="http://steampowered.com" target="_blank">Powered By Steam</a></div>
+	
+== Upgrade Steps From Unofficial 1.0.7x to 1.0.8 ==
     1. Upload the upload directory to your forum (overwrite any files)
     2. Upgrade the addon using the provided "addon-Steam.xml" file
 
-== Upgrade Steps From 1.0.x To 1.0.7c ==
+== Upgrade Steps From 1.0.x To 1.0.8 ==
     1. Backup root/js/steam somewhere safe
     2. Delete root/js/steam directory
     3. Upload the upload directory to your forum (overwrite any files)
@@ -76,6 +86,18 @@ important so you might as well give it so those who develop for this addon can
 make it better and others can see your opinions.
 
 == Common Issues (and fixes) ==
+  * Server Error 302 on Steam Badges
+	Steam community is over capacity and cannot process your request. It should
+	resolve itself over time.
+	
+	Having open_basedir set other than none or safe_mode on can cause 302 errors 
+	on the Steam Profile badge. This has to do with the that project using 
+	XML and CURL without the API.
+	
+  * SQL errors during install
+	Drop xf_steam_games and xf_user_steam_games tables from your database prior 
+	to the install.
+  
   * Invalid profile data
     This occurs when the AJAX calls fail when using the "steamprofile" library.
     Check your error log to set the appropriate permissions but likely files in
@@ -122,10 +144,10 @@ This fork was updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
 
 In the original developers absence, I wanted to get this working again for
 the XenForo community. I can't guarentee the performance on larger websites,
-but testing the changes made for 1.0.7b, I haven't noticed any more errors and 
+but testing the changes made for 1.0.8, I haven't noticed any more errors and 
 things are running smoothly. Of course though, I do ask that you try this
 update at your own risk. Without feedback from other XenForo admins I can't
 completely sign off on it's stability aside from my own website.
 
-If you'd like to see a current working example of 1.0.7b, please visit my
-XenForo website at http://ragecagegaming.com
+If you'd like to see a current working example of 1.0.8, please visit my
+XenForo forum at http://ragecagegaming.com

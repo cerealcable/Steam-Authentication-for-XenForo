@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.0.7c" version_id="10" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.0.8" version_id="14" url="" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
     <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
@@ -364,6 +364,18 @@
       <sub_options></sub_options>
       <relation group_id="SteamAuth" display_order="1"/>
     </option>
+    <option option_id="steamGameStats" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>1</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="SteamAuth" display_order="1"/>
+    </option>
+    <option option_id="steamAPIKey" edit_format="textbox" data_type="string" can_backup="1">
+      <default_value></default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="SteamAuth" display_order="1"/>
+    </option>
   </optiongroups>
   <permissions>
     <permission_groups/>
@@ -392,7 +404,11 @@
     <phrase title="option_steamDisplayMessageInfo_explain" version_id="2" version_string="1.0.1"><![CDATA[Display an informational/status block on messages user information.]]></phrase>
     <phrase title="option_steamDisplayProfile" version_id="1" version_string="1.0.0"><![CDATA[Display in Profile]]></phrase>
     <phrase title="option_steamDisplayProfile_explain" version_id="2" version_string="1.0.1"><![CDATA[Display an informational/status block in Profile.]]></phrase>
-    <phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
+    <phrase title="option_steamAPIKey" version_id="1" version_string="1.0.0"><![CDATA[Steam API Key]]></phrase>
+    <phrase title="option_steamAPIKey_explain" version_id="1" version_string="1.0.0"><![CDATA[A <a href="http://steamcommunity.com/dev/apikey" target="_blank">Steam Web API Key</a> is required for this plugin to function. Terms of the API are <a href="http://steamcommunity.com/dev/apiterms" target="_blank">here</a>.]]></phrase>
+    <phrase title="option_steamGameStats" version_id="1" version_string="1.0.0"><![CDATA[Collect Game Statistics]]></phrase>
+    <phrase title="option_steamGameStats_explain" version_id="1" version_string="1.0.0"><![CDATA[This feature is experimental. Due to the stability of grabbing XML data from steam, not all stats may update.]]></phrase>
+	<phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
     <phrase title="sign_in_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign in with Steam]]></phrase>
     <phrase title="sign_up_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign up with Steam]]></phrase>
     <phrase title="steam" version_id="8" version_string="1.0.7"><![CDATA[Steam]]></phrase>
