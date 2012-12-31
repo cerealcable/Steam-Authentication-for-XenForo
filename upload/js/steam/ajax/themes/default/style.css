@@ -80,38 +80,38 @@
 	font-size:9px;
 }
 
-.steamprofile .sp-in-game {
+.steamprofile .sp-In-Game {
 	color: #8bc53f;
 }
 
-.steamprofile .sp-in-game a {
+.steamprofile .sp-In-Game a {
 	color: #b1fb50;
 }
 
-.steamprofile .sp-online {
+.steamprofile .sp-Online {
 	color: #6f9fc8;
 }
 
-.steamprofile .sp-online a {
+.steamprofile .sp-Online a {
 	color: #8ecbff;
 }
 
-.steamprofile .sp-online .sp-avatar,
-.steamprofile .sp-in-game .sp-avatar,
-.steamprofile .sp-offline .sp-avatar {
+.steamprofile .sp-Online .sp-avatar,
+.steamprofile .sp-In-Game .sp-avatar,
+.steamprofile .sp-Offline .sp-avatar {
 	background: transparent url(iconholder.png) no-repeat 0 0;
 }
 
-.steamprofile .sp-online .sp-avatar {
+.steamprofile .sp-Online .sp-avatar {
 	background-position: -40px 0;
 }
 
-.steamprofile .sp-in-game .sp-avatar {
+.steamprofile .sp-In-Game .sp-avatar {
 	background-position: -80px 0;
 }
 
-.steamprofile .sp-offline .sp-info,
-.steamprofile .sp-offline .sp-info a {
+.steamprofile .sp-Offline .sp-info,
+.steamprofile .sp-Offline .sp-info a {
 	color: #898989;
 }
 

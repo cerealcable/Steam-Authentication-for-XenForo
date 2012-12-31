@@ -328,7 +328,7 @@ function SteamProfile() {
 		var onlineState = profileData.profilestate;
 		
 		// set state class, avatar image and name
-		profile.find('.sp-badge').addClass('sp-' + onlineState);
+		// profile.find('.sp-badge').addClass('sp-' + onlineState);
 		profile.find('.sp-avatar img').attr('src', profileData.avatar);
 		profile.find('.sp-info a').append(profileData.personaname);
 		
@@ -338,6 +338,7 @@ function SteamProfile() {
 		{
 			profile.find('.sp-info').append("<div>" + langData[langLocal].private_profile + "</div>");
 			profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[0]);
+			profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[0]);
 			
 		}
 		else if(typeof profileData.gameid != "undefined")
@@ -346,14 +347,21 @@ function SteamProfile() {
 			profile.find('.sp-info').append("<div class='sp-ingame' style='overflow:hidden;text-overflow: ellipsis;white-space: nowrap;'>" + profileData.gameextrainfo + "</div>");
 		
 			profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[5]);
+			profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[5]);
 			
 		}
 		else
 		{
 			profile.find('.sp-info').append("<div>" + langData[langLocal].profile_visibilities[profileData.personastate] + "</div>");
 			profile.find('.sp-wizard').attr("state", langData[langLocal].profile_visibilities[profileData.personastate]);
+			
+			switch (profileData.personastate)
+			{
+				case 1: profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[1]);
+						break;
+				default: profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[0]);
+			}
 		}
-		
 		
 		profile.removeClass('sp-bg-game');
 		profile.find('.sp-bg-fade').removeClass('sp-bg-fade');

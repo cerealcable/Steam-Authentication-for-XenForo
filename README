@@ -20,11 +20,11 @@ templates and implements them using hooks.
          Debian / Ubuntu:
            * apt-get install php5-curl
 
-    2. Upload files in the upload directory to your forum
-    3. Make the folder "js/steam/cache" world writable (chmod 777)
-    4. Edit "js/steam/jsonproxy.php" to include your Steam Web API Key
+	2. Upload files in the upload directory to your forum
+	3. Make the folder "js/steam/cache" world writable (chmod 777)
+	4. Edit "js/steam/jsonproxy.php" to include your Steam Web API Key
 	5. Install using the provided "addon-Steam.xml"
-    6. Change options for "Steam Integration" as necessary
+	6. Change options for "Steam Integration" as necessary
 	7. To adhere to the terms of using the STEM API, make the following
 	   template edit to footer
 	   
