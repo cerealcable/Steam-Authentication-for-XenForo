@@ -46,6 +46,8 @@ class Steam_Listener {
 				$template->preloadTemplate('steam_member_view_info');
 				$template->preloadTemplate('steam_message_content');
 				$template->preloadTemplate('steam_helper_criteria_privs');
+				$template->preloadTemplate('steam_member_card_info');
+				$template->preloadTemplate('steam_footer');
 				break;
 		}
 	}
@@ -76,6 +78,9 @@ class Steam_Listener {
 			case 'user_criteria_extra':
 				$s = new Steam_Helper_Steam();
 				$contents .= $template->create('steam_helper_criteria_privs', array_merge($hookParams, $template->getParams(), array_merge($hookParams, $template->getParams(), array("steam_games" => $s->getAvailableGames()))));
+				break;
+			case 'footer_links':
+				$contents = $template->create('steam_footer', array_merge($hookParams, $template->getParams())) . $contents;
 				break;
 		}
 	}

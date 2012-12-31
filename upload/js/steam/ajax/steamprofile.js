@@ -357,9 +357,9 @@ function SteamProfile() {
 			
 			switch (profileData.personastate)
 			{
-				case 1: profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[1]);
+				case 0: profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[0]);
 						break;
-				default: profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[0]);
+				default: profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[1]);
 			}
 		}
 		
