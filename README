@@ -23,19 +23,12 @@ templates and implements them using hooks.
 	4. Install using the provided "addon-Steam.xml"
 	5. Change options for "Steam Integration" as necessary
 
-== Upgrade Steps From Unofficial 1.0.7x to 1.0.9 ==
+== Upgrade Steps From 1.0.x to 1.0.9 ==
     1. Backup root/js/steam somewhere safe
     2. Delete root/js/steam directory
 	3. Upload the upload directory to your forum (overwrite any files)
     4. Upgrade the addon using the provided "addon-Steam.xml" file
 
-== Upgrade Steps From 1.0.x To 1.0.8 ==
-    1. Backup root/js/steam somewhere safe
-    2. Delete root/js/steam directory
-    3. Upload the upload directory to your forum (overwrite any files)
-    4. chmod 777 root/js/steam/cache
-    5. Upgrade the addon using the provided "addon-Steam.xml" file
-    
 == Features ==
  * Single Sign On / Authentication via Steam
  * Statistics
@@ -82,8 +75,7 @@ make it better and others can see your opinions.
 	resolve itself over time.
 	
 	Having open_basedir set other than none or safe_mode on can cause 302 errors 
-	on the Steam Profile badge. This has to do with the that project using 
-	XML and CURL without the API.
+	on the Steam Profile badge.
 	
   * SQL errors during install
 	Drop xf_steam_games and xf_user_steam_games tables from your database prior 
@@ -110,8 +102,14 @@ make it better and others can see your opinions.
 == License ==
 Steam Authentication for XenForo
 
-Written by Morgan Humes <morgan@lanaddict.com>
+Original Code Written by Morgan Humes <morgan@lanaddict.com>
 Copyright 2012 Morgan Humes
+
+Code Forked and Updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+Copyright 2013 Michael Linback Jr.
+Website: http://ragecagegaming.com
+
+JSON steam profile badge idea by Luke Foreman
 
 Steam Authentication for XenForo is free software: you can redistribute
 it and/or modify it under the terms of the GNU General Public License
@@ -124,7 +122,7 @@ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with SteamProfile. If not, see <http://www.gnu.org/licenses/>.
+along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
 
 == Source Code ==
 Steam Authentication for XenForo is open source! Visit our git repository at
