@@ -23,6 +23,10 @@ templates and implements them using hooks.
 	4. Install using the provided "addon-Steam.xml"
 	5. Change options for "Steam Integration" as necessary
 
+== Upgrade Steps From 1.0.9 to 1.1.0 ==
+	1. Upload the upload directory to your forum (overwrite any files)
+	2. Upgrade the addon using the provided "addon-Steam.xml" file
+
 == Upgrade Steps From 1.0.x to 1.0.9 ==
     1. Backup root/js/steam somewhere safe
     2. Delete root/js/steam directory
