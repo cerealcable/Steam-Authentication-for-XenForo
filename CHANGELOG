@@ -4,6 +4,7 @@
 * Added retry logic for Steam Community XML game data. Will try up to three
   times, and wait 5 seconds in between each attempt.
 * Fixed language bug in steamprofile.js (reported by Kartus)
+* Removed example pictures from next .zip release on Xenforo
 
 == Version 1.0.9 ==
 * Implemented JSON Steam Profile suggested by Luke Foreman
