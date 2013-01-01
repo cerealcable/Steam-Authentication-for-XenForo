@@ -66,17 +66,7 @@ function SteamProfile() {
 			invalid_data : "Ungültige Profildaten.",
 			join_game : "Spiel beitreten",
 			add_friend : "Als Freund hinzufügen",
-			view_tf2items : "TF2-Items ansehen",
-			profile_visibilities : {
-				0 : "Offline",
-				1 : "Online",
-				2 : "Busy",
-				3 : "Away",
-				4 : "Snooze",
-				5 : "In-Game",
-				7 : "Looking to Trade",
-				6 : "Looking to Play"
-			}
+			view_tf2items : "TF2-Items ansehen"
 		},
 		portuguese : {
 			loading : "Carregando...",
@@ -85,17 +75,7 @@ function SteamProfile() {
 			invalid_data : "Invalid profile data.",
 			join_game : "Entrar",
 			add_friend : "Adicionar à sua lista de amigos",
-			view_tf2items : "Ver Itens do TF2",
-			profile_visibilities : {
-				0 : "Offline",
-				1 : "Online",
-				2 : "Busy",
-				3 : "Away",
-				4 : "Snooze",
-				5 : "In-Game",
-				7 : "Looking to Trade",
-				6 : "Looking to Play"
-			}
+			view_tf2items : "Ver Itens do TF2"
 		}
 	};
 	

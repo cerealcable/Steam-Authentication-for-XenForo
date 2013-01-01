@@ -10,7 +10,8 @@
 		<!-- If set to true, an icon linked to tf2items.com will be shown. -->
 		<var name="tf2items">true</var>
 		<!-- Sets the community language.
-			 Allowed values: english, german, and portuguese -->
+			 Allowed values: danish, czech, dutch, english, finnish, french, german, hungarian, italian, japanese, 
+							 norwegian, polish, portuguese, romanian, russian, schinese, spanish, swedish, tchinese, thai -->
 		<var name="language">english</var>
 	</vars>
 	<!-- The HTML templates used for DOM manipulation. Change only if you know what you're doing. -->
