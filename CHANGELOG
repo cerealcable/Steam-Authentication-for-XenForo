@@ -1,0 +1,70 @@
+=== CHANGE LOG ===
+
+== DEV-1.1.0 ==
+* Added retry logic for Steam Community XML game data. Will try up to three
+  times, and wait 5 seconds in between each attempt.
+* Fixed language bug in steamprofile.js (reported by Kartus)
+
+== Version 1.0.9 ==
+* Implemented JSON Steam Profile suggested by Luke Foreman
+    - This improves loading time of steamprofile badges greatly (one query
+	  versus several)
+* Tweaked the steamprofile.js and default style.css to display user states
+  correctly in the steam profile
+
+== Version 1.0.8 ==
+* Changed authentication process information Steam Web API w/ JSON instead 
+  of XML
+* Fixed a MySQL query error when user has >= 1000 hours of game time on a 
+  single game
+* Solved errors by nulling any XML return for game statstics when the steam
+  community is unavailable
+
+== Version 1.0.7c-v2 ==
+* Attempted to fix XML parsing errors for Steam.php for good by running the 
+  xml through a buffer and trimming it.
+
+== Version 1.0.7c ==
+* Fixed XML parsing errors for Cron.php by adding a ?> at the end of the file
+* Disabled trimming of the XML games feed to help with parsing errors
+* Fixed a rare bug with steam profiles not always displaying on a page
+
+== Version 1.0.7b ==
+* Fixed "Unknown Steam Account" in the User CP
+* Fixed errors with Game Statistic updates
+* Added a PHP check to use cURL if CURLOPT_FOLLOWLOCATION can be used
+* If so, xml data is loaded via simplexml_load_string
+* If not, xml data is loaded via simplexml_load_file (less efficient, but it 
+  works)
+* Fixed an installation bug where database operations were being preformed 
+  before a necessarily column was created
+* Changed to a newer version of steamprofile
+* Steam profile CSS fix (thanks Binari0!)
+
+-- OLD VERSION OF STEAM AUTHENTICATION --
+
+== Version 1.0.7 ==
+* Created Admin Tap & Prefix (Steam)
+    - All previous items under Tools were moved here
+* Games List
+    - Click a game to see who owns what game & other details
+* Top Owned Games
+* Top Played Games (all time)
+* Top Recently Played Games (two weeks)
+* User List
+
+== Version 1.0.6 ==
+* Visitors receive error when a notice implementing a Steam Game is 
+  defined
+* Admin phrases not defined for Admin->Tools->Steam->Top 25 Games
+
+== Version 1.0.5 ==
+* Game notices and Tools now gained a "Steam" section (which will 
+  gain more capabilities later).
+  
+== Version 1.0.4 ==
+* Fixed permissions typo in "Steam Statistics"
+* Import data from Steam during registration & association
+
+== Version 1.0.3 ==
+* Added Statistics
