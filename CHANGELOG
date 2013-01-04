@@ -1,6 +1,6 @@
 === CHANGE LOG ===
 
-== DEV-1.1.0 ==
+== Version 1.1.0 ==
 * Added retry logic for Steam Community XML game data. Will try up to three
   times, and wait five seconds in between each attempt.
 * Fixed language bug in steamprofile.js (reported by Kartus)
