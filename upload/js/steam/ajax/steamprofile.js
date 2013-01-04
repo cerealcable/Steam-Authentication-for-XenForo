@@ -70,12 +70,12 @@ function SteamProfile() {
 			profile_visibilities : {
 				0 : "Offline",
 				1 : "Online",
-				2 : "Busy",
-				3 : "Away",
-				4 : "Snooze",
-				5 : "In-Game",
-				7 : "Looking to Trade",
-				6 : "Looking to Play"
+				2 : "Beschäftigt",
+				3 : "Abwesend",
+				4 : "Untätig",
+				5 : "Im Spiel",
+				7 : "Möchte handeln",
+				6 : "Möchte spielen"
 			}
 		},
 		portuguese : {
