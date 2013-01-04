@@ -2,7 +2,7 @@
 
 == DEV-1.1.0 ==
 * Added retry logic for Steam Community XML game data. Will try up to three
-  times, and wait 5 seconds in between each attempt.
+  times, and wait five seconds in between each attempt.
 * Fixed language bug in steamprofile.js (reported by Kartus)
 * Updated German translations in steamprofile.js
 * Removed example pictures from next .zip release on Xenforo
