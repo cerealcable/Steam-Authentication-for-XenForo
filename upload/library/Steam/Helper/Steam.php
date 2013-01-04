@@ -28,7 +28,7 @@ class Steam_Helper_Steam {
 		// Setup cURL
 		$this->ch = curl_init();
 		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($this->ch, CURLOPT_TIMEOUT, 4);
+		curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
         if(!ini_get('safe_mode') && !ini_get('open_basedir'))
         {
             curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
@@ -63,29 +63,42 @@ class Steam_Helper_Steam {
 		$gamestats = $options->steamGameStats;
 		if ($gamestats > 0)
 		{
-		$games = array();
-        if(!ini_get('safe_mode') && !ini_get('open_basedir'))
-        {
-            // cURL
-            curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
-            ob_start();
-            $result = curl_exec($this->ch);
-            echo $result;
-            $result = ob_get_clean();
-            $result = trim($result);
-			if (strpos($result,'<!DOCTYPE html>') !== false)
-			{
-				$xml = '';
+        $games = array();
+
+		// cURL
+		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+		ob_start();
+		$result = curl_exec($this->ch);
+		echo $result;
+		$result = ob_get_clean();
+		$result = trim($result);
+		
+		if (strpos($result,'<!DOCTYPE html>') !== false) {
+			$i = 0;
+			while (($i < 3) || ((strpos($result,'<!DOCTYPE html>') !== false))) {
+				curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+				ob_start();
+				$result = curl_exec($this->ch);
+				echo $result;
+				$result = ob_get_clean();
+				$result = trim($result);
+				$i++;
+				sleep(5);
 			}
-			else
-			{
-				$xml = simplexml_load_string($result);
-			}
-        }
-        else
-        {
-            $xml = simplexml_load_file("http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
-        }
+		}
+		else
+		{
+			$xml = simplexml_load_string($result);
+		}
+		
+		if (strpos($result,'<!DOCTYPE html>') !== true) {
+			$xml = simplexml_load_string($result);
+		}
+		else
+		{
+			$xml = '';
+		}
+		
         if(!empty($xml)) {
 			if(isset($xml->games)) {
 	            foreach($xml->games->children() as $game) {
@@ -95,13 +108,14 @@ class Steam_Helper_Steam {
     	            $appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
 	                $hours = isset($game->hoursOnRecord) ? $game->hoursOnRecord : 0;
 					$hoursRecent = isset($game->hoursLast2Weeks) ? $game->hoursLast2Weeks : 0;
-            	    
+
 					$hours = str_replace(",", "",$hours);
 					$hoursRecent = str_replace(",", "",$hoursRecent);
 					
-					if($appId == 0 || $appName == "") {
+            	    if($appId == 0 || $appName == "") {
         	            continue;
     	            }
+
 	                $games["$appId"] = array (
                     	'name'  => $appName,
                 	    'logo'  => $appLogo,
@@ -112,6 +126,7 @@ class Steam_Helper_Steam {
 	            }
 			}
         }
+
         return $games;
 		}
     }
