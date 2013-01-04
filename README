@@ -11,6 +11,8 @@ templates and implements them using hooks.
  * cURL
  * BCMath (PHP Extension, usually installed already)
  * Steam Web API Key (http://steamcommunity.com/dev/apikey)
+ * PHP safe_mode off
+ * PHP open_basedir should not be set
 
 == Installation Steps ==
 	1. Install Prerequisites
@@ -22,6 +24,10 @@ templates and implements them using hooks.
 	3. Make the folder "js/steam/cache" world writable (chmod 777)
 	4. Install using the provided "addon-Steam.xml"
 	5. Change options for "Steam Integration" as necessary
+
+== Upgrade Steps From 1.0.9 to 1.1.0+ ==
+	1. Upload the upload directory to your forum (overwrite any files)
+    2. Upgrade the addon using the provided "addon-Steam.xml" file	
 
 == Upgrade Steps From 1.0.x to 1.0.9 ==
     1. Backup root/js/steam somewhere safe
