@@ -22,6 +22,8 @@
 class Steam_Cron {
 
 	public static function update() {
+		set_time_limit(0);
+		ignore_user_abort(1);
 		$options = XenForo_Application::get('options');
 		$gamestats = $options->steamGameStats;
 		if ($gamestats > 0)
