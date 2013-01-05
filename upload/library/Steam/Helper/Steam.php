@@ -164,6 +164,23 @@ class Steam_Helper_Steam {
 
 		return $rVal;
 	}
+	
+	public function getGameOwnersHours($limit=25) {
+        $rVal = array();
+        $db = XenForo_Application::get('db');
+        $results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_steam_games g WHERE  g.user_id = u.user_id GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+        foreach($results as $row) {
+            $rVal[$row['user_id']] = array(
+                'hours' => $row['hours'],
+				'user_id' => $row['user_id'],
+				'username' => $row['username'],
+				'gravatar' => $row['gravatar'],
+				'avatar_date' => $row['avatar_date'],
+            );
+        }
+
+        return $rVal;
+	}
 
 	public function getGameStatistics($limit=25) {
 		$rVal = array();
