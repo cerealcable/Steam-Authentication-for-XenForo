@@ -1,5 +1,11 @@
 === CHANGE LOG ===
 
+== Development 1.1.1 ==
+* Added public steam statistics pages
+* Added a permission for the public steam stats
+* Added an option to show or hide the steam statistics navbar tab
+* Organized Steam Integration options
+
 == Version 1.1.0 ==
 * Added retry logic for Steam Community XML game data. Will try up to three
   times, and wait five seconds in between each attempt.

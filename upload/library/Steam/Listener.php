@@ -33,6 +33,16 @@ class Steam_Listener {
 				break;
 		}
 	}
+	
+	public static function navtabs(array &$extraTabs, $selectedTabId)
+	{
+		$extraTabs['steam'] = array(
+			'title' => 'Steam',
+			'href' => 'steam/',
+			'selected' => ($selectedTabId == 'steam'),
+			'linksTemplate' => 'steam_navtabs',
+		);
+	}
 
 	public static function templateCreate($templateName, array &$params, XenForo_Template_Abstract $template) {
 		switch($templateName) {
@@ -48,6 +58,11 @@ class Steam_Listener {
 				$template->preloadTemplate('steam_helper_criteria_privs');
 				$template->preloadTemplate('steam_member_card_info');
 				$template->preloadTemplate('steam_footer');
+				$template->preloadTemplate('steam_navtabs');
+				$template->preloadTemplate('steam_public_index');
+				$template->preloadTemplate('steam_public_owned');
+				$template->preloadTemplate('steam_public_played');
+				$template->preloadTemplate('steam_public_recent');
 				break;
 		}
 	}
