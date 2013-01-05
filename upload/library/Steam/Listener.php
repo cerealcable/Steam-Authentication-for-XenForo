@@ -36,12 +36,16 @@ class Steam_Listener {
 	
 	public static function navtabs(array &$extraTabs, $selectedTabId)
 	{
+		$options = XenForo_Application::get('options');
+		$visitor = XenForo_Visitor::getInstance();
+		if($options->steamNavTab && $visitor->hasPermission("SteamAuth", "view")){
 		$extraTabs['steam'] = array(
 			'title' => 'Steam',
 			'href' => 'steam/',
 			'selected' => ($selectedTabId == 'steam'),
 			'linksTemplate' => 'steam_navtabs',
 		);
+		}
 	}
 
 	public static function templateCreate($templateName, array &$params, XenForo_Template_Abstract $template) {
@@ -85,6 +89,7 @@ class Steam_Listener {
 				$contents .= $template->create('steam_member_view_info', array_merge($hookParams, $template->getParams()));
 				break;
 			case 'page_container_head':
+				$template->addRequiredExternal('css', 'steam_stats');
 				$contents .= $template->create('steam_js', $hookParams);
 				break;
 			case 'message_content':

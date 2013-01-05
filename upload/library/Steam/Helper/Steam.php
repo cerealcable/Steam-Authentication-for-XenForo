@@ -97,6 +97,8 @@ class Steam_Helper_Steam {
 		else
 		{
 			$xml = '';
+			$xmlerror = new Exception('SteamAuth: Failed downloading XML game data for a user');
+			XenForo_Error::logException($xmlerror, false);
 		}
 		
         if(!empty($xml)) {
