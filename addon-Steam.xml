@@ -420,7 +420,7 @@
     <phrase title="option_steamAPIKey" version_id="18" version_string="1.0.9"><![CDATA[Steam API Key]]></phrase>
     <phrase title="option_steamAPIKey_explain" version_id="18" version_string="1.0.9"><![CDATA[A <a href="http://steamcommunity.com/dev/apikey" target="_blank">Steam Web API Key</a> is required for this plugin to function. Terms of the API are <a href="http://steamcommunity.com/dev/apiterms" target="_blank">here</a>.]]></phrase>
     <phrase title="option_steamGameStats" version_id="18" version_string="1.0.9"><![CDATA[Collect Game Statistics]]></phrase>
-    <phrase title="option_steamGameStats_explain" version_id="18" version_string="1.0.9"><![CDATA[Polls steam community for game statstics on users. It is possible for it to fail on occasion.]]></phrase>
+    <phrase title="option_steamGameStats_explain" version_id="18" version_string="1.0.9"><![CDATA[Polls the Steam Community for game statistics on users. It is possible for it to fail on occasion.]]></phrase>
 	<phrase title="option_steamNavTab" version_id="25" version_string="1.1.1"><![CDATA[Steam statistics navbar tab]]></phrase>
 	<phrase title="option_steamNavTab_explain" version_id="25" version_string="1.1.1"><![CDATA[Display a navigaton tab for public steam statistics.]]></phrase>	
 	<phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
