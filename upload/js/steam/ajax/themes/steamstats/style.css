@@ -1,0 +1,52 @@
+.steamprofile * {
+	font-size: 8px;
+	font-family: tahoma,Arial,Helvetica,sans-serif;
+	margin: 0;
+	padding: 0;
+	margin-right:2px;
+	height: 24px;
+	width: 24px;
+}
+
+.steamprofile {
+	position: relative;
+	height: 24px;
+	width: 24px;
+	overflow: hidden;
+	margin: 0px;
+}
+
+.steamprofile a:link { text-decoration:none; }
+.steamprofile a:visited { text-decoration:none; }
+.steamprofile a:hover{ text-decoration:none; }
+.steamprofile a:active{ text-decoration:none; }
+
+.steamprofile .sp-loading{
+}
+
+.steamprofile .sp-error{
+}
+
+.steamstats_avatar
+{
+	height: 20px;
+	width: 20px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+.steamstats_avatar .ingame
+{
+	border: 3px solid #81b900;
+	vertical-align:top;
+}
+.steamstats_avatar .online
+{
+	border: 3px solid #5cb1fe;
+	vertical-align:top;
+}
+.steamstats_avatar .offline
+{
+	border: 3px solid #727272;
+	vertical-align:top;
+}
