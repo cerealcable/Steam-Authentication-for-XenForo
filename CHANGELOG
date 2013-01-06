@@ -1,10 +1,12 @@
 === CHANGE LOG ===
 
-== Development 1.1.1 ==
+== Version 1.1.1 ==
 * Added public steam statistics pages
 * Added a permission for the public steam stats
 * Added an option to show or hide the steam statistics navbar tab
-* Organized Steam Integration options
+* Added an exception throw if the cron fails to update a user's XML data
+* Organized Steam Integration options in the admin CP
+* Created a second steamprofile JS to render just avatars and online state
 
 == Version 1.1.0 ==
 * Added retry logic for Steam Community XML game data. Will try up to three
