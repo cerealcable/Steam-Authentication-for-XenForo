@@ -4,11 +4,11 @@
 		<!-- The Theme used by SteamProfile. Must be the name of a folder inside the "themes/" folder. -->
 		<var name="theme">steamstats</var>
 		<!-- If set to true, the slider menu with icon links will be shown. -->
-		<var name="slidermenu">true</var>
+		<var name="slidermenu">false</var>
 		<!-- If set to true, the banner of the currenty played game will be shown in the badge background. -->
-		<var name="gamebanner">true</var>
+		<var name="gamebanner">false</var>
 		<!-- If set to true, an icon linked to tf2items.com will be shown. -->
-		<var name="tf2items">true</var>
+		<var name="tf2items">false</var>
 		<!-- Sets the community language.
 			 Allowed values: danish, czech, dutch, english, finnish, french, german, hungarian, italian, japanese, 
 							 norwegian, polish, portuguese, romanian, russian, schinese, spanish, swedish, tchinese, thai -->
