@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.1.2 ==
+* URL and JS fix for forums without Friendly URLs
+
 == Version 1.1.1 ==
 * Added public steam statistics pages
 * Added a permission for the public steam stats

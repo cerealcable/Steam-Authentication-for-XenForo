@@ -41,7 +41,7 @@ class Steam_Listener {
 		if($options->steamNavTab && $visitor->hasPermission("SteamAuth", "view")){
 		$extraTabs['steam'] = array(
 			'title' => 'Steam',
-			'href' => 'steam/',
+			'href' => XenForo_Link::buildPublicLink('full:steam'),
 			'selected' => ($selectedTabId == 'steam'),
 			'linksTemplate' => 'steam_navtabs',
 		);
@@ -97,16 +97,18 @@ class Steam_Listener {
 				$hostname    = $_SERVER['HTTP_HOST'];
 				$scriptname  = $_SERVER['SCRIPT_NAME'];
 				$currentpageURL = $serverprotocol . '://' . $hostname . $scriptname;
-				$currentpageURL = str_replace('index.php', '', $currentpageURL);
+				$currentpageURL2 = str_replace('index.php', '', $currentpageURL);
+				$currentpageURL2 .= 'steam/';
+				$currentpageURL = str_replace('index.php', 'index.php?', $currentpageURL);
 				$currentpageURL .= 'steam/';
 				
-				if ($currentpageURL != $paths['fullUri'])
+				if ($currentpageURL2 != $paths['fullUri'] && $currentpageURL != $paths['fullUri'])
 				{
-				$contents .= $template->create('steam_js', $hookParams);
+					$contents .= $template->create('steam_js', $hookParams);
 				}
 				else
 				{
-				$contents .= $template->create('steamstats_js', $hookParams);
+					$contents .= $template->create('steamstats_js', $hookParams);
 				}
 				break;
 			case 'message_content':
