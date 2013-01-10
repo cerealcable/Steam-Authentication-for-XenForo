@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.1.2" version_id="33" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.1.3" version_id="35" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
     <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
@@ -340,6 +340,7 @@
     <listener event_id="template_create" execute_order="10" callback_class="Steam_Listener" callback_method="templateCreate" active="1" description=""/>
     <listener event_id="navigation_tabs" execute_order="10" callback_class="Steam_Listener" callback_method="navtabs" active="1" description="Navigation Tabs"/>
 	<listener event_id="template_hook" execute_order="10" callback_class="Steam_Listener" callback_method="templateHook" active="1" description=""/>
+	<listener event_id="init_dependencies" execute_order="10" callback_class="Steam_Listener" callback_method="init" active="1" description="Steam Helper"/>
   </code_event_listeners>
   <cron>
     <entry entry_id="steam_user_poll" cron_class="Steam_Cron" cron_method="update" active="1"><![CDATA[{"day_type":"dom","dom":["-1"],"hours":["3","15"],"minutes":["0"]}]]></entry>
