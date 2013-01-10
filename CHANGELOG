@@ -1,5 +1,9 @@
 === CHANGE LOG ===
 
+== Version 1.1.3 ==
+* Added steamid helper to convert SteamID64 to SteamID. Called in a template 
+  with {xen:helper steamid, $value}
+
 == Version 1.1.2 ==
 * URL and JS fix for forums without Friendly URLs
 
