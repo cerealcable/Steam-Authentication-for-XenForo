@@ -1,5 +1,10 @@
 === CHANGE LOG ===
 
+== Version 1.1.4 ==
+* Added option to ACP for statistics gathering on user registration. Can 
+  increase performance if disabled. However, stats aren't generated for 
+  the user until the cron runs.
+
 == Version 1.1.3 ==
 * Added steamid helper to convert SteamID64 to SteamID. Called in a template 
   with {xen:helper steamid, $value}

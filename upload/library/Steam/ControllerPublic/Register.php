@@ -396,8 +396,8 @@ else
 
 	private function updateUserStats($userId, $steamId) {
         $options = XenForo_Application::get('options');
-		$gamestats = $options->steamGameStats;
-		if ($gamestats > 0)
+		$gamestatsreg = $options->steamGameStatsReg;
+		if ($gamestatsreg > 0)
 		{
 		$db = XenForo_Application::get('db');
 		$sHelper = new Steam_Helper_Steam();
