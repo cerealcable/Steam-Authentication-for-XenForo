@@ -1,5 +1,10 @@
 === CHANGE LOG ===
 
+== Version 1.1.5 ==
+* Fixes by Chris Deeming
+	- Added basic session activity details
+	- Fixed database queries on the installer (Manufacture.php)
+
 == Version 1.1.4 ==
 * Added option to ACP for statistics gathering on user registration. Can 
   increase performance if disabled. However, stats aren't generated for 
