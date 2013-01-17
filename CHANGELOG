@@ -1,5 +1,9 @@
 === CHANGE LOG ===
 
+== Version 1.1.6 ==
+* Added county code case statement check for user location
+* Fixed HTTPS redirection as reported in the previous addon
+
 == Version 1.1.5 ==
 * Fixes by Chris Deeming
 	- Added basic session activity details
