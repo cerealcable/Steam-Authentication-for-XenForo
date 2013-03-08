@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.2.0 ==
+* Game data is now retrieved from JSON!
+
 == Version 1.1.6 ==
 * Added county code case statement check for user location
 * Fixed HTTPS redirection as reported in the previous addon
