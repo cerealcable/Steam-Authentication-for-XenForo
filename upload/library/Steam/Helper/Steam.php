@@ -22,6 +22,9 @@
 class Steam_Helper_Steam {
 
 	// cURL Variable
+	/*
+	NO LONGER NEEDED WITH NEW JSON COMMANDS! WOO HOO!
+	
 	private $ch = null;
 
 	public function __construct() {
@@ -33,7 +36,9 @@ class Steam_Helper_Steam {
         {
             curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
         }
-	}	
+	}
+
+	*/
 
 	public function getUserInfo($steam_id) {
 		
@@ -63,9 +68,17 @@ class Steam_Helper_Steam {
 		$gamestats = $options->steamGameStats;
 		if ($gamestats > 0)
 		{
+		$options = XenForo_Application::get('options');
+		$steamapikey = $options->steamAPIKey;
         $games = array();
 
+		$json_object=file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={$steamapikey}&steamid={$steam_id}&include_appinfo=1&include_played_free_games=1&format=json");
+		$json_usergames = json_decode($json_object);
+		
 		// cURL
+		/* 
+		NO LONGER NEEDED WITH NEW JSON COMMANDS! WOO HOO!
+		
 		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
 		ob_start();
 		$result = curl_exec($this->ch);
@@ -100,19 +113,36 @@ class Steam_Helper_Steam {
 			$xmlerror = new Exception('SteamAuth: Failed downloading XML game data for a user');
 			XenForo_Error::logException($xmlerror, false);
 		}
+		*/
 		
-        if(!empty($xml)) {
-			if(isset($xml->games)) {
-	            foreach($xml->games->children() as $game) {
-                	$appId = isset($game->appID) ? $game->appID : 0;
+		
+		/*
+		
+		DEV NOTES:
+		
+		storeLink is not in JSON, however store links are just http://steamcommunity.com/app/<appid>
+		appLogo is no longer a full url in JSON. Needs to be this: http://media.steampowered.com/steamcommunity/public/images/apps/<appid>/<img_logo_url>.jpg
+		playtime_forever and playtime_2weeks are now in minutes instead of hours like in the XML. Divide by 60.
+		*/
+		
+        if(!empty($json_usergames->response)) {
+			if(!empty($json_usergames->response->games)) {
+	            foreach($json_usergames->response->games as $game) {
+                	$appId = isset($game->appid) ? $game->appid : 0;
             	    $appName = isset($game->name) ? addslashes($game->name) : "";
-        	        $appLogo = isset($game->logo) ? addslashes($game->logo) : "";
-    	            $appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
-	                $hours = isset($game->hoursOnRecord) ? $game->hoursOnRecord : 0;
-					$hoursRecent = isset($game->hoursLast2Weeks) ? $game->hoursLast2Weeks : 0;
+        	        $appLogo = isset($game->img_logo_url) ? addslashes($game->img_logo_url) : "";
+					$appLogo = "http://media.steampowered.com/steamcommunity/public/images/apps/" . $appId . "/" . $appLogo . ".jpg";
+    	            //Following line is no longer needed, this was for XML
+					//$appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
+					$appLink = "http://store.steampowered.com/app/" . $appId;
+	                $hours = isset($game->playtime_forever) ? $game->playtime_forever : 0;
+					$hoursRecent = isset($game->playtime_2weeks) ? $game->playtime_2weeks : 0;
 
-					$hours = str_replace(",", "",$hours);
-					$hoursRecent = str_replace(",", "",$hoursRecent);
+					//JSON stores playtime in minutes (without commas) instead of hours like XML data
+					//$hours = str_replace(",", "",$hours);
+					//$hoursRecent = str_replace(",", "",$hoursRecent);
+					$hours = ($hours / 60);
+					$hoursRecent = ($hoursRecent / 60);
 					
             	    if($appId == 0 || $appName == "") {
         	            continue;
@@ -266,6 +296,12 @@ class Steam_Helper_Steam {
 		}
 		return $rVal;
 	}
+	
+	/*
+	
+	This function is used to convert a 64ID to a STEAMID
+	
+	*/
 
 	public static function convertIdToString($id) {
         $steamId1  = substr($id, -1) % 2;
