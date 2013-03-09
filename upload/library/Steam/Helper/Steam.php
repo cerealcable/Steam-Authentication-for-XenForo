@@ -134,7 +134,7 @@ class Steam_Helper_Steam {
 					$appLogo = "http://media.steampowered.com/steamcommunity/public/images/apps/" . $appId . "/" . $appLogo . ".jpg";
     	            //Following line is no longer needed, this was for XML
 					//$appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
-					$appLink = "http://store.steampowered.com/app/" . $appId;
+					$appLink = "http://steamcommunity.com/app/" . $appId;
 	                $hours = isset($game->playtime_forever) ? $game->playtime_forever : 0;
 					$hoursRecent = isset($game->playtime_2weeks) ? $game->playtime_2weeks : 0;
 
