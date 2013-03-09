@@ -8,11 +8,9 @@ which adds no custom template code by hand and instead properly creates
 templates and implements them using hooks.
 
 == Prerequisites ==
- * cURL
  * BCMath (PHP Extension, usually installed already)
  * Steam Web API Key (http://steamcommunity.com/dev/apikey)
- * PHP safe_mode off
- * PHP open_basedir should not be set
+ * allow_url_fopen = 1 (On by default in PHP)
 
 == Installation Steps ==
 	1. Install Prerequisites
@@ -75,15 +73,7 @@ Awesome! Leave a review and tell me how much you like it and why! Feedback is
 important so you might as well give it so those who develop for this addon can
 make it better and others can see your opinions.
 
-== Common Issues (and fixes) ==
-  * Server Error 302 on Steam Badges
-	Steam community is over capacity and cannot process your request. It should
-	resolve itself over time.
-	
-	Having open_basedir set other than none or safe_mode on can cause 302 errors 
-	on the Steam Profile badge. This has to do with the that project using 
-	XML and CURL without the API.
-	
+== Common Issues (and fixes) ==	
   * SQL errors during install
 	Drop xf_steam_games and xf_user_steam_games tables from your database prior 
 	to the install.
@@ -105,6 +95,10 @@ make it better and others can see your opinions.
     Also, you'll need to revert any templates you had to change such as the part
     for the login_bar. You should just reference the old addons install steps to
     find exactly what to remove.
+	
+  * SteamProfile not loading after quick reply/edit post
+	This is an issue with how the javascript is set into the web page. 
+	I'll have to look into this further and see if there is a fix.
 
 == License ==
 Steam Authentication for XenForo

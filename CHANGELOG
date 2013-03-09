@@ -1,7 +1,9 @@
 === CHANGE LOG ===
 
 == Version 1.2.0 ==
-* Game data is now retrieved from JSON!
+* All data is requested through the SteamAPI. No more unreliable SteamCommunity XML!
+* Removed cURL from SteamBadge. Code now uses file_get_contents
+* cURL is no longer used and is not a requirement for this add-on to work
 
 == Version 1.1.6 ==
 * Added county code case statement check for user location

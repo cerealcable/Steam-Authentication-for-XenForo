@@ -44,7 +44,7 @@ class Steam_Helper_Steam {
 		
 		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
-		$json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$steam_id}");
+		$json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$steam_id}&format=json");
 		$json_decoded = json_decode($json_object);
 		
 		if(!empty($json_decoded)) {
