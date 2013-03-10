@@ -48,6 +48,13 @@ function SteamProfile() {
 			join_game : "Join Game",
 			add_friend : "Add to Friends",
 			view_tf2items : "View TF2 Backpack",
+            view_games : "View games",
+            view_friends : "View friends",
+            view_groups : "View groups",
+            view_inventory : "View inventory",
+            view_wishlist : "View wishlist",
+            view_videos : "View videos",
+            view_screenshots : "View screenshots",
 			profile_visibilities : {
 				0 : "Offline",
 				1 : "Online",
@@ -67,6 +74,13 @@ function SteamProfile() {
 			join_game : "Spiel beitreten",
 			add_friend : "Als Freund hinzufügen",
 			view_tf2items : "TF2-Items ansehen",
+            view_games : "View games",
+            view_friends : "View friends",
+            view_groups : "View groups",
+            view_inventory : "View inventory",
+            view_wishlist : "View wishlist",
+            view_videos : "View videos",
+            view_screenshots : "View screenshots",
 			profile_visibilities : {
 				0 : "Offline",
 				1 : "Online",
@@ -86,6 +100,13 @@ function SteamProfile() {
 			join_game : "Entrar",
 			add_friend : "Adicionar à sua lista de amigos",
 			view_tf2items : "Ver Itens do TF2",
+            view_games : "View games",
+            view_friends : "View friends",
+            view_groups : "View groups",
+            view_inventory : "View inventory",
+            view_wishlist : "View wishlist",
+            view_videos : "View videos",
+            view_screenshots : "View screenshots",
 			profile_visibilities : {
 				0 : "Offline",
 				1 : "Online",
@@ -401,6 +422,8 @@ function SteamProfile() {
 				// the user is not in a multiplayer game, remove 'Join Game' link
 				profile.find('.sp-joingame').remove();
 			}
+			
+			/*
 		
 			if (showTF2ItemsIcon) {
 				// add 'View Items' link href
@@ -410,8 +433,34 @@ function SteamProfile() {
 				profile.find('.sp-viewitems').remove();
 			}
 			
+			*/
+			
 			// add 'Add Friend' link href
-			profile.find('.sp-addfriend').attr('href', 'steam://friends/add/' + profileData.steamid);
+			//profile.find('.sp-addfriend').attr('href', 'steam://friends/add/' + profileData.steamid);
+			
+			profile.find('.sp-addfriend').attr('href', 'steam://friends/add/' +  profileData.steamid);
+			profile.find('.sp-addfriend').attr('title', langData[langLocal].add_friend);
+                
+			profile.find('.sp-viewgames').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid + '/games/');
+			profile.find('.sp-viewgames').attr('title', langData[langLocal].view_games);
+                
+			profile.find('.sp-viewfriends').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid + '/friends/');
+			profile.find('.sp-viewfriends').attr('title', langData[langLocal].view_friends);
+                
+			profile.find('.sp-viewgroups').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid + '/groups/');
+			profile.find('.sp-viewgroups').attr('title', langData[langLocal].view_groups);
+                
+			profile.find('.sp-viewinventory').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid + '/inventory/');
+			profile.find('.sp-viewinventory').attr('title', langData[langLocal].view_inventory);
+                
+			profile.find('.sp-viewwishlist').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid + '/wishlist/');
+			profile.find('.sp-viewwishlist').attr('title', langData[langLocal].view_wishlist);
+                
+			profile.find('.sp-viewvideos').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid + '/videos/');
+			profile.find('.sp-viewvideos').attr('title', langData[langLocal].view_videos);
+                
+			profile.find('.sp-viewscreenshots').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid + '/screenshots/');
+			profile.find('.sp-viewscreenshots').attr('title', langData[langLocal].view_screenshots);
 			
 		} else {
 			profile.find('.sp-extra').remove();

@@ -48,8 +48,8 @@
 	margin: 8px;
 	padding-left: 40px;
 	color: #606060;
-	font-size: 20px;
-	background: transparent url(loading.gif) no-repeat left center;
+	font-size: 18px;
+	background: transparent url(loading.gif) no-repeat left top;
 }
 
 .steamprofile .sp-error {
@@ -141,22 +141,21 @@
 }
 
 .steamprofile .sp-content {
-	white-space: nowrap;
-	height: 50px;
-	padding: 6px;
-	padding-top: 16px;
-	display: none;
+    white-space: nowrap;
+    height: 50px;
+    padding: 6px;
+    display: none;
 }
 
 .steamprofile .sp-content ul {
-	list-style: none;
-	float: left;
+    list-style: none;
+    float: left;
 }
 
 .steamprofile .sp-content li {
-	height: 16px;
-	padding-left: 18px;
-	margin: 2px;
+    height: 16px;
+    padding-left: 18px;
+    margin: 2px;
 }
 
 .steamprofile .sp-content a:hover {
@@ -164,19 +163,49 @@
 	color: #ffffff;
 }
 
-.steamprofile .sp-addfriend,
 .steamprofile .sp-joingame,
-.steamprofile .sp-viewitems {
+.steamprofile .sp-addfriend,
+.steamprofile .sp-viewfriends,
+.steamprofile .sp-viewgroups,
+.steamprofile .sp-viewgames {
 	display: inline-block;
 	width: 16px;
 	height: 16px;
-	background: transparent url(icons.png) no-repeat 0 0;
+	background: transparent url(icons_new.png) no-repeat 0 0;
 }
 
-.steamprofile .sp-addfriend {
+.steamprofile .sp-viewfriends {
 	background-position: -16px 0;
 }
 
-.steamprofile .sp-joingame {
+.steamprofile .sp-viewgroups {
 	background-position: -32px 0;
+}
+.steamprofile .sp-viewgames {
+	background-position: -48px 0;
+}
+
+.steamprofile .sp-joingame {
+	background-position: -64px 0;
+}
+
+.steamprofile .sp-viewinventory,
+.steamprofile .sp-viewwishlist,
+.steamprofile .sp-viewvideos,
+.steamprofile .sp-viewscreenshots {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: transparent url(icons_new.png) no-repeat 0px -16px;
+}
+
+.steamprofile .sp-viewwishlist {
+	background-position: -16px -16px;
+}
+
+.steamprofile .sp-viewvideos {
+	background-position: -32px -16px;
+}
+.steamprofile .sp-viewscreenshots  {
+	background-position: -48px -16px;
 }

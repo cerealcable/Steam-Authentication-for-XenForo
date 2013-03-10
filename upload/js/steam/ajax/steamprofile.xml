@@ -35,7 +35,14 @@
 					<div class="sp-content">
 						<a class="sp-joingame" href=""></a>
 						<a class="sp-addfriend" href=""></a>
-						<a class="sp-viewitems" href="" target="_blank"></a>
+						<a class="sp-viewfriends" href="" target="_blank"></a>
+						<a class="sp-viewgroups" href="" target="_blank"></a>
+						<a class="sp-viewgames" href="" target="_blank"></a>
+						<br />
+						<a class="sp-viewinventory" href="" target="_blank"></a>
+						<a class="sp-viewwishlist" href="" target="_blank"></a>
+						<a class="sp-viewvideos" href="" target="_blank"></a>
+						<a class="sp-viewscreenshots" href="" target="_blank"></a>
 					</div>
 				</div>
 			</div>
