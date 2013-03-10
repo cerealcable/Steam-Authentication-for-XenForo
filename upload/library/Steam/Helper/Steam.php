@@ -21,87 +21,30 @@
 
 class Steam_Helper_Steam {
 
-	/*private $ch = null;
+	// cURL Variable
+	/*
+	NO LONGER NEEDED WITH NEW JSON COMMANDS! WOO HOO!
+	
+	private $ch = null;
 
 	public function __construct() {
-			// Setup cURL
-			$this->ch = curl_init();
-			curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
-			if(!ini_get('safe_mode') && !ini_get('open_basedir'))
-			{
-				curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
-			}
-		}
-	*/
-	function get_web_page( $url ) {
-		$res = array();
-		$options = array( 
-			CURLOPT_RETURNTRANSFER => true,     // return web page 
-			CURLOPT_HEADER         => false,    // do not return headers 
-			CURLOPT_FOLLOWLOCATION => true,     // follow redirects 
-			CURLOPT_USERAGENT      => "spider", // who am i 
-			CURLOPT_AUTOREFERER    => true,     // set referer on redirect 
-			CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect 
-			CURLOPT_TIMEOUT        => 5,      // timeout on response 
-			CURLOPT_MAXREDIRS      => 2,       // stop after 10 redirects 
-			CURLOPT_ENCODING       => 'UTF-8',
-
-		); 
-		$ch      = curl_init( $url ); 
-		curl_setopt_array( $ch, $options ); 
-		$content = curl_exec( $ch ); 
-		$err     = curl_errno( $ch ); 
-		$errmsg  = curl_error( $ch ); 
-		$header  = curl_getinfo( $ch ); 
-		
-		if ($content === false) {
-			$i = 0;
-			while ($content === false && $i < 2) {
-				$content = curl_exec( $ch ); 
-				$err     = curl_errno( $ch ); 
-				$errmsg  = curl_error( $ch ); 
-				$header  = curl_getinfo( $ch ); 
-				$i++;
-				sleep(2);
-			}
-		}
-		
-		curl_close( $ch ); 
-		
-		return $content;
+		// Setup cURL
+		$this->ch = curl_init();
+		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
+        if(!ini_get('safe_mode') && !ini_get('open_basedir'))
+        {
+            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        }
 	}
+
+	*/
 
 	public function getUserInfo($steam_id) {
 		
-		
 		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
-		
-		//Check to make sure we get the data
-		
-		//cURL settings are good, let's do this
-		if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
-		{
-			$json_object = get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$steam_id}&format=json");
-		}
-		
-		//cURL isn't a good idea, let's try file_get_contents
-		else
-		{
-			$json_object = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$steam_id}&format=json");
-
-			if ($content_json === false) {
-				$i = 0;
-				while ($content_json === false && $i < 2) {
-					$json_object = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$steam_id}&format=json");
-					$i++;
-					sleep(1);
-				}
-			
-			}
-		}
-		
+		$json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$steam_id}&format=json");
 		$json_decoded = json_decode($json_object);
 		
 		if(!empty($json_decoded)) {
@@ -129,32 +72,49 @@ class Steam_Helper_Steam {
 		$steamapikey = $options->steamAPIKey;
         $games = array();
 
-		//Check to make sure we get the data
+		$json_object=file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={$steamapikey}&steamid={$steam_id}&include_appinfo=1&include_played_free_games=1&format=json");
+		$json_usergames = json_decode($json_object);
 		
-		if((function_exists('curl_version')) &&!ini_get('safe_mode') && !ini_get('open_basedir'))
-		//cURL is good, let's do this
-		{
-			$json_object = get_web_page("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={$steamapikey}&steamid={$steam_id}&include_appinfo=1&include_played_free_games=1&format=json");
+		// cURL
+		/* 
+		NO LONGER NEEDED WITH NEW JSON COMMANDS! WOO HOO!
+		
+		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+		ob_start();
+		$result = curl_exec($this->ch);
+		echo $result;
+		$result = ob_get_clean();
+		$result = trim($result);
+		
+		if (strpos($result,'<!DOCTYPE html>') !== false) {
+			$i = 0;
+			while (($i < 3) || ((strpos($result,'<!DOCTYPE html>') !== false))) {
+				curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
+				ob_start();
+				$result = curl_exec($this->ch);
+				echo $result;
+				$result = ob_get_clean();
+				$result = trim($result);
+				$i++;
+				sleep(5);
+			}
 		}
-		
-		//cURL isn't a good idea, let's try file_get_contents
 		else
 		{
-			$json_object = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={$steamapikey}&steamid={$steam_id}&include_appinfo=1&include_played_free_games=1&format=json");
-
-			if ($content_json === false) {
-				$i = 0;
-				while ($content_json === false && $i < 2) {
-					$json_object = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={$steamapikey}&steamid={$steam_id}&include_appinfo=1&include_played_free_games=1&format=json");
-					$i++;
-					sleep(2);
-				}
-			
-			}
-			
+			$xml = simplexml_load_string($result);
 		}
 		
-		$json_usergames = json_decode($json_object);
+		if (strpos($result,'<!DOCTYPE html>') !== true) {
+			$xml = simplexml_load_string($result);
+		}
+		else
+		{
+			$xml = '';
+			$xmlerror = new Exception('SteamAuth: Failed downloading XML game data for a user');
+			XenForo_Error::logException($xmlerror, false);
+		}
+		*/
+		
 		
 		/*
 		
