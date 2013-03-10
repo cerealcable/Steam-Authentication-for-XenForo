@@ -81,6 +81,7 @@ if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_
 	$content = get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
 	echo $content;
 }
+
 else
 {
 	$content_json = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
