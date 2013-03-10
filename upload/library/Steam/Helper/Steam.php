@@ -115,7 +115,7 @@ class Steam_Helper_Steam {
 				while (curl_exec($ch) === false && $i < 2) {
 					$json_object = curl_exec($this->ch);
 					$i++;
-					sleep(1);
+					sleep(2);
 				}
 			}
 			
@@ -132,7 +132,7 @@ class Steam_Helper_Steam {
 				while ($content_json === false && $i < 2) {
 					$json_object = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={$steamapikey}&steamid={$steam_id}&include_appinfo=1&include_played_free_games=1&format=json");
 					$i++;
-					sleep(1);
+					sleep(2);
 				}
 			
 			}

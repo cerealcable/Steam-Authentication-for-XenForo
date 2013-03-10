@@ -1,5 +1,11 @@
 === CHANGE LOG ===
 
+== Version 1.2.1 ==
+* cURL reimplemented for performance and only used if it can be
+* Added retry methods incase getting JSON data times out
+* Added new icons to SteamProfile badge
+* Removed all unused SteamProfile files
+
 == Version 1.2.0 ==
 * All data is requested through the SteamAPI. No more unreliable SteamCommunity XML!
 * Removed cURL from SteamBadge. Code now uses file_get_contents
