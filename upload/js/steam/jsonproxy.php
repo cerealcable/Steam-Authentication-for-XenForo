@@ -38,9 +38,6 @@ XenForo_Application::$javaScriptUrl = $fileDir . '/js';
 $options = XenForo_Application::get('options');
 $API_KEY = $options->steamAPIKey;
 
-/*
-DEV NOTE: Curl? We don't need no stinkin' CURL! Removed as of add-on release 1.2.0
-
 function get_web_page( $url ) {
 	$res = array();
 	$options = array( 
@@ -61,15 +58,42 @@ function get_web_page( $url ) {
 	$err     = curl_errno( $ch ); 
 	$errmsg  = curl_error( $ch ); 
 	$header  = curl_getinfo( $ch ); 
+	
+	if (curl_exec($ch) === false) {
+		$i = 0;
+		while (curl_exec($ch) === false && $i < 2) {
+			$ch      = curl_init( $url ); 
+			curl_setopt_array( $ch, $options ); 
+			$content = curl_exec( $ch ); 
+			$err     = curl_errno( $ch ); 
+			$errmsg  = curl_error( $ch ); 
+			$header  = curl_getinfo( $ch ); 
+			$i++;
+			sleep(1);
+		}
+	}
+	
 	curl_close( $ch ); 
 	
 	return $content; 
 }
-*/
 
-//echo get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
-
-$content_json = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
-echo $content_json;
+if(!ini_get('safe_mode') && !ini_get('open_basedir'))
+{
+	$content = get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
+}
+else
+{
+	$content_json = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
+	if ($content_json === false) {
+		$i = 0;
+		while ($content_json === false && $i < 2) {
+			$content_json = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
+			$i++;
+			sleep(1);
+		}
+	}
+	echo $content_json;
+}
 
 ?>
