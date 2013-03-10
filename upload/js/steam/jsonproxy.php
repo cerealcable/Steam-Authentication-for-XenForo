@@ -59,11 +59,9 @@ function get_web_page( $url ) {
 	$errmsg  = curl_error( $ch ); 
 	$header  = curl_getinfo( $ch ); 
 	
-	if (curl_exec($ch) === false) {
+	if ($content === false) {
 		$i = 0;
-		while (curl_exec($ch) === false && $i < 2) {
-			$ch      = curl_init( $url ); 
-			curl_setopt_array( $ch, $options ); 
+		while ($content === false && $i < 2) {
 			$content = curl_exec( $ch ); 
 			$err     = curl_errno( $ch ); 
 			$errmsg  = curl_error( $ch ); 
@@ -75,10 +73,10 @@ function get_web_page( $url ) {
 	
 	curl_close( $ch ); 
 	
-	return $content; 
+	return $content;
 }
 
-if(!ini_get('safe_mode') && !ini_get('open_basedir'))
+if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
 {
 	$content = get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
 	echo $content;
