@@ -160,9 +160,16 @@ class Steam_Helper_Steam {
 	            foreach($json_usergames->response->games as $game) {
                 	$appId = isset($game->appid) ? $game->appid : 0;
             	    $appName = isset($game->name) ? addslashes($game->name) : "";
-        	        $appLogo = isset($game->img_logo_url) ? addslashes($game->img_logo_url) : "";
-					$appLogo = "http://media.steampowered.com/steamcommunity/public/images/apps/" . $appId . "/" . $appLogo . ".jpg";
-    	            //Following line is no longer needed, this was for XML
+					if (strcmp($game->img_logo_url,"") == 0)
+					{
+						$appLogo = "styles/default/steamauth/unknown_game.png";
+					}
+					else
+					{
+						$appLogo = isset($game->img_logo_url) ? addslashes($game->img_logo_url) : "";
+						$appLogo = "http://media.steampowered.com/steamcommunity/public/images/apps/" . $appId . "/" . $appLogo . ".jpg";
+    	            }
+					//Following line is no longer needed, this was for XML
 					//$appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
 					$appLink = "http://steamcommunity.com/app/" . $appId;
 	                $hours = isset($game->playtime_forever) ? $game->playtime_forever : 0;
