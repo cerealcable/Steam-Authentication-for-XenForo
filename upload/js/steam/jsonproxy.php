@@ -78,8 +78,7 @@ function get_web_page( $url ) {
 
 if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
 {
-	$content = get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
-	echo $content;
+	$content_json = get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
 }
 
 else
@@ -93,7 +92,7 @@ else
 			sleep(1);
 		}
 	}
-	echo $content_json;
 }
 
+echo $content_json;
 ?>

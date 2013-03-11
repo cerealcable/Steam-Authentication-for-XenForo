@@ -1,6 +1,9 @@
 About SteamProfile
 ==================
 
+Originally written by Nico Bergemann <barracuda415@yahoo.de>
+Extra icons brought from V1TSK <vitaly@easycoding.org>
+
 *TODO*
 
 Installation and Usage

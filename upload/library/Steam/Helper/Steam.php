@@ -51,6 +51,7 @@ class Steam_Helper_Steam {
 			$json_object = ob_get_clean();
 			$json_object = trim($json_object);
 			
+			//Check to make sure nothing went wrong, if it did, try to fix it.
 			if (strpos($json_object,'response:') !== false) {
 				$i = 0;
 				while (($i < 3) || ((strpos($json_object,'response:') !== false))) {
@@ -66,10 +67,12 @@ class Steam_Helper_Steam {
 			}
 		}
 		
-		//No cURL?! NOOOOOOOOOOOOOOOOOOOOOOOOO-- Wait, that's okay, let's use file_get_contents
+		//No cURL?! NOOOOOOOOOOOOOOOOOOOOOOOOO-- Wait, that's okay, let's use file_get_contents!
 		else
 		{
 			$json_object = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$steam_id}&format=json" );
+			
+			//Check to make sure nothing went wrong, if it did, try to fix it.
 			if ($json_object === false) {
 				$i = 0;
 				while ($json_object === false && $i < 2) {
@@ -116,6 +119,7 @@ class Steam_Helper_Steam {
 			$json_object = ob_get_clean();
 			$json_object = trim($json_object);
 			
+			//Check to make sure nothing went wrong, if it did, try to fix it.
 			if (strpos($json_object,'response:') !== false) {
 				$i = 0;
 				while (($i < 3) || ((strpos($json_object,'response:') !== false))) {
@@ -131,10 +135,12 @@ class Steam_Helper_Steam {
 			}
 		}
 		
-		//No cURL?! NOOOOOOOOOOOOOOOOOOOOOOOOO-- Wait, that's okay, let's use file_get_contents
+		//No cURL?! NOOOOOOOOOOOOOOOOOOOOOOOOO-- Wait, that's okay, let's use file_get_contents!
 		else
 		{
 			$json_object = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={$steamapikey}&steamid={$steam_id}&include_appinfo=1&include_played_free_games=1&format=json" );
+			
+			//Check to make sure nothing went wrong, if it did, try to fix it.
 			if ($json_object === false) {
 				$i = 0;
 				while ($json_object === false && $i < 2) {
