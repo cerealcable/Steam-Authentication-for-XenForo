@@ -1,6 +1,10 @@
 === CHANGE LOG ===
 
 == Version 1.2.1 ==
+* Added cookies for people who log in via steamcommunity (Thanks, Adshi!)
+* Steam profile images compressed a little further (Thanks, Binari0!)
+
+== Version 1.2.1 ==
 * cURL reimplemented for performance and will only be used if it can be
 * Added retry methods incase JSON data times out
 * Added a place holder image for games that don't have a banner
