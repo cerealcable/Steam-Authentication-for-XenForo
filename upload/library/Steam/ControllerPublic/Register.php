@@ -50,7 +50,10 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		if($stAssoc && $userModel->getUserById($stAssoc['user_id'])) {
 			XenForo_Application::get('session')->changeUserId($stAssoc['user_id']);
 			XenForo_Visitor::setup($stAssoc['user_id']);
-
+			
+			/* Cookies */
+			$userModel->setUserRememberCookie($stAssoc['user_id']);
+			
 			return $this->responseRedirect(
 				XenForo_ControllerResponse_Redirect::SUCCESS,
 				$this->getDynamicRedirect(false, false)
@@ -503,6 +506,10 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		$userExternalModel->updateExternalAuthAssociation('steam', $id, $user['user_id']);
 
 		XenForo_Model_Ip::log($user['user_id'], 'user', $user['user_id'], 'register');
+		
+		/* Cookies */
+		$userModel->setUserRememberCookie($user['user_id']);
+		
 		$session->changeUserId($user['user_id']);
 		XenForo_Visitor::setup($user['user_id']);
 		$this->updateUserStats($user['user_id'], $id);
