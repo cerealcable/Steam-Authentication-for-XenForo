@@ -13,7 +13,7 @@ class Steam_ControllerPublic_Steam_Owned extends XenForo_ControllerPublic_Abstra
 		else
 		{
 		$viewParams = array(
-			'gameStats' => $sHelper->getGameStatistics()
+			'gameStats' => $sHelper->getGameStatisticsStats()
 		);
 
 		return $this->responseView('Steam_ViewPublic_Owned', 'steam_public_owned', $viewParams);

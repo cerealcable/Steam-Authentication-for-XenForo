@@ -13,7 +13,7 @@ class Steam_ControllerPublic_Steam_Played extends XenForo_ControllerPublic_Abstr
 		else
 		{
 			$viewParams = array(
-				'gameStats' => $sHelper->getGamePlayedStatistics()
+				'gameStats' => $sHelper->getGamePlayedStatisticsStats()
 			);
 
 			return $this->responseView('Steam_ViewPublic_Played', 'steam_public_played', $viewParams);

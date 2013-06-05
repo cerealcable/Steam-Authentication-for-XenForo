@@ -13,7 +13,7 @@ class Steam_ControllerPublic_Steam_Recent extends XenForo_ControllerPublic_Abstr
 		else
 		{
 		$viewParams = array(
-			'gameStats' => $sHelper->getGamePlayedRecentStatistics()
+			'gameStats' => $sHelper->getGamePlayedRecentStatisticsStats()
 		);
 		
 		return $this->responseView('Steam_ViewPublic_Recent', 'steam_public_recent', $viewParams);

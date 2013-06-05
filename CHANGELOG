@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.2.4 ==
+* Added the ability to filter out games on the steam stats pages
+
 == Version 1.2.3 ==
 * Updated no image available thumbnail
 * Empty index fix for SteamProfile (Thanks, Chris Deeming!)

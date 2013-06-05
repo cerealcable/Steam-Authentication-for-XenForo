@@ -13,7 +13,7 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		else
 		{
 			$viewParams = array(
-				'gameStats' => $sHelper->getGameOwnersHours()
+				'gameStats' => $sHelper->getGameOwnersHoursStats()
 			);
 
 			return $this->responseView('Steam_ViewPublic_Index', 'steam_public_index', $viewParams);
