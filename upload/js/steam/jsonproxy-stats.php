@@ -94,42 +94,5 @@ else
 	}
 }
 
-$content_decoded = json_decode($content_json);
-unset($content_json);
-
-foreach ($content_decoded->response->players as $rows)
-{
-    if (isset($rows->gameid))
-    {
-        $appid = $rows->gameid;
-        $steamid64 = $rows->steamid;
-        $game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
-        $games_decoded = json_decode($game_info);
-        
-        foreach ($games_decoded->response->games as $rowsgames)
-        {
-            if ($rowsgames->appid == $appid)
-            {
-                if (isset($rowsgames->img_logo_url))
-                {
-                    $logo = $rowsgames->img_logo_url;
-                }
-            }
-        }
-        
-        if (!empty($logo))
-        {
-            $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/' . $appid . '/' . $logo . '.jpg';
-            
-            $rows->gameLogoSmall = $logo;
-        }
-    }
-    
-    $logo = '';
-}
-
-$content_json = json_encode($content_decoded);
-unset($content_decoded);
-
 echo $content_json;
 ?>

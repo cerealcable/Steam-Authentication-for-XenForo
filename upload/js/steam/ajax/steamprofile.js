@@ -331,7 +331,7 @@ function SteamProfile() {
 											if($(profiles[k]).data('profileID') == steamID)
 											{
 												$(profiles[k]).html(profileCache[steamID].html());
-												$(profiles[k]).addClass('state-'+$(profiles[k]).find('.sp-wizard').attr("state"));
+												//$(profiles[k]).addClass('state-'+$(profiles[k]).find('.sp-wizard').attr("state"));
 											}
 										}
 									});
@@ -362,10 +362,10 @@ function SteamProfile() {
 	}
 
 	function createProfile(profileData) {
-		var profile;
+		// var profile;
 		profileData = profileData[0];
 		// profile data looks good
-		profile = profileTpl.clone();
+		var profile = profileTpl.clone();
 		var onlineState = profileData.profilestate;
 		
 		// set state class, avatar image and name
@@ -378,23 +378,23 @@ function SteamProfile() {
 		if(profileData.communityvisibilitystate != 3)
 		{
 			profile.find('.sp-info').append("<div>" + langData[langLocal].private_profile + "</div>");
-			profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[0]);
+			//profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[0]);
 			profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[0]);
 			
 		}
 		else if(typeof profileData.gameid != "undefined")
 		{
-			profile.find('.sp-info').append("<div class='sp-ingame'>" + langData[langLocal].profile_visibilities[5] + "</div>");
-			profile.find('.sp-info').append("<div class='sp-ingame' style='overflow:hidden;text-overflow: ellipsis;white-space: nowrap;'>" + profileData.gameextrainfo + "</div>");
+			profile.find('.sp-info').append(langData[langLocal].profile_visibilities[5]);
+			profile.find('.sp-info').append("<br>" + profileData.gameextrainfo);
 		
-			profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[5]);
+			//profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[5]);
 			profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[5]);
 			
 		}
 		else
 		{
 			profile.find('.sp-info').append("<div>" + langData[langLocal].profile_visibilities[profileData.personastate] + "</div>");
-			profile.find('.sp-wizard').attr("state", langData[langLocal].profile_visibilities[profileData.personastate]);
+			//profile.find('.sp-wizard').attr("state", langData[langLocal].profile_visibilities[profileData.personastate]);
 			
 			switch (profileData.personastate)
 			{
@@ -404,14 +404,19 @@ function SteamProfile() {
 			}
 		}
 		
-		profile.removeClass('sp-bg-game');
-		profile.find('.sp-bg-fade').removeClass('sp-bg-fade');
-		/* FIXME
+		// profile.removeClass('sp-bg-game');
+		//profile.find('.sp-bg-fade').removeClass('sp-bg-fade');
+		// FIXME
 		// set game background
-		//if (showGameBanner && profileData.find('profile > inGameInfo > gameLogoSmall').length !== 0) {
-		//	profile.css('background-image', 'url(' + profileData.find('profile > inGameInfo > gameLogoSmall').text() + ')');
-		//} else 
-		*/
+		if (showGameBanner && typeof profileData.gameLogoSmall != "undefined") {
+			profile.find('.sp-bg-game-img').css('background-image', 'url(' + profileData.gameLogoSmall + ')');
+            //profile.find('background-image', 'url(' + profileData.gameLogoSmall + ')');
+		} else {
+            profile.removeClass('sp-bg-game-img');
+            profile.find('.sp-bg-fade').attr('class', 'sp-bg-no-fade');
+            //profile.find('.sp-bg-fade').removeClass('sp-bg-fade');
+        }
+		
 
 		
 		if (showSliderMenu) {
@@ -467,7 +472,7 @@ function SteamProfile() {
 		}
 		
 		// add other link hrefs
-		profile.find('.sp-avatar a, .sp-info a.sp-name').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid);
+		profile.find('.sp-avatar a, .sp-info a').attr('href', 'http://steamcommunity.com/profiles/' + profileData.steamid);
 		
 		return profile;
 	}

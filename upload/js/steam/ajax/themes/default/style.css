@@ -16,6 +16,7 @@
 }
 
 .steamprofile .sp-bg-game,
+.steamprofile .sp-bg-game-img,
 .steamprofile .sp-bg-fade {
 	background-position: right center;
 	height: 48px;
@@ -24,10 +25,13 @@
 .steamprofile .sp-bg-fade {
 	background-repeat: repeat-y;
 	background-image: url(background_fade.png);
+    height: 48px;
 }
 
-.steamprofile .sp-bg-game {
+.steamprofile .sp-bg-game,
+.steamprofile .sp-bg-game-img {
 	background-repeat: no-repeat;
+    background-size:auto 48px;
 }
 
 .steamprofile .sp-badge,
