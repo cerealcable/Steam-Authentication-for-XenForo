@@ -32,7 +32,7 @@ function SteamProfile() {
 	// path/file config
 	var scriptFile = "steamprofilestats.js";
 	var configFile = "steamprofilestats.xml";
-	var proxyFile = "../jsonproxy.php";
+	var proxyFile = "../jsonproxy-stats.php";
 	var basePath;
 	var themePath;
 	
