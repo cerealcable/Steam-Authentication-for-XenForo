@@ -138,7 +138,7 @@ function SteamProfile() {
 			type: 'GET',
 			global: false,
 			url: basePath + configFile,
-			dataType: 'html',
+			dataType: 'xml',
 			complete: function(request, status) {
 				configData = $(request.responseXML);
 				loadConfig();
@@ -358,7 +358,7 @@ function SteamProfile() {
 		{
 			profile.find('.steamstats_avatar img').attr('class', 'steamstats_avatar offline');
 			profile.find('.sp-info').append("<div>" + langData[langLocal].private_profile + "</div>");
-			profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[0]);
+			//profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[0]);
 			profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[0]);
 			
 		}
@@ -368,14 +368,14 @@ function SteamProfile() {
 			profile.find('.sp-info').append("<div class='sp-ingame'>" + langData[langLocal].profile_visibilities[5] + "</div>");
 			profile.find('.sp-info').append("<div class='sp-ingame' style='overflow:hidden;text-overflow: ellipsis;white-space: nowrap;'>" + profileData.gameextrainfo + "</div>");
 		
-			profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[5]);
+			//profile.find('.sp-wizard').attr("state",  langData[langLocal].profile_visibilities[5]);
 			profile.find('.sp-badge').addClass('sp-' + langData[langLocal].profile_visibilities[5]);
 			
 		}
 		else
 		{
 			profile.find('.sp-info').append("<div>" + langData[langLocal].profile_visibilities[profileData.personastate] + "</div>");
-			profile.find('.sp-wizard').attr("state", langData[langLocal].profile_visibilities[profileData.personastate]);
+			//profile.find('.sp-wizard').attr("state", langData[langLocal].profile_visibilities[profileData.personastate]);
 			
 			switch (profileData.personastate)
 			{

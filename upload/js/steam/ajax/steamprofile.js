@@ -159,7 +159,7 @@ function SteamProfile() {
 			type: 'GET',
 			global: false,
 			url: basePath + configFile,
-			dataType: 'html',
+			dataType: 'xml',
 			complete: function(request, status) {
 				configData = $(request.responseXML);
 				loadConfig();
