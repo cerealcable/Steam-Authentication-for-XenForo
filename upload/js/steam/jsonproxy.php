@@ -99,36 +99,39 @@ if (!empty($_GET['steamids']))
 
     $content_decoded = json_decode($content_json);
     unset($content_json);
-
-    foreach ($content_decoded->response->players as $rows)
+    
+    if (isset($content_decoded->response->players))
     {
-        if (isset($rows->gameid))
+        foreach ($content_decoded->response->players as $rows)
         {
-            $appid = $rows->gameid;
-            $steamid64 = $rows->steamid;
-            $game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
-            $games_decoded = json_decode($game_info);
-            
-            foreach ($games_decoded->response->games as $rowsgames)
+            if (isset($rows->gameid))
             {
-                if ($rowsgames->appid == $appid)
+                $appid = $rows->gameid;
+                $steamid64 = $rows->steamid;
+                $game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
+                $games_decoded = json_decode($game_info);
+                
+                foreach ($games_decoded->response->games as $rowsgames)
                 {
-                    if (isset($rowsgames->img_logo_url))
+                    if ($rowsgames->appid == $appid)
                     {
-                        $logo = $rowsgames->img_logo_url;
+                        if (isset($rowsgames->img_logo_url))
+                        {
+                            $logo = $rowsgames->img_logo_url;
+                        }
                     }
+                }
+                
+                if (!empty($logo))
+                {
+                    $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/' . $appid . '/' . $logo . '.jpg';
+                    
+                    $rows->gameLogoSmall = $logo;
                 }
             }
             
-            if (!empty($logo))
-            {
-                $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/' . $appid . '/' . $logo . '.jpg';
-                
-                $rows->gameLogoSmall = $logo;
-            }
+            $logo = '';
         }
-        
-        $logo = '';
     }
 
     $content_json = json_encode($content_decoded);
