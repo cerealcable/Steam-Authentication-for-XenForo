@@ -37,6 +37,7 @@ XenForo_Application::$javaScriptUrl = $fileDir . '/js';
 
 $options = XenForo_Application::get('options');
 $API_KEY = $options->steamAPIKey;
+$STEAM_GAMEBANNER = $options->steamDisplayBanner;
 
 function get_web_page( $url ) {
 	$res = array();
@@ -100,7 +101,7 @@ if (!empty($_GET['steamids']))
     $content_decoded = json_decode($content_json);
     unset($content_json);
     
-    if (isset($content_decoded->response->players))
+    if (isset($content_decoded->response->players) && $STEAM_GAMEBANNER > 0)
     {
         foreach ($content_decoded->response->players as $rows)
         {
