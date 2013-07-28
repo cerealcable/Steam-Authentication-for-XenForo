@@ -240,7 +240,14 @@ function SteamProfile() {
 	
 		// set theme stylesheet
 		themePath = basePath + 'themes/' + getConfigString('theme') + '/';
-		$('head').append('<link rel="stylesheet" type="text/css" href="' + themePath + 'style.css">');
+		if (document.createStyleSheet)
+        {
+            document.createStyleSheet(themePath + "style.css");
+        }
+        else
+        {
+            $('head').append('<link rel="stylesheet" type="text/css" href="' + themePath + 'style.css">');
+		}
 		
 		// load templates
 		profileTpl = $(configData.find('templates > profile').text());
