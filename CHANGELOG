@@ -1,7 +1,12 @@
 === CHANGE LOG ===
 
-== Version 1.2.4 ==
-* Added the ability to filter out games on the steam stats pages
+== Version 1.3.0 ==
+* Added the ability to filter games shown on the steam stats pages
+* Another empty index fix for SteamProfile (Thanks, Chris Deeming!)
+* Added option to show in-game banners on SteamProfile (1 API request per user in game)
+* Removed unnecessary divs in SteamProfile XML
+* Fixed SteamProfile javascript for Xenforo 1.2 support
+* Fixed a bug with IE rendering issues for SteamProfile
 
 == Version 1.2.3 ==
 * Updated no image available thumbnail
@@ -71,7 +76,7 @@
   of XML
 * Fixed a MySQL query error when user has >= 1000 hours of game time on a 
   single game
-* Solved errors by nulling any XML return for game statstics when the steam
+* Solved errors by nulling any XML return for game statistics when the steam
   community is unavailable
 
 == Version 1.0.7c-v2 ==
