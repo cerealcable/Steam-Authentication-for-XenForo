@@ -109,7 +109,26 @@ if (!empty($_GET['steamids']))
             {
                 $appid = $rows->gameid;
                 $steamid64 = $rows->steamid;
-                $game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
+                
+                if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
+                {
+                    $game_info = get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
+                }
+                else
+                {
+                    $game_info = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
+                    if ($game_info === false) {
+                        $i = 0;
+                        while ($game_info === false && $i < 2) {
+                            $game_info = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $_GET['steamids'] . "&key=$API_KEY" );
+                            $i++;
+                            sleep(1);
+                        }
+                    }
+                }
+                
+                //DEBUG using cURL only
+                //$game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
                 $games_decoded = json_decode($game_info);
                 
                 foreach ($games_decoded->response->games as $rowsgames)
