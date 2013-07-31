@@ -1,5 +1,9 @@
 === CHANGE LOG ===
 
+== Version 1.3.1 ==
+* Fixed bug for in-game banners if cURL was not enabled
+* Very small text changes on options page
+
 == Version 1.3.0 ==
 * Added the ability to filter games shown on the steam stats pages
 * Another empty index fix for SteamProfile (Thanks, Chris Deeming!)
