@@ -100,16 +100,15 @@ class Steam_Listener {
 				$template->addRequiredExternal('css', 'steam_stats');
 				
 				$paths = XenForo_Application::get('requestPaths');
-				$serverprotocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']),'https')  === FALSE ? 'http' : 'https';
-				$hostname    = $_SERVER['HTTP_HOST'];
-				$scriptname  = $_SERVER['SCRIPT_NAME'];
-				$currentpageURL = $serverprotocol . '://' . $hostname . $scriptname;
-				$currentpageURL2 = str_replace('index.php', '', $currentpageURL);
-				$currentpageURL2 .= 'steam/';
-				$currentpageURL = str_replace('index.php', 'index.php?', $currentpageURL);
-				$currentpageURL .= 'steam/';
-				
-				if ($currentpageURL2 != $paths['fullUri'] && $currentpageURL != $paths['fullUri'])
+                $fullURL = $paths['fullUri'];
+                $urlTest = substr($fullURL, -6);
+                
+                if ($fullURL === '/steam')
+                {
+                    $urlTest = 'steam/';
+                }
+                
+                if ($urlTest !== 'steam/')
 				{
 					$contents .= $template->create('steam_js', $hookParams);
 				}
@@ -117,6 +116,7 @@ class Steam_Listener {
 				{
 					$contents .= $template->create('steamstats_js', $hookParams);
 				}
+                
 				break;
 			case 'message_content':
 				$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
