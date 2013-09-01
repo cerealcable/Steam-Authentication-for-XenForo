@@ -1,5 +1,9 @@
 === CHANGE LOG ===
 
+== Version 1.3.2 ==
+* Attempt to fix possible bug with avatar display on steam statistics page
+* Fixed rendering of SteamProfile on member view page
+
 == Version 1.3.1 ==
 * Fixed bug for in-game banners if cURL was not enabled
 * Very small text changes on options page

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.3.1" version_id="60" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.3.2" version_id="61" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
     <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
@@ -681,7 +681,7 @@
     <template title="steam_login_bar_item" version_id="1" version_string="1.0.0"><![CDATA[<li><a href="{xen:link register/steam, '', 'reg=1'}" style="text-decoration:none;display: inline-block;">
    <img src="http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png" alt="Sign up with Steam"}" style="margin:0 14px;"/>
 </a></li>]]></template>
-    <template title="steam_member_view_info" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayProfile} AND {$user.steam_auth_id} > 0"><dd><div class="steamprofile" title="{$user.steam_auth_id}"></div></dd></xen:if>]]></template>
+    <template title="steam_member_view_info" version_id="61" version_string="1.3.2"><![CDATA[<xen:if is="{$xenOptions.steamDisplayProfile} AND {$user.steam_auth_id} > 0"><dl><div class="steamprofile" title="{$user.steam_auth_id}"></div></dl></xen:if>]]></template>
     <template title="steam_message_content" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayMessageContent} AND {$message.steam_auth_id} > 0"><div class="steamprofile" style="width: 225px; float: right;" title="{$message.steam_auth_id}"></div></xen:if>]]></template>
     <template title="steam_message_user_info" version_id="1" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.steamDisplayMessageInfo} AND {$user.steam_auth_id} > 0"><dd><div class="steamprofile" title="{$user.steam_auth_id}"></div></dd></xen:if>]]></template>
     <template title="steam_navigation_visitor_tab_link" version_id="1" version_string="1.0.0"><![CDATA[<li><a href="{xen:link account/steam}">{xen:phrase steam_integration}</a></li>]]></template>
