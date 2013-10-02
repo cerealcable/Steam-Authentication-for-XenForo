@@ -99,7 +99,7 @@ class Steam_Manufacture {
 		self::addColumnIfNotExists('xf_user_steam_games', 'game_hours_recent', 'INT UNSIGNED NOT NULL DEFAULT 0', 'game_hours');
 		
 		// Run Initial Cron Job for Steam!
-		Steam_Cron::update();
+		// Steam_Cron::update();
 	}
 
 	public static function destroy() {
