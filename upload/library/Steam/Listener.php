@@ -43,16 +43,13 @@ class Steam_Listener {
 	
 	public static function navtabs(array &$extraTabs, $selectedTabId)
 	{
-		$options = XenForo_Application::get('options');
-		$visitor = XenForo_Visitor::getInstance();
-		if($options->steamNavTab && $visitor->hasPermission("SteamAuth", "view")){
 		$extraTabs['steam'] = array(
 			'title' => 'Steam',
 			'href' => XenForo_Link::buildPublicLink('full:steam'),
-			'selected' => ($selectedTabId == 'steam'),
+			'position' => 'middle',
 			'linksTemplate' => 'steam_navtabs',
+			'steam' => $selectedTabId == 'steam',
 		);
-		}
 	}
 
 	public static function templateCreate($templateName, array &$params, XenForo_Template_Abstract $template) {
@@ -71,10 +68,6 @@ class Steam_Listener {
 				$template->preloadTemplate('steam_member_card_info');
 				$template->preloadTemplate('steam_footer');
 				$template->preloadTemplate('steam_navtabs');
-				$template->preloadTemplate('steam_public_index');
-				$template->preloadTemplate('steam_public_owned');
-				$template->preloadTemplate('steam_public_played');
-				$template->preloadTemplate('steam_public_recent');
 				break;
 		}
 	}
