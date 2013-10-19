@@ -98,5 +98,15 @@ if (!empty($_GET['steamids']))
     }
 }
 
+if (function_exists('gzcompress'))
+{
+	ob_start('ob_gzhandler');
+}
+else
+{
+	ob_start();
+}
+
 echo $content_json;
+ob_end_flush();
 ?>

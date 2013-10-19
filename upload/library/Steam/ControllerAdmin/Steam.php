@@ -45,12 +45,20 @@ class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 				$owners[] = $user;
 				$hours += $user['hours'];
 			}
+			if (count($owners) == 0)
+			{
+				$hoursAvgMath = 0;
+			}
+			else
+			{
+				$hoursAvgMath = round($hours/count($owners));
+			}
 			$viewParams = array(
 				'count' => count($owners),
 				'game' => $sHelper->getGameInfo($gameId),
 				'users' => $owners,
 				'hours' => $hours,
-				'hoursAvg' => round($hours/count($owners))
+				'hoursAvg' => $hoursAvgMath
 			);
 			$template = 'steam_stats_game_view';
 		} else {

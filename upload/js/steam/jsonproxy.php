@@ -19,7 +19,7 @@ header('content-type: application/json; charset: utf-8');
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 $startTime = microtime(true);
 $fileDir = '../../';
 require($fileDir . '/library/XenForo/Autoloader.php');
@@ -155,8 +155,21 @@ if (!empty($_GET['steamids']))
         }
     }
 
-    $content_json = json_encode($content_decoded);
-    unset($content_decoded);
+    //$content_json = json_encode($content_decoded);
+    //unset($content_decoded);
 }
-echo $content_json;
+
+if (function_exists('gzcompress'))
+{
+	ob_start('ob_gzhandler');
+}
+else
+{
+	ob_start();
+}
+
+echo json_encode($content_decoded);
+unset($content_decoded);
+ob_end_flush();
+
 ?>
