@@ -1,5 +1,9 @@
 === CHANGE LOG ===
 
+== Version 1.3.3 ==
+* Install error fixed (Thanks, SchmitzIT)
+* Turned off word wrap on SteamProile to keep long usernames from breaking the status
+
 == Version 1.3.2 ==
 * Attempt to fix possible bug with avatar display on steam statistics page
 * Fixed rendering of SteamProfile on member view page

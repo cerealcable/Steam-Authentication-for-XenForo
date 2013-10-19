@@ -83,7 +83,11 @@
 	font-weight: bold;
 	font-size:9px;
 }
-
+.steamprofile .sp-info {
+	text-overflow: string;
+	white-space: nowrap;
+	word-break: break-all;
+}
 .steamprofile .sp-In-Game {
 	color: #8bc53f;
 }
