@@ -499,7 +499,7 @@ function SteamProfile() {
 	}
 }
 
-$(document).ready(function() {
+jQuery(function($) {
 	SteamProfile = new SteamProfile();
 	SteamProfile.init();
 });
