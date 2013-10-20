@@ -2,6 +2,7 @@
 
 == Version 1.3.4 ==
 * Fixed check for page compression on jsonproxy.php
+* HTML errors fixed in some templates
 
 == Version 1.3.3 ==
 * Install error fixed (Thanks, SchmitzIT)
