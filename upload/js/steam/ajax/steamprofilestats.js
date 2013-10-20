@@ -451,7 +451,7 @@ function SteamProfile() {
 	}
 }
 
-$(document).ready(function() {
+$(function() {
 	SteamProfile = new SteamProfile();
 	SteamProfile.init();
 });

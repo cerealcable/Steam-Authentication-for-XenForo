@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.3.4 ==
+* Fixed check for page compression on jsonproxy.php
+
 == Version 1.3.3 ==
 * Install error fixed (Thanks, SchmitzIT)
 * Turned off word wrap on SteamProile to keep long usernames from breaking the status
