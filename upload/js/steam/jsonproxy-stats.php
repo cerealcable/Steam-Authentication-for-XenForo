@@ -98,7 +98,7 @@ if (!empty($_GET['steamids']))
     }
 }
 
-if (function_exists('gzcompress') && strcmp(ini_get('zlib.output_compression'),'Off') < 0 || ini_get('zlib.output_compression') != 1)
+if (function_exists('gzcompress') && (!ini_get('zlib.output_compression')))
 {
 	ob_start('ob_gzhandler');
 }
