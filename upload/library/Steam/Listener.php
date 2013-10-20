@@ -98,26 +98,6 @@ class Steam_Listener {
 				break;
 			case 'page_container_head':
 				$template->addRequiredExternal('css', 'steam_stats');
-				
-				$paths = XenForo_Application::get('requestPaths');
-                $fullURL = $paths['fullUri'];
-                $urlTest = substr($fullURL, -6);
-                
-                if ($fullURL === '/steam')
-                {
-                    $urlTest = 'steam/';
-                }
-                
-                if ($urlTest !== 'steam/')
-				{
-					$contents .= $template->create('steam_js', $hookParams);
-				}
-				else
-				{
-					$contents .= $template->create('steamstats_js', $hookParams);
-				}
-                
-				break;
 			case 'message_content':
 				$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
 				break;
