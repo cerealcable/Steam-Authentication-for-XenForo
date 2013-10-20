@@ -6,6 +6,7 @@
 * 'Powered By Steam' now only shows on main forum list and any page with Steam API usage
 * Added PHP output buffering to SteamProfile requests (As requested by silence)
 * Fixed Divide By Zero error in Library\Steam\ControllerAdmin\Steam.php
+* Reduced the amount of pages javascript and CSS was included on
 
 == Version 1.3.2 ==
 * Attempt to fix possible bug with avatar display on steam statistics page
