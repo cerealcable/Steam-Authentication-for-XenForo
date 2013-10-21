@@ -258,6 +258,7 @@ function SteamProfile() {
 		if (langData[langLocal] == null) {
 			langLocal = "english";
 		}
+		/*
 	
 		// set theme stylesheet
 		themePath = basePath + 'themes/' + getConfigString('theme') + '/';
@@ -269,7 +270,8 @@ function SteamProfile() {
         {
             $('head').append('<link rel="stylesheet" type="text/css" href="' + themePath + 'style.css">');
 		}
-        
+        */
+		
 		// load templates
 		profileTpl = $(configData.find('templates > profile').text());
 		loadingTpl = $(configData.find('templates > loading').text());
@@ -499,7 +501,7 @@ function SteamProfile() {
 	}
 }
 
-jQuery(function($) {
+$(document).ready(function() {
 	SteamProfile = new SteamProfile();
 	SteamProfile.init();
 });

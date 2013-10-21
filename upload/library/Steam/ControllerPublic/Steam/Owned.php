@@ -8,15 +8,15 @@ class Steam_ControllerPublic_Steam_Owned extends XenForo_ControllerPublic_Abstra
 		$visitor = XenForo_Visitor::getInstance();
 		
 		if(!$visitor->hasPermission("SteamAuth", "view")){
-			throw $this->getErrorOrNoPermissionResponseException('steam_do_not_have_permission');
+			return $this->responseErrorthis->responseError('steam_do_not_have_permission');
 		}
 		else
 		{
-		$viewParams = array(
-			'gameStats' => $sHelper->getGameStatisticsStats()
-		);
+			$viewParams = array(
+				'gameStats' => $sHelper->getGameStatisticsStats()
+			);
 
-		return $this->responseView('Steam_ViewPublic_Owned', 'steam_public_owned', $viewParams);
+			return $this->responseView('Steam_ViewPublic_Owned', 'steam_public_owned', $viewParams);
 		}
 	}
 	

@@ -78,6 +78,7 @@ function get_web_page( $url ) {
 }
 
 $content_json = '';
+$content_decoded = '';
 
 if (!empty($_GET['steamids']))
 {

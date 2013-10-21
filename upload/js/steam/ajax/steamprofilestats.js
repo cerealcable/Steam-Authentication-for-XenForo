@@ -238,6 +238,7 @@ function SteamProfile() {
 			langLocal = "english";
 		}
 	
+		/*
 		// set theme stylesheet
 		themePath = basePath + 'themes/' + getConfigString('theme') + '/';
 		if (document.createStyleSheet)
@@ -248,6 +249,7 @@ function SteamProfile() {
         {
             $('head').append('<link rel="stylesheet" type="text/css" href="' + themePath + 'style.css">');
 		}
+		*/
 		
 		// load templates
 		profileTpl = $(configData.find('templates > profile').text());
@@ -451,7 +453,7 @@ function SteamProfile() {
 	}
 }
 
-$(function() {
+$(document).ready(function() {
 	SteamProfile = new SteamProfile();
 	SteamProfile.init();
 });

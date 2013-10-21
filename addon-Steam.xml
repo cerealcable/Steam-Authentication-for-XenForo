@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.3.5" version_id="71" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.3.5-dev" version_id="74" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
     <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
@@ -696,18 +696,26 @@
 </xen:if>
 ]]></template>
     <template title="steam_navigation_visitor_tab_link" version_id="1" version_string="1.0.0"><![CDATA[<li><a href="{xen:link account/steam}">{xen:phrase steam_integration}</a></li>]]></template>
-	<template title="steam_footer" version_id="67" version_string="1.3.3"><![CDATA[
-<xen:if is="{$steamProfNoJS} || {$contentTemplate} == 'forum_list'">
+	<template title="steam_footer" version_id="74" version_string="1.3.5"><![CDATA[
+<xen:if is="{$contentTemplate} == 'forum_list'">
+<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
+</xen:if>
+	
+<xen:if is="{$steamProfNoJS}">
+<xen:require css="steamStats.css" />
 <li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
 </xen:if>
 
 <xen:if is="{$steamProf}">
+<xen:require css="steamProfile.css" />
 <xen:require js="js/steam/ajax/steamprofile.js" />
 <script type="text/javascript">spBasePath = 'js/steam/ajax/';</script>
 <li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
 </xen:if>
 
 <xen:if is="{$steamProfStats}">
+<xen:require css="steamProfileStats.css" />
+<xen:require css="steamStats.css" />
 <xen:require js="js/steam/ajax/steamprofilestats.js" />
 <script type="text/javascript">spBasePath = 'js/steam/ajax/';</script>
 <li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
@@ -758,7 +766,7 @@
 </xen:foreach>
 </div>
 ]]></template>
-	<template title="steam_stats.css" version_id="45" version_string="1.2.1"><![CDATA[/* Steam Authentication & Integration CSS */
+	<template title="steamStats.css" version_id="74" version_string="1.3.5"><![CDATA[/* Steam Authentication & Integration CSS */
 	.steamstats_header
 	{
 		font-size: 150%;
@@ -799,6 +807,281 @@
 		padding-right: 4px;
 		width: 68px;
 		height: 24px;
+		vertical-align:top;
+	}
+	]]></template>
+	<template title="steamProfile.css" version_id="72" version_string="1.3.5"><![CDATA[
+		.steamprofile * {
+		font-size: 10px;
+		font-family: tahoma,Arial,Helvetica,sans-serif;
+		margin: 0;
+		padding: 0;
+		line-height: 1.3em;
+	}
+
+	.steamprofile {
+		position: relative;
+		width: 100%;
+		height: 48px;
+		background: #3A3A3A url(styles/default/steamauth/themes/default/background.png);
+		overflow: hidden;
+		margin: 0px;
+	}
+
+	.steamprofile .sp-bg-game,
+	.steamprofile .sp-bg-game-img,
+	.steamprofile .sp-bg-fade {
+		background-position: right center;
+		height: 48px;
+	}
+
+	.steamprofile .sp-bg-fade {
+		background-repeat: repeat-y;
+		background-image: url(styles/default/steamauth/themes/default/background_fade.png);
+		height: 48px;
+	}
+
+	.steamprofile .sp-bg-game,
+	.steamprofile .sp-bg-game-img {
+		background-repeat: no-repeat;
+		background-size:auto 48px;
+	}
+
+	.steamprofile .sp-badge,
+	.steamprofile .sp-loading,
+	.steamprofile .sp-error {
+		padding: 4px;
+	}
+
+	.steamprofile a {
+		text-decoration: none;
+	}
+
+	.steamprofile img  {
+		border: none;
+	}
+
+	.steamprofile .sp-loading {
+		margin: 8px;
+		padding-left: 40px;
+		color: #606060;
+		font-size: 18px;
+		background: transparent url(styles/default/steamauth/themes/default/loading.gif) no-repeat left top;
+	}
+
+	.steamprofile .sp-error {
+		margin: 4px 8px;
+		padding-left: 22px;
+		color: #cc4444;
+		font-size: 12px;
+		background: transparent url(styles/default/steamauth/themes/default/error.png) no-repeat left center;
+	}
+
+	.steamprofile:hover {
+		background-color: #313131;
+	}
+
+	.steamprofile .sp-avatar {
+		float: left;
+		width: 40px;
+		height: 40px;
+		margin-right: 4px;
+	}
+
+	.steamprofile .sp-avatar img  {
+		margin: 4px;
+	}
+
+	.steamprofile .sp-info a {
+		font-weight: bold;
+		font-size:9px;
+	}
+	.steamprofile .sp-info {
+		text-overflow: string;
+		white-space: nowrap;
+		word-break: break-all;
+	}
+	.steamprofile .sp-In-Game {
+		color: #8bc53f;
+	}
+
+	.steamprofile .sp-In-Game a {
+		color: #b1fb50;
+	}
+
+	.steamprofile .sp-Online {
+		color: #6f9fc8;
+	}
+
+	.steamprofile .sp-Online a {
+		color: #8ecbff;
+	}
+
+	.steamprofile .sp-Online .sp-avatar,
+	.steamprofile .sp-In-Game .sp-avatar,
+	.steamprofile .sp-Offline .sp-avatar {
+		background: transparent url(styles/default/steamauth/themes/default/iconholder.png) no-repeat 0 0;
+	}
+
+	.steamprofile .sp-Online .sp-avatar {
+		background-position: -40px 0;
+	}
+
+	.steamprofile .sp-In-Game .sp-avatar {
+		background-position: -80px 0;
+	}
+
+	.steamprofile .sp-Offline .sp-info,
+	.steamprofile .sp-Offline .sp-info a {
+		color: #898989;
+	}
+
+	.steamprofile .sp-extra {
+		display: block;
+		position: absolute;
+		z-index: 1;
+		right: 0;
+		top: 0;
+		background-color: #202020;
+		height: 50px;
+	}
+
+	.steamprofile .sp-handle {
+		width: 16px;
+		height: 50px;
+		display: block;
+		position: absolute;
+		z-index: 2;
+		left: -16px;
+		top: -1px;
+		background: url(styles/default/steamauth/themes/default/handle.png) right center no-repeat;
+	}
+
+	.steamprofile .sp-handle:hover {
+		cursor: pointer;
+	}
+
+	.steamprofile .sp-content {
+		white-space: nowrap;
+		height: 50px;
+		padding: 6px;
+		display: none;
+	}
+
+	.steamprofile .sp-content ul {
+		list-style: none;
+		float: left;
+	}
+
+	.steamprofile .sp-content li {
+		height: 16px;
+		padding-left: 18px;
+		margin: 2px;
+	}
+
+	.steamprofile .sp-content a:hover {
+		text-decoration: underline;
+		color: #ffffff;
+	}
+
+	.steamprofile .sp-joingame,
+	.steamprofile .sp-addfriend,
+	.steamprofile .sp-viewfriends,
+	.steamprofile .sp-viewgroups,
+	.steamprofile .sp-viewgames {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		background: transparent url(styles/default/steamauth/themes/default/icons_new.png) no-repeat 0 0;
+	}
+
+	.steamprofile .sp-viewfriends {
+		background-position: -16px 0;
+	}
+
+	.steamprofile .sp-viewgroups {
+		background-position: -32px 0;
+	}
+	.steamprofile .sp-viewgames {
+		background-position: -48px 0;
+	}
+
+	.steamprofile .sp-joingame {
+		background-position: -64px 0;
+	}
+
+	.steamprofile .sp-viewinventory,
+	.steamprofile .sp-viewwishlist,
+	.steamprofile .sp-viewvideos,
+	.steamprofile .sp-viewscreenshots {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		background: transparent url(styles/default/steamauth/themes/default/icons_new.png) no-repeat 0px -16px;
+	}
+
+	.steamprofile .sp-viewwishlist {
+		background-position: -16px -16px;
+	}
+
+	.steamprofile .sp-viewvideos {
+		background-position: -32px -16px;
+	}
+	.steamprofile .sp-viewscreenshots  {
+		background-position: -48px -16px;
+	}
+	]]></template>
+	<template title="steamProfileStats.css" version_id="72" version_string="1.3.5"><![CDATA[
+	.steamprofile * {
+		font-size: 8px;
+		font-family: tahoma,Arial,Helvetica,sans-serif;
+		margin: 0;
+		padding: 0;
+		margin-right:2px;
+		height: 24px;
+		width: 24px;
+	}
+
+	.steamprofile {
+		position: relative;
+		height: 24px;
+		width: 24px;
+		overflow: hidden;
+		margin: 0px;
+	}
+
+	.steamprofile a:link { text-decoration:none; }
+	.steamprofile a:visited { text-decoration:none; }
+	.steamprofile a:hover{ text-decoration:none; }
+	.steamprofile a:active{ text-decoration:none; }
+
+	.steamprofile .sp-loading{
+	}
+
+	.steamprofile .sp-error{
+	}
+
+	.steamstats_avatar
+	{
+		height: 20px;
+		width: 20px;
+		border-radius: 3px;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+	}
+	.steamstats_avatar .ingame
+	{
+		border: 3px solid #81b900;
+		vertical-align:top;
+	}
+	.steamstats_avatar .online
+	{
+		border: 3px solid #5cb1fe;
+		vertical-align:top;
+	}
+	.steamstats_avatar .offline
+	{
+		border: 3px solid #727272;
 		vertical-align:top;
 	}
 	]]></template>

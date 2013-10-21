@@ -8,7 +8,7 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		$visitor = XenForo_Visitor::getInstance();
 
 		if(!$visitor->hasPermission("SteamAuth", "view")){
-			throw $this->getErrorOrNoPermissionResponseException('steam_do_not_have_permission');
+			return $this->responseErrorthis->responseError('steam_do_not_have_permission');
 		}
 		else
 		{

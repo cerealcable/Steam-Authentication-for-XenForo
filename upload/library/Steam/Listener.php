@@ -63,8 +63,6 @@ class Steam_Listener {
 				$template->preloadTemplate('steam_navigation_visitor_tab_link');
 				$template->preloadTemplate('steam_account_wrapper_sidebar_settings');
 				$template->preloadTemplate('steam_message_user_info');
-				$template->preloadTemplate('steam_js');
-				$template->preloadTemplate('steamstats_js');
 				$template->preloadTemplate('steam_member_view_info');
 				$template->preloadTemplate('steam_message_content');
 				$template->preloadTemplate('steam_helper_criteria_privs');
@@ -96,8 +94,6 @@ class Steam_Listener {
 			case 'member_view_info_block':
 				$contents .= $template->create('steam_member_view_info', array_merge($hookParams, $template->getParams()));
 				break;
-			case 'page_container_head':
-				$template->addRequiredExternal('css', 'steam_stats');
 			case 'message_content':
 				$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
 				break;
