@@ -487,7 +487,7 @@ function SteamProfile() {
 	function createEvents() {
 		// add events for menu
 		$('.sp-handle').unbind('click').click(function(e) {
-			$(this).siblings('.sp-content').toggle(200);
+			$(this).siblings('.sp-content').animate({'width': 'toggle'}, 200, 'linear');
 			e.stopPropagation();
 		});
 	}
