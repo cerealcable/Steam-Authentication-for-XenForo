@@ -34,7 +34,7 @@ function SteamProfile() {
 	var configFile = "steamprofilestats.xml";
 	var proxyFile = "../jsonproxy-stats.php";
 	var basePath;
-	var themePath;
+	// var themePath;
 	
 	// language config
 	var lang = "english";
@@ -257,9 +257,9 @@ function SteamProfile() {
 		errorTpl   = $(configData.find('templates > error').text());
 		
 		// add theme path to image src
-		profileTpl.find('img').attrAppend('src', themePath);
-		loadingTpl.find('img').attrAppend('src', themePath);
-		errorTpl.find('img').attrAppend('src', themePath);
+		// profileTpl.find('img').attrAppend('src', themePath);
+		// loadingTpl.find('img').attrAppend('src', themePath);
+		// errorTpl.find('img').attrAppend('src', themePath);
 		
 		// set localization strings
 		profileTpl.find('.sp-joingame').attr('title', langData[langLocal].join_game);
