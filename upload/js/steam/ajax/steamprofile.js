@@ -160,8 +160,8 @@ function SteamProfile() {
 			global: false,
 			url: basePath + configFile,
 			dataType: 'xml',
-			complete: function(request, status) {
-				configData = $(request.responseXML);
+			success: function(request, status) {
+				configData = $(request);
 				loadConfig();
 			}
 		});
@@ -218,9 +218,9 @@ function SteamProfile() {
 			global: false,
 			url: getXMLProxyURL(profileID),
 			dataType: 'xml',
-			complete: function(request, status) {
+			success: function(request, status) {
 				// build profile and replace placeholder with profile
-				profile.empty().append(createProfile($(request.responseXML)));
+				profile.empty().append(createProfile($(request)));
 			}
 		});
 		
@@ -274,8 +274,8 @@ function SteamProfile() {
 		
 		// load templates
 		profileTpl = $(configData.find('templates > profile').text());
-		loadingTpl = $(configData.find('templates > loading').text());
-		errorTpl   = $(configData.find('templates > error').text());
+		loadingTpl = $(jQuery.parseHTML(configData.find('templates > loading').text()));
+		errorTpl   = $(jQuery.parseHTML(configData.find('templates > error').text()));
 		
 		// add theme path to image src
 		// profileTpl.find('img').attrAppend('src', themePath);
