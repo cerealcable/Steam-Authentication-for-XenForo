@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.3.5-dev" version_id="75" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.3.5-dev" version_id="77" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
     <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
@@ -338,7 +338,7 @@
     <listener event_id="criteria_user" execute_order="10" callback_class="Steam_Helper_Criteria" callback_method="criteriaUser" active="1" description=""/>
     <listener event_id="load_class_controller" execute_order="10" callback_class="Steam_Listener" callback_method="loadClassController" active="1" description=""/>
     <listener event_id="template_create" execute_order="10" callback_class="Steam_Listener" callback_method="templateCreate" active="1" description=""/>
-    <listener event_id="navigation_tabs" execute_order="10" callback_class="Steam_Listener" callback_method="navtabs" active="1" description="Navigation Tabs"/>
+    <listener event_id="navigation_tabs" execute_order="10" callback_class="Steam_Listener" callback_method="addNavbarTab" active="1" description="Navigation Tabs"/>
 	<listener event_id="template_hook" execute_order="10" callback_class="Steam_Listener" callback_method="templateHook" active="1" description=""/>
 	<listener event_id="init_dependencies" execute_order="10" callback_class="Steam_Listener" callback_method="init" active="1" description="Steam Helper"/>
   </code_event_listeners>
@@ -414,7 +414,8 @@
       <permission_group permission_group_id="SteamAuth"/>
     </permission_groups>
     <permissions>
-	  <permission permission_group_id="SteamAuth" permission_id="view" permission_type="flag" default_value="allow" interface_group_id="SteamAuth" display_order="1"/>
+	  <permission permission_group_id="SteamAuth" permission_id="viewProfile" permission_type="flag" default_value="allow" interface_group_id="SteamAuth" display_order="1"/>
+	  <permission permission_group_id="SteamAuth" permission_id="viewStats" permission_type="flag" default_value="allow" interface_group_id="SteamAuth" display_order="2"/>
 	</permissions>
     <interface_groups>
       <interface_group interface_group_id="SteamAuth" display_order="1501"/>
@@ -483,7 +484,8 @@
 	<phrase title="steam_stats_topUsersRecent_user" version_id="25" version_string="1.1.1"><![CDATA[User]]></phrase>
 	<phrase title="steam_stats_topUsersRecent_hours" version_id="25" version_string="1.1.1"><![CDATA[Hours]]></phrase>
     <phrase title="your_account_is_not_currently_associated_with_steam_account" version_id="1" version_string="1.2.0"><![CDATA[Your account is not currently associated with a Steam account.]]></phrase>
-    <phrase title="permission_SteamAuth_view" version_id="25" version_string="1.1.1"><![CDATA[Can view steam statistics]]></phrase>
+    <phrase title="permission_SteamAuth_viewProfile" version_id="76" version_string="1.3.5"><![CDATA[Can view steam profiles]]></phrase>
+	<phrase title="permission_SteamAuth_viewStats" version_id="76" version_string="1.3.5"><![CDATA[Can view steam statistics]]></phrase>
     <phrase title="permission_group_SteamAuth" version_id="25" version_string="1.1.1"><![CDATA[Steam Integration]]></phrase>
     <phrase title="permission_interface_SteamAuth" version_id="25" version_string="1.1.1"><![CDATA[Steam Integration]]></phrase>
 	<phrase title="steam_do_not_have_permission" version_id="25" version_string="1.1.1"><![CDATA[You do not have permission to view steam statistics.]]></phrase>
@@ -677,19 +679,19 @@
     <template title="steam_login_bar_item" version_id="70" version_string="1.3.4"><![CDATA[<li><a href="{xen:link register/steam, '', 'reg=1'}" style="text-decoration:none;display: inline-block;">
    <img src="http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png" alt="Sign up with Steam" style="margin:0 14px;"/>
 </a></li>]]></template>
-    <template title="steam_member_view_info" version_id="70" version_string="1.3.4"><![CDATA[
+    <template title="steam_member_view_info" version_id="77" version_string="1.3.5"><![CDATA[
 <xen:if is="{$xenOptions.steamDisplayProfile} AND {$user.steam_auth_id} > 0">
 <div class="steamprofile" title="{$user.steam_auth_id}"></div>
 <xen:container var="$steamProf">1</xen:container>
 </xen:if>
 ]]></template>
-    <template title="steam_message_content" version_id="64" version_string="1.3.3"><![CDATA[
+    <template title="steam_message_content" version_id="77" version_string="1.3.5"><![CDATA[
 <xen:if is="{$xenOptions.steamDisplayMessageContent} AND {$message.steam_auth_id} > 0">
 <div class="steamprofile" style="width: 225px; float: right;" title="{$message.steam_auth_id}">
 <xen:container var="$steamProf">1</xen:container>
 </div></xen:if>
 ]]></template>
-    <template title="steam_message_user_info" version_id="70" version_string="1.3.4"><![CDATA[
+    <template title="steam_message_user_info" version_id="77" version_string="1.3.5"><![CDATA[
 <xen:if is="{$xenOptions.steamDisplayMessageInfo} AND {$user.steam_auth_id} > 0">
 <div class="steamprofile" title="{$user.steam_auth_id}"></div>
 <xen:container var="$steamProf">1</xen:container>

@@ -19,17 +19,15 @@ header('content-type: application/json; charset: utf-8');
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
 $startTime = microtime(true);
 $fileDir = '../../';
 require($fileDir . '/library/XenForo/Autoloader.php');
 XenForo_Autoloader::getInstance()->setupAutoloader($fileDir . '/library');
 
-restore_error_handler();
-restore_exception_handler();
-
 XenForo_Application::initialize($fileDir . '/library', $fileDir);
 XenForo_Application::set('page_start_time', $startTime);
+XenForo_Application::disablePhpErrorHandler();
+XenForo_Application::setDebugMode(false);
 
 XenForo_Application::$externalDataPath = $fileDir . '/data';
 XenForo_Application::$externalDataUrl = $fileDir . '/data';
@@ -37,6 +35,9 @@ XenForo_Application::$javaScriptUrl = $fileDir . '/js';
 
 $options = XenForo_Application::get('options');
 $API_KEY = $options->steamAPIKey;
+
+restore_error_handler();
+restore_exception_handler();
 
 function get_web_page( $url ) {
 	$res = array();

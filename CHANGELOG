@@ -6,6 +6,8 @@
 * Deleted unused style.css files
 * Removed themes folder from JS directory, moved to styles\default\steamauth
 * Removed unnecessary templates pre-loads from and fixed a bug in Listener.php
+* Cleaned up ControllerPublic and Routes
+* Added permissions for viewing SteamProfile banner
 
 == Version 1.3.4 ==
 * Fixed check for page compression on jsonproxy files

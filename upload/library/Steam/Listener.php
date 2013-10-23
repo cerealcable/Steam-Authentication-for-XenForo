@@ -28,9 +28,6 @@ class Steam_Listener {
 			case 'XenForo_ControllerPublic_Account':
 				$extend[] = 'Steam_ControllerPublic_Account';
 				break;
-			case 'XenForo_ControllerAdmin_Abstract':
-				$extend[] = 'Steam_ControllerAdmin_Steam';
-				break;
 		}
 	}
 	
@@ -41,16 +38,18 @@ class Steam_Listener {
         );
     }
 	
-	public static function navtabs(array &$extraTabs, $selectedTabId)
+	public static function addNavbarTab(array &$extraTabs, $selectedTabId)
 	{
 		$options = XenForo_Application::get('options');
 		$visitor = XenForo_Visitor::getInstance();
-		if($options->steamNavTab && $visitor->hasPermission("SteamAuth", "view")){
+		$visitorPerms = $visitor->getPermissions();
+		
+		if($options->steamNavTab && $visitor->hasPermission('SteamAuth', 'viewStats')){
 		$extraTabs['steam'] = array(
 			'title' => 'Steam',
 			'href' => XenForo_Link::buildPublicLink('full:steam'),
-			'selected' => ($selectedTabId == 'steam'),
 			'linksTemplate' => 'steam_navtabs',
+			'position'  =>  'middle'
 		);
 		}
 	}
@@ -89,13 +88,25 @@ class Steam_Listener {
 				$contents .= $template->create('steam_account_wrapper_sidebar_settings', $hookParams);
 				break;
 			case 'message_user_info_text':
-				$contents .= $template->create('steam_message_user_info', array_merge($hookParams, $template->getParams()));
+				$visitor = XenForo_Visitor::getInstance();
+				$visitorPerms = $visitor->getPermissions();
+				if($visitorPerms['SteamAuth']['viewProfile']){
+					$contents .= $template->create('steam_message_user_info', array_merge($hookParams, $template->getParams()));
+				}
 				break;
 			case 'member_view_info_block':
-				$contents .= $template->create('steam_member_view_info', array_merge($hookParams, $template->getParams()));
+				$visitor = XenForo_Visitor::getInstance();
+				$visitorPerms = $visitor->getPermissions();
+				if($visitorPerms['SteamAuth']['viewProfile']){
+					$contents .= $template->create('steam_member_view_info', array_merge($hookParams, $template->getParams()));
+				}
 				break;
 			case 'message_content':
-				$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
+				$visitor = XenForo_Visitor::getInstance();
+				$visitorPerms = $visitor->getPermissions();
+				if($visitorPerms['SteamAuth']['viewProfile']){
+					$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
+				}
 				break;
 			case 'user_criteria_extra':
 				$s = new Steam_Helper_Steam();
