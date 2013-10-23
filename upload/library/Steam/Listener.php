@@ -20,7 +20,7 @@
  */
 
 class Steam_Listener {
-	public static function loadClassController($class, &$extend) {
+	public static function loadClassController($class, array &$extend) {
 		switch($class) {
 			case 'XenForo_ControllerPublic_Register':
 				$extend[] = 'Steam_ControllerPublic_Register';
@@ -44,13 +44,17 @@ class Steam_Listener {
 		$visitor = XenForo_Visitor::getInstance();
 		$visitorPerms = $visitor->getPermissions();
 		
-		if($options->steamNavTab && $visitor->hasPermission('SteamAuth', 'viewStats')){
-		$extraTabs['steam'] = array(
-			'title' => 'Steam',
-			'href' => XenForo_Link::buildPublicLink('full:steam'),
-			'linksTemplate' => 'steam_navtabs',
-			'position'  =>  'middle'
-		);
+		if($options->steamNavTab)
+		{
+			if($visitor->hasPermission('SteamAuth', 'viewStats'))
+			{
+				$extraTabs['steam'] = array(
+					'title' => 'Steam',
+					'href' => XenForo_Link::buildPublicLink('full:steam'),
+					'linksTemplate' => 'steam_navtabs',
+					'position'  =>  'middle'
+				);
+			}
 		}
 	}
 
