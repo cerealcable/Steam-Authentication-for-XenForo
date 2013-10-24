@@ -16,24 +16,12 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jQuery.fn.attrAppend = function(name, value) {
-	var elem;
-	return this.each(function(){
-		elem = $(this);
-		
-		// append attribute only if extisting and not empty
-		if (elem.attr(name) !== undefined && elem.attr(name) != "") {
-			elem.attr(name, value + elem.attr(name));
-		}
-	});
-};
-
 function SteamProfile() {
 	// path/file config
-	var scriptFile = "steamprofile.js";
-	var configFile = "steamprofile.xml";
-	var proxyFile = "../jsonproxy.php";
-	var basePath;
+	var basePath = 'js/steam/';
+	var scriptFile = 'ajax/steamprofile.js';
+	var configFile = 'ajax/steamprofile.xml';
+	var proxyFile = 'jsonproxy.php';
 	// var themePath;
 	
 	// language config
@@ -138,6 +126,8 @@ function SteamProfile() {
 	var errorTpl;
 
 	this.init = function() {		
+		
+		/*
 		if (typeof spBasePath == "string") {
 			basePath = spBasePath;
 		} else {
@@ -153,6 +143,7 @@ function SteamProfile() {
 			
 			basePath = scriptElement.attr('src').replace(scriptFile, '');
 		}
+		*/
 		
 		// load xml config
 		jQuery.ajax({
