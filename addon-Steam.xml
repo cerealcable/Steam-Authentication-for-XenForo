@@ -698,7 +698,7 @@
 </xen:if>
 ]]></template>
     <template title="steam_navigation_visitor_tab_link" version_id="1" version_string="1.0.0"><![CDATA[<li><a href="{xen:link account/steam}">{xen:phrase steam_integration}</a></li>]]></template>
-	<template title="steam_footer" version_id="79" version_string="1.3.5"><![CDATA[
+	<template title="steam_footer" version_id="80" version_string="1.3.5"><![CDATA[
 <xen:if is="{$contentTemplate} == 'forum_list'">
 <li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
 </xen:if>
