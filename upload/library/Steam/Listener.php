@@ -61,6 +61,7 @@ class Steam_Listener {
 	public static function templateCreate($templateName, array &$params, XenForo_Template_Abstract $template) {
 		switch($templateName) {
 			case 'PAGE_CONTAINER':
+				/*
 				$params['eAuth'] = 1;
 				$template->preloadTemplate('steam_login_bar_item');
 				$template->preloadTemplate('steam_navigation_visitor_tab_link');
@@ -76,6 +77,7 @@ class Steam_Listener {
 				$template->preloadTemplate('steam_public_owned');
 				$template->preloadTemplate('steam_public_played');
 				$template->preloadTemplate('steam_public_recent');
+				*/
 				break;
 		}
 	}
