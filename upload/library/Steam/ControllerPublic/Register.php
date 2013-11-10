@@ -22,6 +22,7 @@
 class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Register {
 
 	const STEAM_LOGIN = 'https://steamcommunity.com/openid/login';
+    private $ch = null;
 
 	public function actionSteam() {
 		$assocUserId = $this->_input->filterSingle('assoc', XenForo_Input::UINT);
@@ -84,8 +85,57 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		//$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
 		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
-		$json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-		$json_decoded = json_decode($json_object);
+		
+		if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
+		{
+            $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+            curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
+            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+            //curl_setopt($this->ch, CURLOPT_URL, "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+            ob_start();
+            $json_object = curl_exec($this->ch);
+            echo $json_object;
+            $json_object = ob_get_clean();
+            $json_object = trim($json_object);
+            curl_close( $this->ch );
+            
+            if (strpos($json_object,'response:') !== false) {
+                $i = 0;
+                while (($i < 3) || ((strpos($json_object,'response:') !== false))) {
+                    $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+                    //curl_setopt($this->ch, CURLOPT_URL, "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+                    curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
+                    curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+                    ob_start();
+                    $json_object = curl_exec($this->ch);
+                    echo $json_object;
+                    $json_object = ob_get_clean();
+                    $json_object = trim($json_object);
+                    $i++;
+                    sleep(3);
+                    curl_close( $this->ch );
+                }
+            
+            }
+		}
+		
+        else
+		{
+            $json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+            
+			if ($json_object === false) {
+				$i = 0;
+				while ($json_object === false && $i < 2) {
+					$json_object = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}" );
+					$i++;
+					sleep(1);
+				}
+			}
+		}
+		
+        $json_decoded = json_decode($json_object);
 		
 		if(!empty($json_decoded)) {
 			$username = $json_decoded->response->players[0]->personaname;
@@ -386,7 +436,56 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		//$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
 		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
-		$json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+		
+		if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
+		{
+            $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+            curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
+            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+            //curl_setopt($this->ch, CURLOPT_URL, "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+            ob_start();
+            $json_object = curl_exec($this->ch);
+            echo $json_object;
+            $json_object = ob_get_clean();
+            $json_object = trim($json_object);
+            curl_close( $this->ch );
+            
+            if (strpos($json_object,'response:') !== false) {
+                $i = 0;
+                while (($i < 3) || ((strpos($json_object,'response:') !== false))) {
+                    $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+                    //curl_setopt($this->ch, CURLOPT_URL, "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+                    curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
+                    curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+                    ob_start();
+                    $json_object = curl_exec($this->ch);
+                    echo $json_object;
+                    $json_object = ob_get_clean();
+                    $json_object = trim($json_object);
+                    $i++;
+                    sleep(3);
+                    curl_close( $this->ch );
+                }
+            
+            }
+		}
+		
+        else
+		{
+            $json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
+            
+			if ($json_object === false) {
+				$i = 0;
+				while ($json_object === false && $i < 2) {
+					$json_object = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}" );
+					$i++;
+					sleep(1);
+				}
+			}
+		}
+        
 		$json_decoded = json_decode($json_object);
 		
 		if(!empty($json_decoded)) {
@@ -589,8 +688,30 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 				'content' => $data,
 			),
 		));
-
-		$result = file_get_contents(self::STEAM_LOGIN, false, $context);
+        
+        $headercurl = array (
+            "Accept-language: en",
+            "Content-type: application/x-www-form-urlencoded",
+            "Content-Length: " . strlen($data),
+        );
+        
+        if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
+		{
+            $this->ch = curl_init(self::STEAM_LOGIN);
+            curl_setopt($this->ch, CURLOPT_POST, true);
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
+            curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($this->ch, CURLOPT_HEADER, false);
+            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+            curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headercurl);
+            $result = curl_exec($this->ch);
+            curl_close( $this->ch );
+		}
+        else
+		{
+            $result=file_get_contents(self::STEAM_LOGIN, false, $context);
+		}
 
 		// Validate wheather it's true and if we have a good ID
 		preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $_GET['openid_claimed_id'], $matches);

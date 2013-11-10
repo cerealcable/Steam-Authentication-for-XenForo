@@ -134,24 +134,30 @@ if (!empty($_GET['steamids']))
                 
                 //DEBUG using cURL only
                 //$game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
-                
                 $games_decoded = json_decode($game_info);
-                foreach ($games_decoded->response->games as $rowsgames)
+                if ($games_decoded !== null)
                 {
-                    if ($rowsgames->appid == $appid)
+                    foreach ($games_decoded->response->games as $rowsgames)
                     {
-                        if (isset($rowsgames->img_logo_url))
+                        if ($rowsgames->appid == $appid)
                         {
-                            $logo = $rowsgames->img_logo_url;
+                            if (isset($rowsgames->img_logo_url))
+                            {
+                                $logo = $rowsgames->img_logo_url;
+                            }
                         }
                     }
-                }
-                
-                if (!empty($logo))
-                {
-                    $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/' . $appid . '/' . $logo . '.jpg';
                     
-                    $rows->gameLogoSmall = $logo;
+                    if (!empty($logo))
+                    {
+                        $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/' . $appid . '/' . $logo . '.jpg';
+                        
+                        $rows->gameLogoSmall = $logo;
+                    }
+                }
+                else
+                {
+                    $rows->gameLogoSmall = '';
                 }
             }
             
