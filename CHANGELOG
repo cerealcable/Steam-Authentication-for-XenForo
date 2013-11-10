@@ -9,6 +9,7 @@
 * Cleaned up ControllerPublic and Routes
 * Added permissions for viewing SteamProfile banner
 * Added cURL to Register.php to use first over file_get_contents()
+* Compressed Javascript for SteamProfile
 
 == Version 1.3.4 ==
 * Fixed check for page compression on jsonproxy files
