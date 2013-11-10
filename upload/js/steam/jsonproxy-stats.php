@@ -100,7 +100,6 @@ if (!empty($_GET['steamids']))
             }
         }
     }
-}
 
 if (function_exists('gzcompress') && (!ini_get('zlib.output_compression')))
 {
@@ -113,4 +112,5 @@ else
 
 echo $content_json;
 ob_end_flush();
+}
 ?>

@@ -136,7 +136,6 @@ if (!empty($_GET['steamids']))
                 //$game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
                 
                 $games_decoded = json_decode($game_info);
-                
                 foreach ($games_decoded->response->games as $rowsgames)
                 {
                     if ($rowsgames->appid == $appid)
@@ -162,7 +161,6 @@ if (!empty($_GET['steamids']))
 
     //$content_json = json_encode($content_decoded);
     //unset($content_decoded);
-}
 
 if (function_exists('gzcompress') && (!ini_get('zlib.output_compression')))
 {
@@ -176,5 +174,5 @@ else
 echo json_encode($content_decoded);
 unset($content_decoded);
 ob_end_flush();
-
+}
 ?>

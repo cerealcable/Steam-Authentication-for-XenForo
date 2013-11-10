@@ -19,9 +19,9 @@
 function SteamProfile() {
 	// path/file config
 	var basePath = 'js/steam/';
-	var scriptFile = 'ajax/steamprofile.js';
-	var configFile = 'ajax/steamprofile.xml';
-	var proxyFile = 'jsonproxy.php';
+	var scriptFile = 'ajax/steamprofilestats.js';
+	var configFile = 'ajax/steamprofilestats.xml';
+	var proxyFile = 'jsonproxy-stats.php';
 	// var themePath;
 	
 	// language config
