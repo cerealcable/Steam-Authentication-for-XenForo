@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.3.6 ==
+* Fixed bug with cURL and OpenID verification
+
 == Version 1.3.5 ==
 * JavaScript animation tweak for SteamProfile slider (Thanks, silence!)
 * Moved SteamProfile CSS to XenForo Template Manager
