@@ -657,59 +657,84 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			return false;
 		}
 
-		// Start off with some basic params
-		$params = array(
-			'openid.assoc_handle'    => $_GET['openid_assoc_handle'],
-			'openid.signed'          => $_GET['openid_signed'],
-			'openid.sig'             => $_GET['openid_sig'],
-			'openid.ns'              => 'http://specs.openid.net/auth/2.0',
-		);
-
-		// Get all the params that were sent back and resend them for validation
-		$signed = explode(',', $_GET['openid_signed']);
-
-		foreach($signed as $item) {
-			$val = $_GET['openid_' . str_replace('.', '_', $item)];
-			$params['openid.' . $item] = get_magic_quotes_gpc() ? stripslashes($val) : $val;
-		}
-
-		// Finally, add the all important mode.
-		$params['openid.mode'] = 'check_authentication';
-
-		// Stored to send a Content-Length header
-		$data =  http_build_query($params);
-		$context = stream_context_create(array(
-			'http' => array(
-				'method'  => 'POST',
-				'header'  =>
-					"Accept-language: en\r\n".
-					"Content-type: application/x-www-form-urlencoded\r\n" .
-					"Content-Length: " . strlen($data) . "\r\n",
-				'content' => $data,
-			),
-		));
-        
-        $headercurl = array (
-            "Accept-language: en",
-            "Content-type: application/x-www-form-urlencoded",
-            "Content-Length: " . strlen($data),
-        );
-        
         if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
 		{
+            
+            $data = ($_SERVER['REQUEST_METHOD'] === 'POST') ? $_POST : $_GET;
+            
+            $params = array(
+                    'openid.assoc_handle' => $data['openid_assoc_handle'],
+                    'openid.signed'       => $data['openid_signed'],
+                    'openid.sig'          => $data['openid_sig'],
+            );
+            
+            $params['openid.ns'] = 'http://specs.openid.net/auth/2.0';
+            
+            foreach (explode(',', $data['openid_signed']) as $item)
+            {
+                $value = $data['openid_' . str_replace('.','_',$item)];
+                $params['openid.' . $item] = function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() ? stripslashes($value) : $value;
+            }
+            $params['openid.mode'] = 'check_authentication';
+            
+            $params = http_build_query($params, '', '&');
+            
+            /*
+            $headercurl = array (
+                "Accept-language: en",
+                "Content-type: application/x-www-form-urlencoded",
+                "Content-Length: " . strlen($data),
+            );
+            */
+            
             $this->ch = curl_init(self::STEAM_LOGIN);
+            $curl = curl_init(self::STEAM_LOGIN . ('GET' && $params ? '?' . $params : ''));
             curl_setopt($this->ch, CURLOPT_POST, true);
-            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $params);
             curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($this->ch, CURLOPT_HEADER, false);
             curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
-            curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headercurl);
+            //curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headercurl);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
+            curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
             $result = curl_exec($this->ch);
             curl_close( $this->ch );
 		}
         else
 		{
+            
+            // Start off with some basic params
+            $params = array(
+                'openid.assoc_handle'    => $_GET['openid_assoc_handle'],
+                'openid.signed'          => $_GET['openid_signed'],
+                'openid.sig'             => $_GET['openid_sig'],
+                'openid.ns'              => 'http://specs.openid.net/auth/2.0',
+            );
+
+            // Get all the params that were sent back and resend them for validation
+            $signed = explode(',', $_GET['openid_signed']);
+
+            foreach($signed as $item) {
+                $val = $_GET['openid_' . str_replace('.', '_', $item)];
+                $params['openid.' . $item] = get_magic_quotes_gpc() ? stripslashes($val) : $val;
+            }
+
+            // Finally, add the all important mode.
+            $params['openid.mode'] = 'check_authentication';
+
+            // Stored to send a Content-Length header
+            $data =  http_build_query($params);
+            $context = stream_context_create(array(
+                'http' => array(
+                    'method'  => 'POST',
+                    'header'  =>
+                        "Accept-language: en\r\n".
+                        "Content-type: application/x-www-form-urlencoded\r\n" .
+                        "Content-Length: " . strlen($data) . "\r\n",
+                    'content' => $data,
+                ),
+            ));
+            
             $result=file_get_contents(self::STEAM_LOGIN, false, $context);
 		}
 
