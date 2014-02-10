@@ -2,8 +2,12 @@
 /**
  *      This file is part of Steam Authentication for XenForo
  *
- *      Written by Morgan Humes <morgan@lanaddict.com>
+ *      Originally Written by Morgan Humes <morgan@lanaddict.com>
  *      Copyright 2012 Morgan Humes
+ *
+ *      Code Forked and Updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+ *      Copyright 2014 Michael Linback Jr.
+ *      Website: http://ragecagegaming.com
  *
  *      Steam Authentication for XenForo is free software: you can redistribute
  *      it and/or modify it under the terms of the GNU General Public License

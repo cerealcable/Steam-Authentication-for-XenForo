@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.4.0 ==
+* Migrated Steam Integration to External Accounts for Xenforo 1.3
+
 == Version 1.3.6 ==
 * Fixed bug with cURL and OpenID verification
 
