@@ -245,7 +245,7 @@ class Steam_Helper_Steam {
 		$steamapikey = $options->steamAPIKey;
 		$rVal = array();
         $db = XenForo_Application::get('db');
-        $results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.steam_auth_id, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_profile p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+        $results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
         
 		foreach($results as $row) {
 		
@@ -255,7 +255,7 @@ class Steam_Helper_Steam {
 				'username' => $row['username'],
 				'gravatar' => $row['gravatar'],
 				'avatar_date' => $row['avatar_date'],
-				'steamprofileid' => $row['steam_auth_id']
+				'steamprofileid' => $row['provider_key']
             );
         }
 
@@ -272,19 +272,19 @@ class Steam_Helper_Steam {
 		if (empty($includelist) && empty($excludelist))
 		{
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.steam_auth_id, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_profile p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
         }
 		elseif (!empty($includelist))
 		{
 			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.steam_auth_id, g.game_id, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_profile p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND g.game_id IN ($includelist) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' AND g.game_id IN ($includelist) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
 		}
 		else
 		{
 			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.steam_auth_id, g.game_id, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_profile p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND g.game_id NOT IN ($excludelist) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' AND g.game_id NOT IN ($excludelist) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
 		}
 		
 		
@@ -296,7 +296,7 @@ class Steam_Helper_Steam {
 				'username' => $row['username'],
 				'gravatar' => $row['gravatar'],
 				'avatar_date' => $row['avatar_date'],
-				'steamprofileid' => $row['steam_auth_id']
+				'steamprofileid' => $row['provider_key']
             );
         }
 
@@ -477,11 +477,11 @@ class Steam_Helper_Steam {
 	public function getSteamUsers() {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT u.user_id, u.username, p.steam_auth_id FROM xf_user u, xf_user_profile p WHERE u.user_id = p.user_id AND p.steam_auth_id > 0 ORDER BY u.username;");
+		$results = $db->fetchAll("SELECT u.provider_key, p.user_id, p.username FROM xf_user_external_auth u, xf_user p WHERE u.user_id = p.user_id AND u.provider = 'steam' ORDER BY p.username;");
 		foreach($results as $row) {
 			$rVal[] = array(
-				'id' => Steam_Helper_Steam::convertIdToString($row['steam_auth_id']),
-				'id64' => $row['steam_auth_id'],
+				'id' => Steam_Helper_Steam::convertIdToString($row['provider_key']),
+				'id64' => $row['provider_key'],
 				'username' => $row['username'],
 				'user_id' => $row['user_id']
 			);
@@ -507,6 +507,13 @@ class Steam_Helper_Steam {
 
         return "STEAM_0:$steamId1:" . (($steamId2a + $steamId2b) / 2);
     }
-}
+    /*
+    public static function stDebug($data) {
+    foreach ($data as $columnName => $columnData) {
+    $stData .= 'Column name: ' . $columnName . ' Column data: ' . $columnData . '<br />';
+    }
 
-?>
+     return $stData;
+    }
+    */
+}

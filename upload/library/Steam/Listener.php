@@ -35,6 +35,7 @@ class Steam_Listener {
     {
         XenForo_Template_Helper_Core::$helperCallbacks += array(
             'steamid' => array('Steam_Helper_Steam', 'convertIdToString')
+            //'steamdebug' => array('Steam_Helper_Steam', 'stDebug')
         );
     }
 	
@@ -63,8 +64,6 @@ class Steam_Listener {
 			case 'PAGE_CONTAINER':
 				$params['eAuth'] = 1;
 				$template->preloadTemplate('steam_login_bar_item');
-				$template->preloadTemplate('steam_navigation_visitor_tab_link');
-				$template->preloadTemplate('steam_account_wrapper_sidebar_settings');
 				$template->preloadTemplate('steam_message_user_info');
 				$template->preloadTemplate('steam_member_view_info');
 				$template->preloadTemplate('steam_message_content');
@@ -81,12 +80,6 @@ class Steam_Listener {
 		switch($hookName) {
 			case 'login_bar_eauth_items':
 				$contents .= $template->create('steam_login_bar_item', $hookParams);
-				break;
-			case 'navigation_visitor_tab_links1':
-				$contents .= $template->create('steam_navigation_visitor_tab_link', $hookParams);
-				break;
-			case 'account_wrapper_sidebar_settings':
-				$contents .= $template->create('steam_account_wrapper_sidebar_settings', $hookParams);
 				break;
 			case 'message_user_info_text':
 				$visitor = XenForo_Visitor::getInstance();
@@ -119,5 +112,3 @@ class Steam_Listener {
 		}
 	}
 }
-
-?>

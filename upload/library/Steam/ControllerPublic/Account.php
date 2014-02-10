@@ -36,8 +36,19 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
 				'disassociate_confirm' => XenForo_Input::STRING
 			));
 			if($disassociate['disassociate'] && $disassociate['disassociate_confirm']) {
-				$this->getModelFromCache('XenForo_Model_UserExternal')->deleteExternalAuthAssociation('steam', $visitor['steam_auth_id'], $visitor['user_id']);
-				$sHelper->deleteSteamData($visitor['user_id']);
+                $externalAuthModel = $this->getModelFromCache('XenForo_Model_UserExternal');
+                $external = $externalAuthModel->getExternalAuthAssociationsForUser($visitor['user_id']);
+
+                $stUser = false;
+                if (!empty($external['steam']))
+                {
+                    $extra = @unserialize($external['steam']);
+                    if (!empty($extra['provider_key']))
+                    {
+                        $stUser = $sHelper->getUserInfo($stUser);
+                    }
+                }
+                $sHelper->deleteSteamData($visitor['user_id']);
 
 				if(!$auth->hasPassword()) {
 					$this->getModelFromCache('XenForo_Model_UserConfirmation')->resetPassword($visitor['user_id']);
@@ -46,14 +57,21 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
 
 			return $this->responseRedirect(
 				XenForo_ControllerResponse_Redirect::SUCCESS,
-				XenForo_Link::buildPublicLink('account/steam')
+				XenForo_Link::buildPublicLink('account/external-accounts')
 			);
 		} else {
-			if($visitor['steam_auth_id']) {
-				$stUser = $sHelper->getUserInfo($visitor['steam_auth_id']);
-			} else {
-				$stUser = false;
-			}
+                $externalAuthModel = $this->getModelFromCache('XenForo_Model_UserExternal');
+                $external = $externalAuthModel->getExternalAuthAssociationsForUser($visitor['user_id']);
+
+                $stUser = false;
+                if (!empty($external['steam']))
+                {
+                    $extra = @unserialize($external['steam']);
+                    if (!empty($extra['provider_key']))
+                    {
+                        $stUser = $sHelper->getUserInfo($stUser);
+                    }
+                }
 
 			$viewParams = array(
 				'stUser' => $stUser,

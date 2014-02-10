@@ -61,12 +61,12 @@ class Steam_Manufacture {
 	}
 
 	protected function _installVersion1() {
-		$db = $this->_getDb();
+		//$db = $this->_getDb();
 		
-		self::addColumnIfNotExists('xf_user_profile', 'steam_auth_id', 'BIGINT( 20 ) UNSIGNED NOT NULL DEFAULT 0', 'facebook_auth_id');
+		//self::addColumnIfNotExists('xf_user_profile', 'steam_auth_id', 'BIGINT( 20 ) UNSIGNED NOT NULL DEFAULT 0', 'facebook_auth_id');
 		
 		// Sync external auth in case of previous addons
-		$db->query("UPDATE xf_user_profile p1 JOIN xf_user_external_auth p2 ON(p1.user_id = p2.user_id) SET p1.steam_auth_id = p2.provider_key WHERE provider = 'steam'");
+		//$db->query("UPDATE xf_user_profile p1 JOIN xf_user_external_auth p2 ON(p1.user_id = p2.user_id) SET p1.steam_auth_id = p2.provider_key WHERE provider = 'steam'");
 	}
 
 	protected function _installVersion4() {
@@ -101,6 +101,12 @@ class Steam_Manufacture {
 		// Run Initial Cron Job for Steam!
 		// Steam_Cron::update();
 	}
+    
+    protected function _installVersion88() {
+		$db = $this->_getDb();
+
+		self::dropColumnIfExists('xf_user_profile', 'steam_auth_id');
+	}
 
 	public static function destroy() {
 		$lastUninstallStep = 1;
@@ -120,7 +126,7 @@ class Steam_Manufacture {
 	protected function _uninstallStep1() {
 		$db = $this->_getDb();
 
-		$db->query("ALTER TABLE xf_user_profile DROP steam_auth_id");
+		self::dropColumnIfExists('xf_user_profile', 'steam_auth_id');
 	}
 
 	protected function _uninstallStep4() {
@@ -132,6 +138,24 @@ class Steam_Manufacture {
 		// Drop xf_user_steam_games
 		$db->query("DROP TABLE IF EXISTS xf_user_steam_games");
 	}
+    
+    public static function dropColumnIfExists($tableName, $fieldName)
+    {
+    	$db = XenForo_Application::get('db');
+    
+    	$exists = $db->fetchRow("
+			SHOW COLUMNS
+			FROM {$tableName}
+			WHERE Field = ?
+		", $fieldName);
+    
+    	if (!$exists)
+    	{
+    		$db->query("
+    				ALTER TABLE {$tableName} DROP {$fieldName}
+    		");
+    	}
+    }
 	
     public static function addColumnIfNotExists($tableName, $fieldName, $fieldDef, $after)
     {

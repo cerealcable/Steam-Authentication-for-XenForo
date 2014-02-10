@@ -85,7 +85,9 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		//$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
 		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
-		
+		if(empty($steamapikey)) {
+            return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
+        }
 		if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
 		{
             $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
@@ -499,7 +501,13 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		$doAssoc = ($this->_input->filterSingle('associate', XenForo_Input::STRING) || $this->_input->filterSingle('force_assoc', XenForo_Input::UINT));
 
 		if($doAssoc) {
-			$associate = $this->_input->filter(array(
+        
+            $userId = $this->_associateExternalAccount();
+            
+            /*
+            LEGACY XENFORO < 1.3.0
+            
+            $associate = $this->_input->filter(array(
 				'associate_login'		=> XenForo_Input::STRING,
 				'associate_password'	=> XenForo_Input::STRING
 			));
@@ -515,11 +523,12 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 				$loginModel->logLoginAttempt($associate['associate_login']);
 				return $this->responseError($error);
 			}
-
+            */
+            
 			$userExternalModel->updateExternalAuthAssociation('steam', $id, $userId);
 
-			$session->changeUserId($userId);
-			XenForo_Visitor::setup($userId);
+			//$session->changeUserId($userId);
+			//XenForo_Visitor::setup($userId);
 			$this->updateUserStats($userId, $id);
 
 			return $this->responseRedirect(
@@ -528,7 +537,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			);
 		}
 
-		$this->_assertRegistrationActive();
+		//$this->_assertRegistrationActive();
 
 		$data = $this->_input->filter(array(
 			'username'	=> XenForo_Input::STRING,
