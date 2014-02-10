@@ -81,7 +81,7 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
 			return $this->_getWrapper(
 				'account',
 				'steam',
-				$this->responseView('XenForo_ViewPublic_Account_Steam', 'account_steam', $viewParams)
+				$this->responseView('XenForo_ViewPublic_Account_Steam', 'account_external_accounts_steam', $viewParams)
 			);
 		}
 	}

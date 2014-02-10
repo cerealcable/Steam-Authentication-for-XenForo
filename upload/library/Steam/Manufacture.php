@@ -102,7 +102,7 @@ class Steam_Manufacture {
 		// Steam_Cron::update();
 	}
     
-    protected function _installVersion88() {
+    protected function _installVersion93() {
 		$db = $this->_getDb();
 
 		self::dropColumnIfExists('xf_user_profile', 'steam_auth_id');
@@ -149,7 +149,7 @@ class Steam_Manufacture {
 			WHERE Field = ?
 		", $fieldName);
     
-    	if (!$exists)
+    	if ($exists)
     	{
     		$db->query("
     				ALTER TABLE {$tableName} DROP {$fieldName}
