@@ -63,7 +63,7 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
         if ($input['disassociate'] && $input['account'] == 'steam')
 		{
 			$sHelper = new Steam_Helper_Steam();
-            $sHelper->deleteSteamData($response->subView->visitor['user_id']);
+            $sHelper->deleteSteamData($visitor['user_id']);
 		}
 
 		return $response;
