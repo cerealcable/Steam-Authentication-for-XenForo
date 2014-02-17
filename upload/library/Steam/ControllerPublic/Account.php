@@ -24,70 +24,57 @@
  */
 
 class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account {
+    
+	public function actionExternalAccounts()
+	{
+        $response = parent::actionExternalAccounts();
+        
+		$stUser = false;
 
-	public function actionSteam() {
-		$sHelper = new Steam_Helper_Steam();
-		$visitor = XenForo_Visitor::getInstance();
-
-		$auth = $this->_getUserModel()->getUserAuthenticationObjectByUserId($visitor['user_id']);
-		if(!$auth) {
-			return $this->responseNoPermission();
-		}
-
-		if($this->isConfirmedPost()) {
-			$disassociate = $this->_input->filter(array(
-				'disassociate' => XenForo_Input::STRING,
-				'disassociate_confirm' => XenForo_Input::STRING
-			));
-			if($disassociate['disassociate'] && $disassociate['disassociate_confirm']) {
-                $externalAuthModel = $this->getModelFromCache('XenForo_Model_UserExternal');
-                $external = $externalAuthModel->getExternalAuthAssociationsForUser($visitor['user_id']);
-
-                $stUser = false;
-                if (!empty($external['steam']))
-                {
-                    $extra = @unserialize($external['steam']);
-                    if (!empty($extra['provider_key']))
-                    {
-                        $stUser = $sHelper->getUserInfo($stUser);
-                    }
-                }
-                $sHelper->deleteSteamData($visitor['user_id']);
-
-				if(!$auth->hasPassword()) {
-					$this->getModelFromCache('XenForo_Model_UserConfirmation')->resetPassword($visitor['user_id']);
-				}
+		if (!empty($response->subView->params['external']['steam']))
+		{
+			if (!empty($response->subView->params['external']['steam']['extra_data']))
+			{
+                $sHelper = new Steam_Helper_Steam();
+                $stUser = $sHelper->getUserInfo($response->subView->params['external']['steam']['provider_key']);
 			}
-
-			return $this->responseRedirect(
-				XenForo_ControllerResponse_Redirect::SUCCESS,
-				XenForo_Link::buildPublicLink('account/external-accounts')
-			);
-		} else {
-                $externalAuthModel = $this->getModelFromCache('XenForo_Model_UserExternal');
-                $external = $externalAuthModel->getExternalAuthAssociationsForUser($visitor['user_id']);
-
-                $stUser = false;
-                if (!empty($external['steam']))
-                {
-                    $extra = @unserialize($external['steam']);
-                    if (!empty($extra['provider_key']))
-                    {
-                        $stUser = $sHelper->getUserInfo($stUser);
-                    }
-                }
-
-			$viewParams = array(
-				'stUser' => $stUser,
-				'hasPassword' => $auth->hasPassword()
-			);
-
-			return $this->_getWrapper(
-				'account',
-				'steam',
-				$this->responseView('XenForo_ViewPublic_Account_Steam', 'account_external_accounts_steam', $viewParams)
-			);
 		}
+        
+        $stParams = $response->subView->params;
+        
+        $stParams['stUser'] = $stUser;
+        
+        $response->subView->params = $stParams;
+
+		return $response;
+	}
+
+	public function actionExternalAccountsDisassociate()
+    {
+        $response = parent::actionExternalAccountsDisassociate();
+        
+        $input = $this->_input->filter(array(
+			'disassociate' => XenForo_Input::STRING,
+			'account' => XenForo_Input::STRING
+		));
+        
+        $visitor = XenForo_Visitor::getInstance();
+        
+        if ($input['disassociate'] && $input['account'] == 'steam')
+		{
+			$sHelper = new Steam_Helper_Steam();
+            $sHelper->deleteSteamData($response->subView->visitor['user_id']);
+		}
+
+		return $response;
+	}
+
+	public function actionSteam()
+	{
+		return $this->responseRedirect(
+			XenForo_ControllerResponse_Redirect::RESOURCE_CANONICAL_PERMANENT,
+			XenForo_Link::buildPublicLink('account/external-accounts')
+		);
 	}
 }
 
