@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.4.1 ==
+* Made Template Modification descriptions more user friendly
+
 == Version 1.4.0 ==
 * Migrated Steam Integration to External Accounts for Xenforo 1.3
 * Fixed bug with recent game hours re-sync when re-associating account
