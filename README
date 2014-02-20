@@ -16,6 +16,9 @@ Integration addon created by Morgan. If you have this version installed
 already, you can upgrade to this addon without the need to re-install. 
 Just follow the upgrade steps below.
 
+== IMPORANT NOTE ==
+Steam Authentication & Integration 1.4.0 only works on XenForo 1.3.0+
+
 == Features ==
  * Single Sign On / Authentication via Steam
  * Statistics
@@ -63,6 +66,14 @@ options. This addon will NOT function properly without a valid API key.
 
 >> /IMPORTANT <<
 
+If you choose to display the steam statistics navbar tab, make sure to 
+also give allow permissions to the appropriate user groups or users. 
+Otherwise, they will not be able to view statistics. Permissions can be 
+changed under the Users section in the ACP.
+
+The same goes for steam profile banners. Permissions need to be 
+configured to display them to users/groups.
+
 == Troubleshooting ==
 Please do not ask me (HowIChrgeLazer) directly for help via a Conversation. 
 Unless you have sensitive information to share (which you shouldn't share 
@@ -106,25 +117,21 @@ case they have similar issues.
 This is an issue with how XenForo loads this content. I'll have to look into 
 this further and see if there is a fix. There is no known method at this time.
 
-* SteamProfile does not display properly in Internet Explorer 7/8/9 *
+* Problems displaying user activity in Firefox *
 
-SteamProfile seems to have a few browser compatibility issues with older 
-versions of IE. However, SteamProfile does work on IE 10 and up.
-
-* Undefined index: steamids *
-
-This error happens on rare occasions and I have yet to track the source 
-of it. It's not a serious error. It's saying that SteamProfile did not 
-get any SteamIDs to run an API request with.
-
-If anybody has insight on what triggers this error, please let me know in 
-the discussion.
+Firefox will not correctly report last seen on any page that has the SteamProfile 
+javascript.
 
 * Failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized *
 
 This means that a SteamAPI key has not been configured or is invaild. 
 Please read the configuration section for information on getting the API 
 key configured.
+
+* Name or service not known *
+
+This can happen if you're having DNS issues with your webserver. Make 
+sure steam community URLs can resolve correctly.
 
 == Like this Addon? ==
 Awesome! Leave a review and tell me how much you like it and why! Feedback is
