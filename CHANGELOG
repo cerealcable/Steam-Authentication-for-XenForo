@@ -2,6 +2,9 @@
 
 == Version 1.4.0 ==
 * Migrated Steam Integration to External Accounts for Xenforo 1.3
+* Fixed bug with recent game hours re-sync when re-associating account
+* Removed majority of template hooks, now using XenForo's Template Modifications system
+* Fixed registration bug (Undefined variable: location)
 
 == Version 1.3.6 ==
 * Fixed bug with cURL and OpenID verification

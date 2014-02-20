@@ -143,10 +143,19 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		
         $json_decoded = json_decode($json_object);
 		
+        if(empty($json_decoded)) {
+            return $this->responseError('Problem communicating with Steam Community. Please try your registration again.');
+        }
+        
 		if(!empty($json_decoded)) {
 			$username = $json_decoded->response->players[0]->personaname;
-			$location = "Parts Unknown";
-			if (isset($json_decoded->response->players[0]->loccountrycode))
+			
+            if (!isset($json_decoded->response->players[0]->loccountrycode))
+			{
+                $location = 'Parts Unknown';
+			}
+            
+            if (isset($json_decoded->response->players[0]->loccountrycode))
 			{
 			$location = $json_decoded->response->players[0]->loccountrycode;
 			
@@ -347,8 +356,8 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			case "YE": $location = "Yemen"; break;
 			case "ZM": $location = "Zambia"; break;
 			case "ZW": $location = "Zimbabwe"; break;
+            default: $location = 'Parts Unknown';
 		}
-	}
 
 	if (isset($json_decoded->response->players[0]->locstatecode) && strcmp($location,'United States of America') == 0)
 	{
@@ -406,6 +415,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		case "WY": $location = "Wyoming, " . $location; break;
 		}
 	}
+    }
 
 		}
 
@@ -775,10 +785,10 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			$r = $db->fetchRow("SELECT * FROM xf_user_steam_games WHERE user_id = $userId AND game_id = $id;");
 			if($r == NULL) {
 				// Insert
-				$db->insert("xf_user_steam_games", array('user_id'=>$userId, 'game_id'=>$id, 'game_hours'=>$data['hours']));
+				$db->insert("xf_user_steam_games", array('user_id'=>$userId, 'game_id'=>$id, 'game_hours'=>$data['hours'], 'game_hours_recent'=>$data['hours_recent']));
 			} else {
 				// Update
-				$db->query("UPDATE xf_user_steam_games SET game_hours = {$data['hours']} WHERE user_id = $userId AND game_id = $id;");
+				$db->query("UPDATE xf_user_steam_games SET game_hours = {$data['hours']}, game_hours_recent = {$data['hours_recent']} WHERE user_id = $userId AND game_id = $id;");
 			}
 		}
 		}

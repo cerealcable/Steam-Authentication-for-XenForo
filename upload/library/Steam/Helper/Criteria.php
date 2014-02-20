@@ -37,7 +37,7 @@ class Steam_Helper_Criteria {
 							}
 							break;
 						case 'deassociated':
-							if(empty($user['steam_auth_id']) || $user['externalAuth']['steam'] <= 0) {
+							if(empty($user['externalAuth']['steam']) || $user['externalAuth']['steam'] <= 0) {
 								$returnValue = true;
 							} else {
 								$returnValue = false;

@@ -66,14 +66,7 @@ class Steam_Listener {
 	public static function templateCreate($templateName, array &$params, XenForo_Template_Abstract $template) {
 		switch($templateName) {
 			case 'PAGE_CONTAINER':
-				$params['eAuth'] = 1;
-				$template->preloadTemplate('steam_login_bar_item');
-				$template->preloadTemplate('steam_message_user_info');
-				$template->preloadTemplate('steam_member_view_info');
-				$template->preloadTemplate('steam_message_content');
 				$template->preloadTemplate('steam_helper_criteria_privs');
-				$template->preloadTemplate('steam_member_card_info');
-				$template->preloadTemplate('steam_footer');
 				$template->preloadTemplate('steam_navtabs');
 				$template->preloadTemplate('steam_public_index');
 				break;
@@ -82,36 +75,9 @@ class Steam_Listener {
 
 	public static function templateHook($hookName, &$contents, array $hookParams, XenForo_Template_Abstract $template) {
 		switch($hookName) {
-			case 'login_bar_eauth_items':
-				$contents .= $template->create('steam_login_bar_item', $hookParams);
-				break;
-			case 'message_user_info_text':
-				$visitor = XenForo_Visitor::getInstance();
-				$visitorPerms = $visitor->getPermissions();
-				if($visitorPerms['SteamAuth']['viewProfile']){
-					$contents .= $template->create('steam_message_user_info', array_merge($hookParams, $template->getParams()));
-				}
-				break;
-			case 'member_view_info_block':
-				$visitor = XenForo_Visitor::getInstance();
-				$visitorPerms = $visitor->getPermissions();
-				if($visitorPerms['SteamAuth']['viewProfile']){
-					$contents .= $template->create('steam_member_view_info', array_merge($hookParams, $template->getParams()));
-				}
-				break;
-			case 'message_content':
-				$visitor = XenForo_Visitor::getInstance();
-				$visitorPerms = $visitor->getPermissions();
-				if($visitorPerms['SteamAuth']['viewProfile']){
-					$contents = $template->create('steam_message_content', array_merge($hookParams, $template->getParams())) . $contents;
-				}
-				break;
 			case 'user_criteria_extra':
 				$s = new Steam_Helper_Steam();
 				$contents .= $template->create('steam_helper_criteria_privs', array_merge($hookParams, $template->getParams(), array_merge($hookParams, $template->getParams(), array("steam_games" => $s->getAvailableGames()))));
-				break;
-			case 'footer_links':
-				$contents = $template->create('steam_footer', array_merge($hookParams, $template->getParams())) . $contents;
 				break;
 		}
 	}
