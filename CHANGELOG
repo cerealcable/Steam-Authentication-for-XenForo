@@ -1,7 +1,7 @@
 === CHANGE LOG ===
 
 == Version 1.4.2 ==
-* Reintroduced templates options back into addon configuration page
+* Reintroduced template options back into addon configuration page
 * Added option to disable grabbing avatar from steam upon user registration
 
 == Version 1.4.1 ==
