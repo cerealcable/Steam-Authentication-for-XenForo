@@ -49,7 +49,7 @@ class Steam_Listener {
 		$visitor = XenForo_Visitor::getInstance();
 		$visitorPerms = $visitor->getPermissions();
 		
-		if($options->steamNavTab)
+		if($options->steamNavTab && $options->steamAPIKey)
 		{
 			if($visitor->hasPermission('SteamAuth', 'viewStats'))
 			{

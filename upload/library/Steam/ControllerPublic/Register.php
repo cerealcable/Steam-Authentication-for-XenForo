@@ -609,7 +609,11 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		$writer->save();
 		$user = $writer->getMergedData();
 
-		if(!empty($avatar)) {
+		if(!$options->steamAvatarReg) {
+            unset($avatar);
+        }
+        
+        if(!empty($avatar)) {
 			$avatarFile = tempnam(XenForo_Helper_File::getTempDir(), 'xf');
 
 			$httpClient = XenForo_Helper_Http::getClient(preg_replace('/\s+/', '%20', $avatar));
