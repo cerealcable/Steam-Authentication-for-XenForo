@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.4.2" version_id="106" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.4.2" version_id="107" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
     <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
@@ -457,7 +457,7 @@
     <phrase title="option_steamGameStats_explain" version_id="42" version_string="1.2.0"><![CDATA[Polls the SteamAPI for game statistics on users. Disabling will reduce API requests.]]></phrase>
     <phrase title="option_steamGameStatsReg" version_id="37" version_string="1.1.4"><![CDATA[Collect game statistics on registration]]></phrase>
     <phrase title="option_steamGameStatsReg_explain" version_id="42" version_string="1.2.0"><![CDATA[Polls the SteamAPI for game statistics on a user during registration. Disabling will reduce API requests, however, stats won't exist for the user until the cron runs.]]></phrase>
-    <phrase title="option_steamAvatarReg" version_id="1" version_string="1.4.2"><![CDATA[Set user's steam avatar as forum avatar upon registration]]></phrase>
+    <phrase title="option_steamAvatarReg" version_id="3" version_string="1.4.2"><![CDATA[Set user's steam avatar as forum avatar on registration]]></phrase>
     <phrase title="option_steamAvatarReg_explain" version_id="1" version_string="1.4.2"><![CDATA[Will use the registering user's steam avatar as their forum avatar. Disabling will give user the default forum avatar.]]></phrase>
 	<phrase title="option_steamNavTab" version_id="25" version_string="1.1.1"><![CDATA[Steam statistics navbar tab]]></phrase>
 	<phrase title="option_steamNavTab_explain" version_id="25" version_string="1.1.1"><![CDATA[Display a navigaton tab for public steam statistics.]]></phrase>	
