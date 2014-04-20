@@ -35,6 +35,8 @@ XenForo_Application::$javaScriptUrl = $fileDir . '/js';
 
 $options = XenForo_Application::get('options');
 $API_KEY = $options->steamAPIKey;
+$IMAGE_KEY = $options->imageLinkProxyKey;
+$IMAGE_PROXY_FLAG = $options->imageLinkProxy['images'];
 
 restore_error_handler();
 restore_exception_handler();
@@ -100,6 +102,27 @@ if (!empty($_GET['steamids']))
             }
         }
     }
+    
+    $content_decoded = json_decode($content_json);
+    unset($content_json);
+    
+    if (isset($content_decoded->response->players))
+    { 
+        foreach ($content_decoded->response->players as $rows)
+        {  
+            if (isset($rows->avatar) && !empty($IMAGE_PROXY_FLAG))
+            {
+                $avatar = $rows->avatar;
+                $hash = hash_hmac('md5', $avatar,
+                XenForo_Application::getConfig()->globalSalt . $IMAGE_KEY
+                );
+                            
+                $avatarProxy = 'proxy.php?' . 'image' . '=' . urlencode($avatar) . '&hash=' . $hash;
+                            
+                $rows->avatar = $avatarProxy;
+            }
+        }
+    }
 
 if (function_exists('gzcompress') && (!ini_get('zlib.output_compression')))
 {
@@ -110,7 +133,8 @@ else
 	ob_start();
 }
 
-echo $content_json;
+echo json_encode($content_decoded);
+unset($content_decoded);
 ob_end_flush();
 }
 ?>

@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.4.3 ==
+* Added HTTPS support through XenForo's Image Proxy
+
 == Version 1.4.2 ==
 * Reintroduced template options back into addon configuration page
 * Added option to disable grabbing avatar from steam upon user registration

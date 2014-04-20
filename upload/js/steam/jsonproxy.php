@@ -36,6 +36,8 @@ XenForo_Application::$javaScriptUrl = $fileDir . '/js';
 $options = XenForo_Application::get('options');
 $API_KEY = $options->steamAPIKey;
 $STEAM_GAMEBANNER = $options->steamDisplayBanner;
+$IMAGE_KEY = $options->imageLinkProxyKey;
+$IMAGE_PROXY_FLAG = $options->imageLinkProxy['images'];
 
 restore_error_handler();
 restore_exception_handler();
@@ -106,11 +108,23 @@ if (!empty($_GET['steamids']))
     $content_decoded = json_decode($content_json);
     unset($content_json);
     
-    if (isset($content_decoded->response->players) && $STEAM_GAMEBANNER > 0)
-    {
+    if (isset($content_decoded->response->players))
+    { 
         foreach ($content_decoded->response->players as $rows)
-        {
-            if (isset($rows->gameid))
+        {  
+            if (isset($rows->avatar) && !empty($IMAGE_PROXY_FLAG))
+            {
+                $avatar = $rows->avatar;
+                $hash = hash_hmac('md5', $avatar,
+                XenForo_Application::getConfig()->globalSalt . $IMAGE_KEY
+                );
+                            
+                $avatarProxy = 'proxy.php?' . 'image' . '=' . urlencode($avatar) . '&hash=' . $hash;
+                            
+                $rows->avatar = $avatarProxy;
+            }
+            
+            if (isset($rows->gameid) && $STEAM_GAMEBANNER > 0)
             {
                 $appid = $rows->gameid;
                 $steamid64 = $rows->steamid;
@@ -152,7 +166,20 @@ if (!empty($_GET['steamids']))
                     {
                         $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/' . $appid . '/' . $logo . '.jpg';
                         
-                        $rows->gameLogoSmall = $logo;
+                        if (!empty($IMAGE_PROXY_FLAG))
+                        {
+                            $hash = hash_hmac('md5', $logo,
+                            XenForo_Application::getConfig()->globalSalt . $IMAGE_KEY
+                            );
+                            
+                            $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logo) . '&hash=' . $hash;
+                            
+                            $rows->gameLogoSmall = $logoProxy;
+                        }
+                        else
+                        {
+                            $rows->gameLogoSmall = $logo;
+                        }
                     }
                 }
                 else

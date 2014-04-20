@@ -312,10 +312,18 @@ class Steam_Helper_Steam {
 		$db = XenForo_Application::get('db');
 		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
         foreach($results as $row) {
-			$rVal[$row['game_id']] = array(
+			$logoProxy = $row['game_logo'];
+            if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
+            {
+                $hash = hash_hmac('md5', $logoProxy,
+                XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
+                );
+                $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
+            }
+            $rVal[$row['game_id']] = array(
 				'name' => $row['game_name'],
 				'count' => $row['count'],
-				'logo' => $row['game_logo'],
+				'logo' => $logoProxy,
 				'link' => $row['game_link']
 			);
 		}
@@ -348,10 +356,18 @@ class Steam_Helper_Steam {
         }
 		
 		foreach($results as $row) {
+			$logoProxy = $row['game_logo'];
+            if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
+            {
+                $hash = hash_hmac('md5', $logoProxy,
+                XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
+                );
+                $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
+            }
 			$rVal[$row['game_id']] = array(
 				'name' => $row['game_name'],
 				'count' => $row['count'],
-				'logo' => $row['game_logo'],
+				'logo' => $logoProxy,
 				'link' => $row['game_link']
 			);
 		}
@@ -364,10 +380,18 @@ class Steam_Helper_Steam {
 		$db = XenForo_Application::get('db');
 		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
 		foreach($results as $row) {
+			$logoProxy = $row['game_logo'];
+            if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
+            {
+                $hash = hash_hmac('md5', $logoProxy,
+                XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
+                );
+                $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
+            }
 			$rVal[$row['game_id']] = array(
 				'name' => $row['game_name'],
 				'hours' => $row['hours'],
-				'logo' => $row['game_logo'],
+				'logo' => $logoProxy,
 				'link' => $row['game_link']
 			);
 		}
@@ -400,10 +424,18 @@ class Steam_Helper_Steam {
         }
 		
 		foreach($results as $row) {
+			$logoProxy = $row['game_logo'];
+            if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
+            {
+                $hash = hash_hmac('md5', $logoProxy,
+                XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
+                );
+                $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
+            }
 			$rVal[$row['game_id']] = array(
 				'name' => $row['game_name'],
 				'hours' => $row['hours'],
-				'logo' => $row['game_logo'],
+				'logo' => $logoProxy,
 				'link' => $row['game_link']
 			);
 		}
@@ -416,10 +448,18 @@ class Steam_Helper_Steam {
         $db = XenForo_Application::get('db');
         $results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
         foreach($results as $row) {
+        	$logoProxy = $row['game_logo'];
+            if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
+            {
+                $hash = hash_hmac('md5', $logoProxy,
+                XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
+                );
+                $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
+            }
             $rVal[$row['game_id']] = array(
                 'name' => $row['game_name'],
                 'hours' => $row['hours'],
-                'logo' => $row['game_logo'],
+                'logo' => $logoProxy,
                 'link' => $row['game_link']
             );
         }
@@ -452,10 +492,18 @@ class Steam_Helper_Steam {
         }
 		
         foreach($results as $row) {
+        	$logoProxy = $row['game_logo'];
+            if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
+            {
+                $hash = hash_hmac('md5', $logoProxy,
+                XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
+                );
+                $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
+            }
             $rVal[$row['game_id']] = array(
                 'name' => $row['game_name'],
                 'hours' => $row['hours'],
-                'logo' => $row['game_logo'],
+                'logo' => $logoProxy,
                 'link' => $row['game_link']
             );
         }
@@ -468,11 +516,19 @@ class Steam_Helper_Steam {
 		$db = XenForo_Application::get('db');
 		$results = $db->fetchAll("SELECT game_id, game_name, game_link, game_logo FROM xf_steam_games ORDER BY game_name;");
 		foreach($results as $row) {
+        	$logoProxy = $row['game_logo'];
+            if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
+            {
+                $hash = hash_hmac('md5', $logoProxy,
+                XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
+                );
+                $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
+            }
 			$rVal[] = array(
 				'id' => $row['game_id'],
 				'name' => $row['game_name'],
 				'link' => $row['game_link'],
-				'logo' => $row['game_logo']
+				'logo' => $logoProxy
 			);
 		}
 		return $rVal;
