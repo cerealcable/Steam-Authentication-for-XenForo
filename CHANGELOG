@@ -2,6 +2,8 @@
 
 == Version 1.4.3 ==
 * Added HTTPS support through XenForo's Image Proxy
+* Added an alternative option for login bar to match XenForo
+* Added option to display login bar in the sidebar visitor panel
 
 == Version 1.4.2 ==
 * Reintroduced template options back into addon configuration page

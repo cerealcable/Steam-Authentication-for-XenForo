@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.4.3-dev" version_id="111" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.4.3-dev" version_id="121" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
     <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
@@ -400,13 +400,25 @@
       <default_value>1</default_value>
       <edit_format_params></edit_format_params>
       <sub_options></sub_options>
-      <relation group_id="SteamAuth" display_order="220"/>
+      <relation group_id="SteamAuth" display_order="230"/>
     </option>
     <option option_id="steamGameStatsReg" edit_format="onoff" data_type="boolean" can_backup="1">
       <default_value>1</default_value>
       <edit_format_params></edit_format_params>
       <sub_options></sub_options>
+      <relation group_id="SteamAuth" display_order="220"/>
+    </option>
+    <option option_id="steamVisitorPanel" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
       <relation group_id="SteamAuth" display_order="210"/>
+    </option>
+    <option option_id="steamAltLoginBar" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="SteamAuth" display_order="200"/>
     </option>
     <option option_id="steamAPIKey" edit_format="textbox" data_type="string" can_backup="1">
       <default_value></default_value>
@@ -443,6 +455,8 @@
     <phrase title="disassociating_with_steam_will_cause_password_generated_emailed_x" version_id="1" version_string="1.0.0"><![CDATA[Disassociating with Steam will cause a password to be generated for your account and emailed to {email}.]]></phrase>
     <phrase title="option_group_SteamAuth" version_id="1" version_string="1.0.0"><![CDATA[Steam Integration]]></phrase>
     <phrase title="option_group_SteamAuth_description" version_id="1" version_string="1.0.0"><![CDATA[Settings for integrating the online gaming service Steam as an authentication source and information source for XenForo Forums.]]></phrase>
+    <phrase title="option_steamAltLoginBar" version_id="112" version_string="1.4.3"><![CDATA[Display alternative login bar for Steam]]></phrase>
+    <phrase title="option_steamAltLoginBar_explain" version_id="112" version_string="1.4.3"><![CDATA[Displays an alternative login bar for Steam that mimics other XenForo login bars. Against Valve ToS for Steam Community API.]]></phrase>
     <phrase title="option_steamDisplayMessageContent" version_id="3" version_string="1.4.2"><![CDATA[Display SteamProfile in message content (top right)]]></phrase>
     <phrase title="option_steamDisplayMessageContent_explain" version_id="4" version_string="1.4.2"><![CDATA[Display an informational/status block in the message content portion (top right).]]></phrase>
     <phrase title="option_steamDisplayMessageInfo" version_id="38" version_string="1.4.2"><![CDATA[Display SteamProfile in messages]]></phrase>
@@ -465,8 +479,10 @@
 	<phrase title="option_steamIncludeGames_explain" version_id="52" version_string="1.2.4"><![CDATA[Only display steam statistics from appids in this list. Comma delimited. Example: 440,550,4000 would only show stats from Team Fortress 2, Left 4 Dead 2, and Garry's Mod.]]></phrase>
 	<phrase title="option_steamExcludeGames" version_id="52" version_string="1.2.4"><![CDATA[Exclude Games]]></phrase>	
 	<phrase title="option_steamExcludeGames_explain" version_id="52" version_string="1.2.4"><![CDATA[Exclude display of steam statistics for appids in this list. Comma delimited. Example: 440,550,4000 would exclude stats from Team Fortress 2, Left 4 Dead 2, and Garry's Mod.]]></phrase>
-	<phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
-    <phrase title="sign_in_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign in with Steam]]></phrase>
+    <phrase title="option_steamVisitorPanel" version_id="112" version_string="1.4.3"><![CDATA[Display Steam login bar on vistor panel]]></phrase>
+    <phrase title="option_steamVisitorPanel_explain" version_id="112" version_string="1.4.3"><![CDATA[Displays the login bar underneath the "Sign up now!" button.]]></phrase>
+    <phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
+    <phrase title="login_with_steam" version_id="112" version_string="1.4.3"><![CDATA[Log in with Steam]]></phrase>
     <phrase title="sign_up_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign up with Steam]]></phrase>
     <phrase title="steam" version_id="8" version_string="1.0.7"><![CDATA[Steam]]></phrase>
     <phrase title="steam_game_not_owned" version_id="4" version_string="1.0.2"><![CDATA[Games NOT owned]]></phrase>
@@ -632,7 +648,30 @@
 <input type="hidden" name="redirect" value="{$redirect}" />
 <input type="hidden" name="location" value="{$location}" />
 </form>]]></template>
-	<template title="steam_navtabs" version_id="26" version_string="1.4.2"><![CDATA[
+<template title="steam_footer" version_id="121" version_string="1.4.3"><![CDATA[
+<xen:if is="{$contentTemplate} == 'forum_list'">
+<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
+</xen:if>
+	
+<xen:if is="{$steamProfNoJS}">
+<xen:require css="steam_stats.css" />
+<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
+</xen:if>
+
+<xen:if is="{$steamProf}">
+<xen:require css="steam_profile.css" />
+<xen:require js="js/steam/ajax/steamprofile.js" />
+<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
+</xen:if>
+
+<xen:if is="{$steamProfStats}">
+<xen:require css="steam_profile_stats.css" />
+<xen:require css="steam_stats.css" />
+<xen:require js="js/steam/ajax/steamprofilestats.js" />
+<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
+</xen:if>
+]]></template>
+    <template title="steam_navtabs" version_id="26" version_string="1.4.2"><![CDATA[
     <ul class="secondaryContent blockLinksList">
 	<li><a href="{xen:link 'steam/top-owned-games'}">{xen:phrase steam_stats_topOwned}</a></li>
 	<li><a href="{xen:link 'steam/top-played-games'}">{xen:phrase steam_stats_topPlayed}</a></li>
@@ -678,7 +717,77 @@
 </xen:foreach>
 </div>
 ]]></template>
-	<template title="steam_stats.css" version_id="82" version_string="1.3.5"><![CDATA[/* Steam Authentication & Integration CSS */
+    <template title="steam_login_bar.css" version_id="118" version_string="1.4.3"><![CDATA[
+    #loginBar a.steamLogin
+    {
+        display: inline-block;
+        width: {xen:property eAuthButtonWidth};
+        height: 22px;
+        box-sizing: border-box;
+        cursor: pointer;
+        
+        background: #91bb43;
+        background: -moz-linear-gradient(top, #91bb43 0%, #6d9c32 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#91bb43), color-stop(100%,#6d9c32));
+        background: -webkit-linear-gradient(top, #91bb43 0%,#6d9c32 100%);
+        background: -o-linear-gradient(top, #91bb43 0%,#6d9c32 100%);
+        background: -ms-linear-gradient(top, #91bb43 0%,#6d9c32 100%);
+        background: linear-gradient(to bottom, #91bb43 0%,#6d9c32 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#91bb43', endColorstr='#6d9c32',GradientType=0 );
+        
+        border: #333 solid 1px;
+        border-radius: 3px;
+        padding: 3px 0px 3px 0px;
+        
+        color: #fff !important;
+        font-weight: bold;
+        font-size: 11px;
+        line-height: 14px;
+    }
+
+        a.steamLogin span
+        {
+            display: block;
+            background: url('styles/default/steamauth/steam-icon.png') no-repeat;
+            background-position: -2px -3px;
+            padding-left: 26px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+    a.steamLogin:hover,
+    #loginBar a.steamLogin:hover,
+    a.steamLogin:active,
+    #loginBar a.steamLogin:active
+    {
+        text-decoration: none;
+    }
+    ]]></template>
+    <template title="steam_sidebar.css" version_id="116" version_string="1.4.3"><![CDATA[
+    .sidebarLoginSteam
+    {
+        margin: 10px auto;
+        text-align: center;
+    }
+    ]]></template>
+    <template title="steam_sidebar_visitor" version_id="120" version_string="1.4.3"><![CDATA[
+        <xen:if is="{$xenOptions.steamVisitorPanel}">
+        <xen:require css="steam_sidebar.css" />
+        <xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamAltLoginBar}">
+        <xen:require css="steam_login_bar.css" />
+        <div class="sidebarLoginSteam">
+        <a href="{xen:link register/steam, '', 'reg=1'}" class="steamLogin"><span>{xen:phrase login_with_steam}</span></a>
+        </div>
+        <xen:else />
+        <div class="sidebarLoginSteam">
+        <a href="{xen:link register/steam, '', 'reg=1'}" style="text-decoration:none;display: inline-block;">
+        <img src="styles/default/steamauth/steam_signin.png" alt="{xen:phrase login_with_steam}" style="margin:0 14px;"/>
+        </a>
+        </div>
+        </xen:if>
+        </xen:if>
+    ]]></template>
+    <template title="steam_stats.css" version_id="82" version_string="1.3.5"><![CDATA[/* Steam Authentication & Integration CSS */
 	.steamstats_header
 	{
 		font-size: 150%;
@@ -997,6 +1106,40 @@
 		vertical-align:top;
 	}
 	]]></template>
+    <template title="steam_profile_message" version_id="120" version_string="1.4.3"><![CDATA[
+        <xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayMessageContent}">
+              <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$message.externalAuth.steam} > 0">
+        <div class="steamprofile" style="width: 225px; float: right;" title="{$message.externalAuth.steam}"></div>
+        <xen:container var="$steamProf">1</xen:container>
+        </xen:if>
+        </xen:if>
+    ]]></template>
+    <template title="steam_profile_member" version_id="120" version_string="1.4.3"><![CDATA[
+    <xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayProfile}">
+          <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$user.externalAuth.steam} > 0">
+          <div class="steamprofile" title="{$user.externalAuth.steam}"></div>
+    <xen:container var="$steamProf">1</xen:container>
+    </xen:if>
+    </xen:if>
+    ]]></template>
+    <template title="steam_profile_message_info" version_id="120" version_string="1.4.3"><![CDATA[
+    <xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayMessageInfo}">
+          <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$user.externalAuth.steam} > 0">
+          <div class="steamprofile" title="{$user.externalAuth.steam}"></div>
+    <xen:container var="$steamProf">1</xen:container>
+    </xen:if>
+    </xen:if>
+    ]]></template>
+    <template title="steam_login_bar" version_id="120" version_string="1.4.3"><![CDATA[
+      				<xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamAltLoginBar}">
+                    <xen:require css="steam_login_bar.css" />
+<li><a href="{xen:link register/steam, '', 'reg=1'}" class="steamLogin" tabindex="110"><span>{xen:phrase login_with_steam}</span></a></li>
+<xen:else />
+               <li><a href="{xen:link register/steam, '', 'reg=1'}" style="text-decoration:none;display: inline-block;">
+   <img src="styles/default/steamauth/steam_signin.png" alt="{xen:phrase login_with_steam}" style="margin:0 14px;"/>
+</a></li>
+                </xen:if>
+    ]]></template>
   </templates>
   <public_template_modifications>
     <modification template="account_external_accounts" modification_key="SteamAccountExternalAccounts" description="Adds Steam Integration to the External Accounts page" execution_order="10" enabled="1" action="str_replace">
@@ -1070,68 +1213,36 @@
       <find><![CDATA[<li><span class="googleLogin GoogleLogin JsOnly" tabindex="110" data-client-id="{$xenOptions.googleClientId}" data-redirect-url="{xen:link register/google, '', 'code=__CODE__', 'csrf={$session.sessionCsrf}'}"><span>{xen:phrase login_with_google}</span></span></li>
 				</xen:if>]]></find>
       <replace><![CDATA[$0
-      				<xen:if is="{$xenOptions.steamAPIKey}">
-<li><a href="{xen:link register/steam, '', 'reg=1'}" style="text-decoration:none;display: inline-block;">
-   <img src="styles/default/steamauth/steam_signin.png" alt="Sign up with Steam" style="margin:0 14px;"/>
-</a></li>
-				</xen:if>]]></replace>
+      <xen:include template="steam_login_bar" />
+]]></replace>
     </modification>
     <modification template="message_user_info" modification_key="SteamMessageUserInfo" description="Display Profile Under Avatar In Messages" execution_order="10" enabled="1" action="str_replace">
       <find><![CDATA[	<xen:if hascontent="true">
 		<div class="extraUserInfo">]]></find>
-      <replace><![CDATA[<xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayMessageInfo}">
-      <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$user.externalAuth.steam} > 0">
-      <div class="steamprofile" title="{$user.externalAuth.steam}"></div>
-<xen:container var="$steamProf">1</xen:container>
-</xen:if>
-</xen:if>
+      <replace><![CDATA[<xen:include template="steam_profile_message_info" />
 $0]]></replace>
     </modification>
     <modification template="member_view" modification_key="SteamMemberView" description="Display Profile In Member View" execution_order="10" enabled="1" action="str_replace">
       <find><![CDATA[<xen:if is="{$canViewWarnings}">
 					<dl><dt>{xen:phrase warning_points}:</dt><dd>{xen:number $user.warning_points}</dd></dl>
 				</xen:if>]]></find>
-      <replace><![CDATA[$0 <xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayProfile}">
-      <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$user.externalAuth.steam} > 0">
-      <div class="steamprofile" title="{$user.externalAuth.steam}"></div>
-<xen:container var="$steamProf">1</xen:container>
-</xen:if>
-</xen:if>]]></replace>
+      <replace><![CDATA[$0 <xen:include template="steam_profile_member" />]]></replace>
     </modification>
     <modification template="message" modification_key="SteamMessageContent" description="Display Profile In Post Content" execution_order="10" enabled="1" action="str_replace">
       <find><![CDATA[<div class="messageContent">		
 			<article>]]></find>
-      <replace><![CDATA[<xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayMessageContent}">
-      <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$message.externalAuth.steam} > 0">
-<div class="steamprofile" style="width: 225px; float: right;" title="{$message.externalAuth.steam}"></div>
-<xen:container var="$steamProf">1</xen:container>
-</xen:if>
-</xen:if>
+      <replace><![CDATA[<xen:include template="steam_profile_message" />
 $0]]></replace>
     </modification>
         <modification template="footer" modification_key="SteamFooter" description="Display Powered By Steam in footer" execution_order="10" enabled="1" action="str_replace">
       <find><![CDATA[<ul class="footerLinks">]]></find>
-      <replace><![CDATA[$0 <xen:if is="{$contentTemplate} == 'forum_list'">
-<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
-</xen:if>
-	
-<xen:if is="{$steamProfNoJS}">
-<xen:require css="steam_stats.css" />
-<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
-</xen:if>
-
-<xen:if is="{$steamProf}">
-<xen:require css="steam_profile.css" />
-<xen:require js="js/steam/ajax/steamprofile.js" />
-<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
-</xen:if>
-
-<xen:if is="{$steamProfStats}">
-<xen:require css="steam_profile_stats.css" />
-<xen:require css="steam_stats.css" />
-<xen:require js="js/steam/ajax/steamprofilestats.js" />
-<li><a href="http://steampowered.com" target="_blank">Powered By Steam</a></li>
-</xen:if>]]></replace>
+      <replace><![CDATA[$0 
+      <xen:include template="steam_footer" />]]></replace>
+    </modification>
+    <modification template="sidebar_visitor_panel" modification_key="SteamSidebarVisitorPanel" description="Display login button in the sidebar" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<label for="LoginControl" id="SignupButton"><a href="{xen:link login}" class="inner">{xen:if $xenOptions.registrationSetup.enabled, {xen:phrase sign_up_now}, {xen:phrase log_in}}</a></label>]]></find>
+      <replace><![CDATA[$0
+<xen:include template="steam_sidebar_visitor" />]]></replace>
     </modification>
   </public_template_modifications>
   <bb_code_media_sites/>
