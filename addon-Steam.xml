@@ -728,6 +728,7 @@
         height: 22px;
         box-sizing: border-box;
         cursor: pointer;
+        text-align: left;
         
         background: #91bb43;
         background: -moz-linear-gradient(top, #91bb43 0%, #6d9c32 100%);
@@ -1109,27 +1110,33 @@
 		vertical-align:top;
 	}
 	]]></template>
-    <template title="steam_profile_message" version_id="120" version_string="1.4.3"><![CDATA[
+    <template title="steam_profile_message" version_id="128" version_string="1.4.3"><![CDATA[
         <xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayMessageContent}">
               <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$message.externalAuth.steam} > 0">
+        <xen:if is="!{$message.is_banned}">
         <div class="steamprofile" style="width: 225px; float: right;" title="{$message.externalAuth.steam}"></div>
         <xen:container var="$steamProf">1</xen:container>
         </xen:if>
         </xen:if>
+        </xen:if>
     ]]></template>
-    <template title="steam_profile_member" version_id="120" version_string="1.4.3"><![CDATA[
+    <template title="steam_profile_member" version_id="128" version_string="1.4.3"><![CDATA[
     <xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayProfile}">
           <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$user.externalAuth.steam} > 0">
+          <xen:if is="!{$user.is_banned}">
           <div class="steamprofile" title="{$user.externalAuth.steam}"></div>
     <xen:container var="$steamProf">1</xen:container>
+    </xen:if>
     </xen:if>
     </xen:if>
     ]]></template>
     <template title="steam_profile_message_info" version_id="120" version_string="1.4.3"><![CDATA[
     <xen:if is="{$xenOptions.steamAPIKey} AND {$xenOptions.steamDisplayMessageInfo}">
           <xen:if is="{$visitor.permissions.SteamAuth.viewProfile} AND {$user.externalAuth.steam} > 0">
+          <xen:if is="!{$user.is_banned}">
           <div class="steamprofile" title="{$user.externalAuth.steam}"></div>
     <xen:container var="$steamProf">1</xen:container>
+    </xen:if>
     </xen:if>
     </xen:if>
     ]]></template>

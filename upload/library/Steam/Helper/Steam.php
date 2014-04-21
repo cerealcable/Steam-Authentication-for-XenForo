@@ -109,7 +109,6 @@ class Steam_Helper_Steam {
 		$gamestats = $options->steamGameStats;
 		if ($gamestats > 0)
 		{
-		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
         $games = array();
 
@@ -231,7 +230,7 @@ class Steam_Helper_Steam {
 	public function getGameOwners($id) {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT u.user_id, u.username, g.game_hours, g.game_hours_recent FROM xf_user_steam_games g, xf_user u WHERE g.user_id = u.user_id AND g.game_id = $id");
+		$results = $db->fetchAll("SELECT u.user_id, u.username, g.game_hours, g.game_hours_recent FROM xf_user_steam_games g, xf_user u WHERE g.user_id = u.user_id AND g.game_id = $id AND u.is_banned NOT IN (1)");
 		foreach($results as $row) {
 			$rVal[] = array(
 				'user_id' => $row['user_id'],
@@ -249,7 +248,7 @@ class Steam_Helper_Steam {
 		$steamapikey = $options->steamAPIKey;
 		$rVal = array();
         $db = XenForo_Application::get('db');
-        $results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+        $results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' AND u.is_banned NOT IN (1) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
         
 		foreach($results as $row) {
 		
@@ -276,19 +275,19 @@ class Steam_Helper_Steam {
 		if (empty($includelist) && empty($excludelist))
 		{
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' AND u.is_banned NOT IN (1) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
         }
 		elseif (!empty($includelist))
 		{
 			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' AND g.game_id IN ($includelist) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' AND g.game_id IN ($includelist) AND u.is_banned NOT IN (1) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
 		}
 		else
 		{
 			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' AND g.game_id NOT IN ($excludelist) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g WHERE g.user_id = u.user_id AND g.user_id = p.user_id AND p.provider = 'steam' AND g.game_id NOT IN ($excludelist) AND u.is_banned NOT IN (1) GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC LIMIT $limit;");
 		}
 		
 		
@@ -310,7 +309,7 @@ class Steam_Helper_Steam {
 	public function getGameStatistics($limit=25) {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
+		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
         foreach($results as $row) {
 			$logoProxy = $row['game_logo'];
             if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
@@ -340,19 +339,19 @@ class Steam_Helper_Steam {
 		if (empty($includelist) && empty($excludelist))
 		{
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
         }	
 		elseif (!empty($includelist))
 		{
 			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id AND g.game_id IN ($includelist) GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND g.game_id IN ($includelist) AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
         }	
 		else
 		{
 			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id AND g.game_id NOT IN ($excludelist) GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND g.game_id NOT IN ($excludelist) AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
         }
 		
 		foreach($results as $row) {
@@ -378,7 +377,7 @@ class Steam_Helper_Steam {
 	public function getGamePlayedStatistics($limit=25) {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
 		foreach($results as $row) {
 			$logoProxy = $row['game_logo'];
             if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
@@ -408,19 +407,19 @@ class Steam_Helper_Steam {
 		if (empty($includelist) && empty($excludelist))
 		{
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
         }	
 		elseif (!empty($includelist))
 		{
 			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id AND g.game_id IN ($includelist) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND g.game_id IN ($includelist) AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
         }	
 		else
 		{
 			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id AND g.game_id NOT IN ($excludelist) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND g.game_id NOT IN ($excludelist) AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
         }
 		
 		foreach($results as $row) {
@@ -446,7 +445,7 @@ class Steam_Helper_Steam {
 	public function getGamePlayedRecentStatistics($limit=25) {
         $rVal = array();
         $db = XenForo_Application::get('db');
-        $results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+        $results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
         foreach($results as $row) {
         	$logoProxy = $row['game_logo'];
             if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
@@ -476,19 +475,19 @@ class Steam_Helper_Steam {
 		if (empty($includelist) && empty($excludelist))
 		{
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
         }	
 		elseif (!empty($includelist))
 		{
 			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id AND g.game_id IN ($includelist) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND g.game_id IN ($includelist) AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
         }	
 		else
 		{
 			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
 			$db = XenForo_Application::get('db');
-			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id AND g.game_id NOT IN ($excludelist) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_user p, xf_steam_games g WHERE p.user_id = u.user_id AND u.game_id = g.game_id AND g.game_id NOT IN ($excludelist) AND p.is_banned NOT IN (1) GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
         }
 		
         foreach($results as $row) {

@@ -34,7 +34,7 @@ class Steam_Cron {
 		{
 		$db = XenForo_Application::get('db');
 		$sHelper = new Steam_Helper_Steam();
-		$results = $db->fetchAll("SELECT user_id, provider_key FROM xf_user_external_auth WHERE provider = 'steam' AND provider_key > 0");
+		$results = $db->fetchAll("SELECT u.user_id, p.provider_key FROM xf_user u, xf_user_external_auth p WHERE u.user_id = p.user_id AND p.provider = 'steam' AND p.provider_key > 0 AND u.is_banned NOT IN (1)");
 		foreach($results as $row) {
 			$games = $sHelper->getUserGames($row['provider_key']);
 			foreach($games as $id => $data) {
