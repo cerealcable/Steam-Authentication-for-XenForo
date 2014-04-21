@@ -66,8 +66,15 @@ class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 			);
 			$template = 'steam_stats_game_view';
 		} else {
-			$viewParams = array(
-				'games' => $sHelper->getAvailableGames()
+			$steamModel = new Steam_Model_Steam();
+            $gamesPerPage = 25;
+            $page = max(1, $this->_input->filterSingle('page', XenForo_Input::UINT));
+            $totalGames = $sHelper->getAvailableGamesCount();
+            $viewParams = array(
+				'page' => $page,
+                'totalGames' => $totalGames,
+                'gamesPerPage' => $gamesPerPage,
+                'games' => $steamModel->getAvailableGames(array('perPage' => $gamesPerPage, 'page' => $page))
 			);
 			$template = 'steam_stats_games';
 		}

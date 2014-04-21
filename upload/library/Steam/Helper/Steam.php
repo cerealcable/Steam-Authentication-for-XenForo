@@ -510,28 +510,15 @@ class Steam_Helper_Steam {
 
         return $rVal;
 	}
-
-	public function getAvailableGames() {
+    
+	public function getAvailableGamesCount() {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT game_id, game_name, game_link, game_logo FROM xf_steam_games ORDER BY game_name;");
+        $results = $db->fetchAll('SELECT COUNT(*) as total_count FROM xf_steam_games');
 		foreach($results as $row) {
-        	$logoProxy = $row['game_logo'];
-            if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
-            {
-                $hash = hash_hmac('md5', $logoProxy,
-                XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
-                );
-                $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
-            }
-			$rVal[] = array(
-				'id' => $row['game_id'],
-				'name' => $row['game_name'],
-				'link' => $row['game_link'],
-				'logo' => $logoProxy
-			);
+            $gameCount = $row['total_count'];
 		}
-		return $rVal;
+		return $gameCount;
 	}
 
 	public function getSteamUsers() {
