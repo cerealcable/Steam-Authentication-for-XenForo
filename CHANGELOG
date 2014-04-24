@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.4.4 ==
+* Fixed bug "Fatal error: Call to undefined method" in user criteria
+
 == Version 1.4.3 ==
 * Added HTTPS support through XenForo's Image Proxy
 * Added an alternative option for login bar to match XenForo

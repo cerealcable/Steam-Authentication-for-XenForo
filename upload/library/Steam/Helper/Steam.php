@@ -510,7 +510,22 @@ class Steam_Helper_Steam {
         return $rVal;
 	}
     
-	public function getAvailableGamesCount() {
+	public function getAvailableGames() {
+		$rVal = array();
+		$db = XenForo_Application::get('db');
+		$results = $db->fetchAll("SELECT game_id, game_name, game_link, game_logo FROM xf_steam_games ORDER BY game_name;");
+		foreach($results as $row) {
+			$rVal[] = array(
+				'id' => $row['game_id'],
+				'name' => $row['game_name'],
+				'link' => $row['game_link'],
+				'logo' => $row['game_logo']
+			);
+		}
+		return $rVal;
+	}
+    
+    public function getAvailableGamesCount() {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
         $results = $db->fetchAll('SELECT COUNT(*) as total_count FROM xf_steam_games');
