@@ -68,11 +68,11 @@ class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 		} else {
 			$steamModel = new Steam_Model_Steam();
             $gamesPerPage = 25;
-            $page = max(1, $this->_input->filterSingle('page', XenForo_Input::UINT));
-            $totalGames = $sHelper->getAvailableGamesCount();
+            //$page = max(1, $this->_input->filterSingle('page', XenForo_Input::UINT));
+            $page = $this->_input->filterSingle('page', XenForo_Input::UINT);
             $viewParams = array(
 				'page' => $page,
-                'totalGames' => $totalGames,
+                'totalGames' => $sHelper->getAvailableGamesCount(),
                 'gamesPerPage' => $gamesPerPage,
                 'games' => $steamModel->getAvailableGames(array('perPage' => $gamesPerPage, 'page' => $page))
 			);

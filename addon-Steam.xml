@@ -303,7 +303,9 @@
 <xen:foreach loop="{$games}" key="$key" value="$value">
 <div style="font-size: 150%; height: 24px; border-bottom: 1px solid #D7EDFC; padding: 8px;"><a href="{xen:adminlink steam/games/}{$value.id}"><img src="{$value.logo}" height="24px" style="padding-right: 4px;" />{$value.name}</a></div>
 </xen:foreach>
-<xen:pagenav link="games" page="{$page}" perpage="{$gamesPerPage}" total="{$totalGames}" />
+<div class="pageNavLinkGroup">
+<xen:adminpagenav link="steam/games" page="{$page}" perpage="{$gamesPerPage}" total="{$totalGames}" />
+</div>
 ]]></template>
     <template title="steam_stats_game_view"><![CDATA[<xen:title>{$game.name}</xen:title>
 <div style="clear: both; font-size: 175%; border-bottom: solid 1px darkgray; margin-bottom: 8px;">Info</div>
