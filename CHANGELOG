@@ -5,7 +5,8 @@
 * Added an alternative option for login bar to match XenForo
 * Added option to display login bar in the sidebar visitor panel
 * Added login bar to the Xenforo login page
-* Now hiding banned users' SteamProfiles and omitting them from statistics 
+* Now hiding banned users' SteamProfiles and omitting them from statistics
+* Paginated Steam games list in ACP (will eventually add search features)
 
 == Version 1.4.2 ==
 * Reintroduced template options back into addon configuration page
