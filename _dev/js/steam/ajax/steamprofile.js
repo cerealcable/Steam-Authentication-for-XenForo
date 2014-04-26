@@ -227,7 +227,7 @@ function SteamProfile() {
 	}
 	
 	function getJSONProxyURL(friendQueryString) {
-		return basePath + proxyFile + '?steamids=' + friendQueryString;
+		return basePath + proxyFile + '?steamids=' + friendQueryString + '&fullprofile=1';
 	}
 	
 	function getConfigString(name) {

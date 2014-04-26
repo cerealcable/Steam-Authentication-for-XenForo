@@ -21,7 +21,7 @@ function SteamProfile() {
 	var basePath = 'js/steam/';
 	var scriptFile = 'ajax/steamprofilestats.js';
 	var configFile = 'ajax/steamprofilestats.xml';
-	var proxyFile = 'jsonproxy-stats.php';
+	var proxyFile = 'jsonproxy.php';
 	// var themePath;
 	
 	// language config
@@ -206,7 +206,7 @@ function SteamProfile() {
 	}
 	
 	function getJSONProxyURL(friendQueryString) {
-		return basePath + proxyFile + '?steamids=' + friendQueryString;
+		return basePath + proxyFile + '?steamids=' + friendQueryString + '&fullprofile=0';
 	}
 	
 	function getConfigString(name) {
