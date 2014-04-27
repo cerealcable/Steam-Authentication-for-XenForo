@@ -10,7 +10,7 @@
  * Written by Nico Bergemann <barracuda415@yahoo.de>
  * Copyright 2011 Nico Bergemann
  *
- * Code Forked by Michael Linback Jr. <webmaster@ragecagegaming.com>
+ * Code updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
  * Copyright 2014 Michael Linback Jr.
  * Website: http://ragecagegaming.com 
  *

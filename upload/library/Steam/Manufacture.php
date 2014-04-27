@@ -1,26 +1,26 @@
 <?php
 /**
- *      This file is part of Steam Authentication for XenForo
+ * Install/Uninstall instruction set for Steam Authentication
  *
- *      Originally Written by Morgan Humes <morgan@lanaddict.com>
- *      Copyright 2012 Morgan Humes
+ * Originally Written by Morgan Humes <morgan@lanaddict.com>
+ * Copyright 2012 Morgan Humes
  *
- *      Code Forked and Updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
- *      Copyright 2014 Michael Linback Jr.
- *      Website: http://ragecagegaming.com
+ * Code updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+ * Copyright 2014 Michael Linback Jr.
+ * Website: http://ragecagegaming.com
  *
- *      Steam Authentication for XenForo is free software: you can redistribute
- *      it and/or modify it under the terms of the GNU General Public License
- *      as published by the Free Software Foundation, either version 3 of the
- *      License, or (at your option) any later version.
+ * Steam Authentication for XenForo is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *      Steam Authentication for XenForo is distributed in the hope that it
- *      will be useful, but WITHOUT ANY WARRANTY; without even the implied
- *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *      See the GNU General Public License for more details.
+ * Steam Authentication for XenForo is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
  */
  
 class Steam_Manufacture {
@@ -65,12 +65,6 @@ class Steam_Manufacture {
 	}
 
 	protected function _installVersion1() {
-		//$db = $this->_getDb();
-		
-		//self::addColumnIfNotExists('xf_user_profile', 'steam_auth_id', 'BIGINT( 20 ) UNSIGNED NOT NULL DEFAULT 0', 'facebook_auth_id');
-		
-		// Sync external auth in case of previous addons
-		//$db->query("UPDATE xf_user_profile p1 JOIN xf_user_external_auth p2 ON(p1.user_id = p2.user_id) SET p1.steam_auth_id = p2.provider_key WHERE provider = 'steam'");
 	}
 
 	protected function _installVersion4() {
@@ -92,8 +86,6 @@ class Steam_Manufacture {
 						PRIMARY KEY (user_id, game_id)
 					)");
 
-		// Run Initial Cron Job for Steam!
-		// Steam_Cron::update();
 	}
 
 	protected function _installVersion8() {
@@ -101,9 +93,6 @@ class Steam_Manufacture {
 
 		// Add columns to steam user games table		
 		self::addColumnIfNotExists('xf_user_steam_games', 'game_hours_recent', 'INT UNSIGNED NOT NULL DEFAULT 0', 'game_hours');
-		
-		// Run Initial Cron Job for Steam!
-		// Steam_Cron::update();
 	}
     
     protected function _installVersion93() {

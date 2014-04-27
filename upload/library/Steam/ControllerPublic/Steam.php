@@ -27,6 +27,8 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		$sHelper = new Steam_Helper_Steam();
 		$visitor = XenForo_Visitor::getInstance();
 		$visitorPerms = $visitor->getPermissions();
+        //Make the following a XenForo Option
+        $queryLimit = 25;
 
 		if(!$visitorPerms['SteamAuth']['viewStats']){
 			return $this->responseError(new XenForo_Phrase('steam_do_not_have_permission'));
@@ -34,7 +36,7 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		else
 		{
 			$viewParams = array(
-				'gameStats' => $sHelper->getGameOwnersHoursStats()
+				'gameStats' => $sHelper->getGameOwnersHours($queryLimit)
 			);
 
 			return $this->responseView('Steam_ViewPublic_Index', 'steam_public_index', $viewParams);
@@ -46,6 +48,8 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		$sHelper = new Steam_Helper_Steam();
 		$visitor = XenForo_Visitor::getInstance();
 		$visitorPerms = $visitor->getPermissions();
+        //Make the following a XenForo Option
+        $queryLimit = 25;
 
 		if(!$visitorPerms['SteamAuth']['viewStats']){
 			return $this->responseError(new XenForo_Phrase('steam_do_not_have_permission'));
@@ -53,7 +57,7 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		else
 		{
 			$viewParams = array(
-				'gameStats' => $sHelper->getGameStatisticsStats()
+				'gameStats' => $sHelper->getGameStatistics($queryLimit)
 			);
 
 			return $this->responseView('Steam_ViewPublic_Owned', 'steam_public_owned', $viewParams);
@@ -65,6 +69,8 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		$sHelper = new Steam_Helper_Steam();
 		$visitor = XenForo_Visitor::getInstance();
 		$visitorPerms = $visitor->getPermissions();
+        //Make the following a XenForo Option
+        $queryLimit = 25;
 
 		if(!$visitorPerms['SteamAuth']['viewStats']){
 			return $this->responseError(new XenForo_Phrase('steam_do_not_have_permission'));
@@ -72,7 +78,7 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		else
 		{
 			$viewParams = array(
-				'gameStats' => $sHelper->getGamePlayedStatisticsStats()
+				'gameStats' => $sHelper->getGamePlayedStatistics($queryLimit)
 			);
 
 			return $this->responseView('Steam_ViewPublic_Played', 'steam_public_played', $viewParams);
@@ -84,14 +90,16 @@ class Steam_ControllerPublic_Steam extends XenForo_ControllerPublic_Abstract
 		$sHelper = new Steam_Helper_Steam();
 		$visitor = XenForo_Visitor::getInstance();
 		$visitorPerms = $visitor->getPermissions();
-
+        //Make the following a XenForo Option
+        $queryLimit = 25;
+        
 		if(!$visitorPerms['SteamAuth']['viewStats']){
 			return $this->responseError(new XenForo_Phrase('steam_do_not_have_permission'));
 		}
 		else
 		{
 			$viewParams = array(
-				'gameStats' => $sHelper->getGamePlayedRecentStatisticsStats()
+				'gameStats' => $sHelper->getGamePlayedRecentStatistics($queryLimit)
 			);
 		
 			return $this->responseView('Steam_ViewPublic_Recent', 'steam_public_recent', $viewParams);
