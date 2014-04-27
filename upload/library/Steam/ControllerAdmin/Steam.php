@@ -23,16 +23,25 @@
  * along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Controller for handling the steam section in the admin control panel.
+ */
 class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 
 	public function _preDispatch($action) {
 		$this->assertAdminPermission('viewStatistics');
 	}
 
+	/**
+	 * Section splash page
+	 */
 	public function actionIndex() {
 		return $this->responseView('XenForo_ViewAdmin_Steam', 'steam_splash');
 	}
 
+    /**
+	 * Section that lists all games and individual game stats
+	 */
 	public function actionGames() {
 		$sHelper = new Steam_Helper_Steam();
 
@@ -68,7 +77,6 @@ class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 		} else {
 			$steamModel = new Steam_Model_Steam();
             $gamesPerPage = 25;
-            //$page = max(1, $this->_input->filterSingle('page', XenForo_Input::UINT));
             $page = $this->_input->filterSingle('page', XenForo_Input::UINT);
             $viewParams = array(
 				'page' => $page,
@@ -82,6 +90,9 @@ class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 		return $this->responseView('XenForo_ViewAdmin_Steam_Games', $template, $viewParams);
 	}
 
+    /**
+	 * Section that lists all steam users
+	 */
 	public function actionUsers() {
 		$sHelper = new Steam_Helper_Steam();
 
@@ -92,6 +103,9 @@ class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 		return $this->responseView('XenForo_ViewAdmin_Steam_Users', 'steam_info_users', $viewParams);
 	}
 
+    /**
+	 * Section that lists all top owned games (count)
+	 */
 	public function actionTopOwned() {
 		$sHelper = new Steam_Helper_Steam();
         //Make the following a XenForo Option
@@ -104,6 +118,9 @@ class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 		return $this->responseView('XenForo_ViewAdmin_Steam_TopOwned', 'steam_stats_topOwned', $viewParams);
 	}
 
+    /**
+	 * Section that lists all top played games (in hours)
+	 */
 	public function actionTopPlayed() {
 		$sHelper = new Steam_Helper_Steam();
         //Make the following a XenForo Option
@@ -116,7 +133,10 @@ class Steam_ControllerAdmin_Steam extends XenForo_ControllerAdmin_Abstract {
 		return $this->responseView('XenForo_ViewAdmin_Steam_TopPlayed', 'steam_stats_topPlayed', $viewParams);
 	}
 
-	public function actionTopPlayedRecent() {
+    /**
+	 * Section that lists all top recently played games (in hours)
+	 */
+    public function actionTopPlayedRecent() {
 		$sHelper = new Steam_Helper_Steam();
         //Make the following a XenForo Option
         $queryLimit = 25;

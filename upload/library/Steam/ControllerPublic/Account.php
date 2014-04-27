@@ -25,7 +25,10 @@
 
 class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account {
     
-	public function actionExternalAccounts()
+    /**
+	 * Adds Steam Integration to External Accounts
+	 */
+    public function actionExternalAccounts()
 	{
         $response = parent::actionExternalAccounts();
         
@@ -49,7 +52,10 @@ class Steam_ControllerPublic_Account extends XFCP_Steam_ControllerPublic_Account
 		return $response;
 	}
 
-	public function actionExternalAccountsDisassociate()
+    /**
+	 * Disassociates a forum account from Steam
+	 */
+    public function actionExternalAccountsDisassociate()
     {
         $response = parent::actionExternalAccountsDisassociate();
         
