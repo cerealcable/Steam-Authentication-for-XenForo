@@ -1,6 +1,6 @@
 <?php
 /**
- * Install/Uninstall instruction set for Steam Authentication
+ * This file is part of Steam Authentication for XenForo
  *
  * Originally Written by Morgan Humes <morgan@lanaddict.com>
  * Copyright 2012 Morgan Humes
