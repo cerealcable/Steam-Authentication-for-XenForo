@@ -86,7 +86,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		}
 
 		$username = '';
-		//$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
+
 		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
 		if(empty($steamapikey)) {
@@ -109,272 +109,270 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		if(!empty($json_decoded)) {
 			$username = $json_decoded->response->players[0]->personaname;
 			
-            if (!isset($json_decoded->response->players[0]->loccountrycode))
-			{
+            if (!isset($json_decoded->response->players[0]->loccountrycode)) {
                 $location = 'Parts Unknown';
 			}
             
-            if (isset($json_decoded->response->players[0]->loccountrycode))
-			{
-			$location = $json_decoded->response->players[0]->loccountrycode;
-			
-		switch($location){
-			case "AF": $location = "Afghanistan"; break;
-			case "AL": $location = "Albania"; break;
-			case "DZ": $location = "Algeria"; break;
-			case "AD": $location = "Andorra"; break;
-			case "AO": $location = "Angola"; break;
-			case "AG": $location = "Antigua and Barbuda"; break;
-			case "AR": $location = "Argentina"; break;
-			case "AM": $location = "Armenia"; break;
-			case "AU": $location = "Australia"; break;
-			case "AT": $location = "Austria"; break;
-			case "AZ": $location = "Azerbaijan"; break;
-			case "BS": $location = "The Bahamas"; break;
-			case "BH": $location = "Bahrain"; break;
-			case "BD": $location = "Bangladesh"; break;
-			case "BB": $location = "Barbados"; break;
-			case "BY": $location = "Belarus"; break;
-			case "BE": $location = "Belgium"; break;
-			case "BZ": $location = "Belize"; break;
-			case "BJ": $location = "Benin"; break;
-			case "BT": $location = "Bhutan"; break;
-			case "BO": $location = "Bolivia"; break;
-			case "BA": $location = "Bosnia and Herzegovina"; break;
-			case "BW": $location = "Botswana"; break;
-			case "BR": $location = "Brazil"; break;
-			case "BN": $location = "Brunei"; break;
-			case "BG": $location = "Bulgaria"; break;
-			case "BF": $location = "Burkina Faso"; break;
-			case "BI": $location = "Burundi"; break;
-			case "KH": $location = "Cambodia"; break;
-			case "CM": $location = "Cameroon"; break;
-			case "CA": $location = "Canada"; break;
-			case "CV": $location = "Cape Verde"; break;
-			case "CF": $location = "Central African Republic"; break;
-			case "TD": $location = "Chad"; break;
-			case "CL": $location = "Chile"; break;
-			case "CN": $location = "China"; break;
-			case "CO": $location = "Colombia"; break;
-			case "KM": $location = "Comoros"; break;
-			case "CG": $location = "Congo, Republic of the"; break;
-			case "CD": $location = "Congo, Democratic Republic of the"; break;
-			case "CR": $location = "Costa Rica"; break;
-			case "CI": $location = "Cote d'Ivoire"; break;
-			case "HR": $location = "Croatia"; break;
-			case "CU": $location = "Cuba"; break;
-			case "CY": $location = "Cyprus"; break;
-			case "CZ": $location = "Czech Republic"; break;
-			case "DK": $location = "Denmark"; break;
-			case "DJ": $location = "Djibouti"; break;
-			case "DM": $location = "Dominica"; break;
-			case "DO": $location = "Dominican Republic"; break;
-			case "TL": $location = "Timor-Leste"; break;
-			case "EC": $location = "Ecuador"; break;
-			case "EG": $location = "Egypt"; break;
-			case "SV": $location = "El Salvador"; break;
-			case "GQ": $location = "Equatorial Guinea"; break;
-			case "ER": $location = "Eritrea"; break;
-			case "EE": $location = "Estonia"; break;
-			case "ET": $location = "Ethiopia"; break;
-			case "FJ": $location = "Fiji"; break;
-			case "FI": $location = "Finland"; break;
-			case "FR": $location = "France"; break;
-			case "GA": $location = "Gabon"; break;
-			case "GM": $location = "Gambia"; break;
-			case "GE": $location = "Georgia"; break;
-			case "DE": $location = "Germany"; break;
-			case "GH": $location = "Ghana"; break;
-			case "GR": $location = "Greece"; break;
-			case "GD": $location = "Grenada"; break;
-			case "GT": $location = "Guatemala"; break;
-			case "GN": $location = "Guinea"; break;
-			case "GW": $location = "Guinea-Bissau"; break;
-			case "GY": $location = "Guyana"; break;
-			case "HT": $location = "Haiti"; break;
-			case "HN": $location = "Honduras"; break;
-			case "HU": $location = "Hungary"; break;
-			case "IS": $location = "Iceland"; break;
-			case "IN": $location = "India"; break;
-			case "ID": $location = "Indonesia"; break;
-			case "IR": $location = "Iran"; break;
-			case "IQ": $location = "Iraq"; break;
-			case "IE": $location = "Ireland"; break;
-			case "IL": $location = "Israel"; break;
-			case "IT": $location = "Italy"; break;
-			case "JM": $location = "Jamaica"; break;
-			case "JP": $location = "Japan"; break;
-			case "JO": $location = "Jordan"; break;
-			case "KZ": $location = "Kazakhstan"; break;
-			case "KE": $location = "Kenya"; break;
-			case "KI": $location = "Kiribati"; break;
-			case "KP": $location = "Korea, North"; break;
-			case "KR": $location = "Korea, South"; break;
-			case "ZZ": $location = "Kosovo"; break;
-			case "KW": $location = "Kuwait"; break;
-			case "KG": $location = "Kyrgyzstan"; break;
-			case "LA": $location = "Laos"; break;
-			case "LV": $location = "Latvia"; break;
-			case "LB": $location = "Lebanon"; break;
-			case "LS": $location = "Lesotho"; break;
-			case "LR": $location = "Liberia"; break;
-			case "LY": $location = "Libya"; break;
-			case "LI": $location = "Liechtenstein"; break;
-			case "LT": $location = "Lithuania"; break;
-			case "LU": $location = "Luxembourg"; break;
-			case "MK": $location = "Macedonia"; break;
-			case "MG": $location = "Madagascar"; break;
-			case "MW": $location = "Malawi"; break;
-			case "MY": $location = "Malaysia"; break;
-			case "MV": $location = "Maldives"; break;
-			case "ML": $location = "Mali"; break;
-			case "MT": $location = "Malta"; break;
-			case "MH": $location = "Marshall Islands"; break;
-			case "MR": $location = "Mauritania"; break;
-			case "MU": $location = "Mauritius"; break;
-			case "MX": $location = "Mexico"; break;
-			case "FM": $location = "Micronesia, Federated States of"; break;
-			case "MD": $location = "Moldova"; break;
-			case "MC": $location = "Monaco"; break;
-			case "MN": $location = "Mongolia"; break;
-			case "ME": $location = "Montenegro"; break;
-			case "MA": $location = "Morocco"; break;
-			case "MZ": $location = "Mozambique"; break;
-			case "MM": $location = "Myanmar (Burma)"; break;
-			case "NA": $location = "Namibia"; break;
-			case "NR": $location = "Nauru"; break;
-			case "NP": $location = "Nepal"; break;
-			case "NL": $location = "Netherlands"; break;
-			case "NZ": $location = "New Zealand"; break;
-			case "NI": $location = "Nicaragua"; break;
-			case "NE": $location = "Niger"; break;
-			case "NG": $location = "Nigeria"; break;
-			case "NO": $location = "Norway"; break;
-			case "OM": $location = "Oman"; break;
-			case "PK": $location = "Pakistan"; break;
-			case "PW": $location = "Palau"; break;
-			case "PA": $location = "Panama"; break;
-			case "PG": $location = "Papua New Guinea"; break;
-			case "PY": $location = "Paraguay"; break;
-			case "PE": $location = "Peru"; break;
-			case "PH": $location = "Philippines"; break;
-			case "PL": $location = "Poland"; break;
-			case "PT": $location = "Portugal"; break;
-			case "QA": $location = "Qatar"; break;
-			case "RO": $location = "Romania"; break;
-			case "RU": $location = "Russia"; break;
-			case "RW": $location = "Rwanda"; break;
-			case "KN": $location = "Saint Kitts and Nevis"; break;
-			case "LC": $location = "Saint Lucia"; break;
-			case "VC": $location = "Saint Vincent and the Grenadines"; break;
-			case "WS": $location = "Samoa"; break;
-			case "SM": $location = "San Marino"; break;
-			case "ST": $location = "Sao Tome and Principe"; break;
-			case "SA": $location = "Saudi Arabia"; break;
-			case "SN": $location = "Senegal"; break;
-			case "RS": $location = "Serbia"; break;
-			case "SC": $location = "Seychelles"; break;
-			case "SL": $location = "Sierra Leone"; break;
-			case "SG": $location = "Singapore"; break;
-			case "SK": $location = "Slovakia"; break;
-			case "SI": $location = "Slovenia"; break;
-			case "SB": $location = "Solomon Islands"; break;
-			case "SO": $location = "Somalia"; break;
-			case "ZA": $location = "South Africa"; break;
-			case "SS": $location = "South Sudan"; break;
-			case "ES": $location = "Spain"; break;
-			case "LK": $location = "Sri Lanka"; break;
-			case "SD": $location = "Sudan"; break;
-			case "SR": $location = "Suriname"; break;
-			case "SZ": $location = "Swaziland"; break;
-			case "SE": $location = "Sweden"; break;
-			case "CH": $location = "Switzerland"; break;
-			case "SY": $location = "Syria"; break;
-			case "TW": $location = "Taiwan"; break;
-			case "TJ": $location = "Tajikistan"; break;
-			case "TZ": $location = "Tanzania"; break;
-			case "TH": $location = "Thailand"; break;
-			case "TG": $location = "Togo"; break;
-			case "TO": $location = "Tonga"; break;
-			case "TT": $location = "Trinidad and Tobago"; break;
-			case "TN": $location = "Tunisia"; break;
-			case "TR": $location = "Turkey"; break;
-			case "TM": $location = "Turkmenistan"; break;
-			case "TV": $location = "Tuvalu"; break;
-			case "UG": $location = "Uganda"; break;
-			case "UA": $location = "Ukraine"; break;
-			case "AE": $location = "United Arab Emirates"; break;
-			case "GB": $location = "United Kingdom"; break;
-			case "US": $location = "United States of America"; break;
-			case "UY": $location = "Uruguay"; break;
-			case "UZ": $location = "Uzbekistan"; break;
-			case "VU": $location = "Vanuatu"; break;
-			case "VA": $location = "Vatican City (Holy See)"; break;
-			case "VE": $location = "Venezuela"; break;
-			case "VN": $location = "Vietnam"; break;
-			case "YE": $location = "Yemen"; break;
-			case "ZM": $location = "Zambia"; break;
-			case "ZW": $location = "Zimbabwe"; break;
-            default: $location = 'Parts Unknown';
-		}
-
-	if (isset($json_decoded->response->players[0]->locstatecode) && strcmp($location,'United States of America') == 0)
-	{
-		$userstate = $json_decoded->response->players[0]->locstatecode;
-		switch($userstate){
-		case "AL": $location = "Alabama, " . $location; break;
-		case "AK": $location = "Alaska, " . $location; break;
-		case "AZ": $location = "Arizona, " . $location; break;
-		case "AR": $location = "Arkansas, " . $location; break;
-		case "CA": $location = "California, " . $location; break;
-		case "CO": $location = "Colorado, " . $location; break;
-		case "CT": $location = "Connecticut, " . $location; break;
-		case "DE": $location = "Delaware, " . $location; break;
-		case "FL": $location = "Florida, " . $location; break;
-		case "GA": $location = "Georgia, " . $location; break;
-		case "HI": $location = "Hawaii, " . $location; break;
-		case "ID": $location = "Idaho, " . $location; break;
-		case "IL": $location = "Illinois, " . $location; break;
-		case "IN": $location = "Indiana, " . $location; break;
-		case "IA": $location = "Iowa, " . $location; break;
-		case "KS": $location = "Kansas, " . $location; break;
-		case "KY": $location = "Kentucky, " . $location; break;
-		case "LA": $location = "Louisiana, " . $location; break;
-		case "ME": $location = "Maine, " . $location; break;
-		case "MD": $location = "Maryland, " . $location; break;
-		case "MA": $location = "Massachusetts, " . $location; break;
-		case "MI": $location = "Michigan, " . $location; break;
-		case "MN": $location = "Minnesota, " . $location; break;
-		case "MS": $location = "Mississippi, " . $location; break;
-		case "MO": $location = "Missouri, " . $location; break;
-		case "MT": $location = "Montana, " . $location; break;
-		case "NE": $location = "Nebraska, " . $location; break;
-		case "NV": $location = "Nevada, " . $location; break;
-		case "NH": $location = "New Hampshire, " . $location; break;
-		case "NJ": $location = "New Jersey, " . $location; break;
-		case "NM": $location = "New Mexico, " . $location; break;
-		case "NY": $location = "New York, " . $location; break;
-		case "NC": $location = "North Carolina, " . $location; break;
-		case "ND": $location = "North Dakota, " . $location; break;
-		case "OH": $location = "Ohio, " . $location; break;
-		case "OK": $location = "Oklahoma, " . $location; break;
-		case "OR": $location = "Oregon, " . $location; break;
-		case "PA": $location = "Pennsylvania, " . $location; break;
-		case "RI": $location = "Rhode Island, " . $location; break;
-		case "SC": $location = "South Carolina, " . $location; break;
-		case "SD": $location = "South Dakota, " . $location; break;
-		case "TN": $location = "Tennessee, " . $location; break;
-		case "TX": $location = "Texas, " . $location; break;
-		case "UT": $location = "Utah, " . $location; break;
-		case "VT": $location = "Vermont, " . $location; break;
-		case "VA": $location = "Virginia, " . $location; break;
-		case "WA": $location = "Washington, " . $location; break;
-		case "WV": $location = "West Virginia, " . $location; break;
-		case "WI": $location = "Wisconsin, " . $location; break;
-		case "WY": $location = "Wyoming, " . $location; break;
-		}
-	}
-    }
+            if (isset($json_decoded->response->players[0]->loccountrycode)) {
+                $location = $json_decoded->response->players[0]->loccountrycode;
+                
+                switch($location) {
+                    case "AF": $location = "Afghanistan"; break;
+                    case "AL": $location = "Albania"; break;
+                    case "DZ": $location = "Algeria"; break;
+                    case "AD": $location = "Andorra"; break;
+                    case "AO": $location = "Angola"; break;
+                    case "AG": $location = "Antigua and Barbuda"; break;
+                    case "AR": $location = "Argentina"; break;
+                    case "AM": $location = "Armenia"; break;
+                    case "AU": $location = "Australia"; break;
+                    case "AT": $location = "Austria"; break;
+                    case "AZ": $location = "Azerbaijan"; break;
+                    case "BS": $location = "The Bahamas"; break;
+                    case "BH": $location = "Bahrain"; break;
+                    case "BD": $location = "Bangladesh"; break;
+                    case "BB": $location = "Barbados"; break;
+                    case "BY": $location = "Belarus"; break;
+                    case "BE": $location = "Belgium"; break;
+                    case "BZ": $location = "Belize"; break;
+                    case "BJ": $location = "Benin"; break;
+                    case "BT": $location = "Bhutan"; break;
+                    case "BO": $location = "Bolivia"; break;
+                    case "BA": $location = "Bosnia and Herzegovina"; break;
+                    case "BW": $location = "Botswana"; break;
+                    case "BR": $location = "Brazil"; break;
+                    case "BN": $location = "Brunei"; break;
+                    case "BG": $location = "Bulgaria"; break;
+                    case "BF": $location = "Burkina Faso"; break;
+                    case "BI": $location = "Burundi"; break;
+                    case "KH": $location = "Cambodia"; break;
+                    case "CM": $location = "Cameroon"; break;
+                    case "CA": $location = "Canada"; break;
+                    case "CV": $location = "Cape Verde"; break;
+                    case "CF": $location = "Central African Republic"; break;
+                    case "TD": $location = "Chad"; break;
+                    case "CL": $location = "Chile"; break;
+                    case "CN": $location = "China"; break;
+                    case "CO": $location = "Colombia"; break;
+                    case "KM": $location = "Comoros"; break;
+                    case "CG": $location = "Congo, Republic of the"; break;
+                    case "CD": $location = "Congo, Democratic Republic of the"; break;
+                    case "CR": $location = "Costa Rica"; break;
+                    case "CI": $location = "Cote d'Ivoire"; break;
+                    case "HR": $location = "Croatia"; break;
+                    case "CU": $location = "Cuba"; break;
+                    case "CY": $location = "Cyprus"; break;
+                    case "CZ": $location = "Czech Republic"; break;
+                    case "DK": $location = "Denmark"; break;
+                    case "DJ": $location = "Djibouti"; break;
+                    case "DM": $location = "Dominica"; break;
+                    case "DO": $location = "Dominican Republic"; break;
+                    case "TL": $location = "Timor-Leste"; break;
+                    case "EC": $location = "Ecuador"; break;
+                    case "EG": $location = "Egypt"; break;
+                    case "SV": $location = "El Salvador"; break;
+                    case "GQ": $location = "Equatorial Guinea"; break;
+                    case "ER": $location = "Eritrea"; break;
+                    case "EE": $location = "Estonia"; break;
+                    case "ET": $location = "Ethiopia"; break;
+                    case "FJ": $location = "Fiji"; break;
+                    case "FI": $location = "Finland"; break;
+                    case "FR": $location = "France"; break;
+                    case "GA": $location = "Gabon"; break;
+                    case "GM": $location = "Gambia"; break;
+                    case "GE": $location = "Georgia"; break;
+                    case "DE": $location = "Germany"; break;
+                    case "GH": $location = "Ghana"; break;
+                    case "GR": $location = "Greece"; break;
+                    case "GD": $location = "Grenada"; break;
+                    case "GT": $location = "Guatemala"; break;
+                    case "GN": $location = "Guinea"; break;
+                    case "GW": $location = "Guinea-Bissau"; break;
+                    case "GY": $location = "Guyana"; break;
+                    case "HT": $location = "Haiti"; break;
+                    case "HN": $location = "Honduras"; break;
+                    case "HU": $location = "Hungary"; break;
+                    case "IS": $location = "Iceland"; break;
+                    case "IN": $location = "India"; break;
+                    case "ID": $location = "Indonesia"; break;
+                    case "IR": $location = "Iran"; break;
+                    case "IQ": $location = "Iraq"; break;
+                    case "IE": $location = "Ireland"; break;
+                    case "IL": $location = "Israel"; break;
+                    case "IT": $location = "Italy"; break;
+                    case "JM": $location = "Jamaica"; break;
+                    case "JP": $location = "Japan"; break;
+                    case "JO": $location = "Jordan"; break;
+                    case "KZ": $location = "Kazakhstan"; break;
+                    case "KE": $location = "Kenya"; break;
+                    case "KI": $location = "Kiribati"; break;
+                    case "KP": $location = "Korea, North"; break;
+                    case "KR": $location = "Korea, South"; break;
+                    case "ZZ": $location = "Kosovo"; break;
+                    case "KW": $location = "Kuwait"; break;
+                    case "KG": $location = "Kyrgyzstan"; break;
+                    case "LA": $location = "Laos"; break;
+                    case "LV": $location = "Latvia"; break;
+                    case "LB": $location = "Lebanon"; break;
+                    case "LS": $location = "Lesotho"; break;
+                    case "LR": $location = "Liberia"; break;
+                    case "LY": $location = "Libya"; break;
+                    case "LI": $location = "Liechtenstein"; break;
+                    case "LT": $location = "Lithuania"; break;
+                    case "LU": $location = "Luxembourg"; break;
+                    case "MK": $location = "Macedonia"; break;
+                    case "MG": $location = "Madagascar"; break;
+                    case "MW": $location = "Malawi"; break;
+                    case "MY": $location = "Malaysia"; break;
+                    case "MV": $location = "Maldives"; break;
+                    case "ML": $location = "Mali"; break;
+                    case "MT": $location = "Malta"; break;
+                    case "MH": $location = "Marshall Islands"; break;
+                    case "MR": $location = "Mauritania"; break;
+                    case "MU": $location = "Mauritius"; break;
+                    case "MX": $location = "Mexico"; break;
+                    case "FM": $location = "Micronesia, Federated States of"; break;
+                    case "MD": $location = "Moldova"; break;
+                    case "MC": $location = "Monaco"; break;
+                    case "MN": $location = "Mongolia"; break;
+                    case "ME": $location = "Montenegro"; break;
+                    case "MA": $location = "Morocco"; break;
+                    case "MZ": $location = "Mozambique"; break;
+                    case "MM": $location = "Myanmar (Burma)"; break;
+                    case "NA": $location = "Namibia"; break;
+                    case "NR": $location = "Nauru"; break;
+                    case "NP": $location = "Nepal"; break;
+                    case "NL": $location = "Netherlands"; break;
+                    case "NZ": $location = "New Zealand"; break;
+                    case "NI": $location = "Nicaragua"; break;
+                    case "NE": $location = "Niger"; break;
+                    case "NG": $location = "Nigeria"; break;
+                    case "NO": $location = "Norway"; break;
+                    case "OM": $location = "Oman"; break;
+                    case "PK": $location = "Pakistan"; break;
+                    case "PW": $location = "Palau"; break;
+                    case "PA": $location = "Panama"; break;
+                    case "PG": $location = "Papua New Guinea"; break;
+                    case "PY": $location = "Paraguay"; break;
+                    case "PE": $location = "Peru"; break;
+                    case "PH": $location = "Philippines"; break;
+                    case "PL": $location = "Poland"; break;
+                    case "PT": $location = "Portugal"; break;
+                    case "QA": $location = "Qatar"; break;
+                    case "RO": $location = "Romania"; break;
+                    case "RU": $location = "Russia"; break;
+                    case "RW": $location = "Rwanda"; break;
+                    case "KN": $location = "Saint Kitts and Nevis"; break;
+                    case "LC": $location = "Saint Lucia"; break;
+                    case "VC": $location = "Saint Vincent and the Grenadines"; break;
+                    case "WS": $location = "Samoa"; break;
+                    case "SM": $location = "San Marino"; break;
+                    case "ST": $location = "Sao Tome and Principe"; break;
+                    case "SA": $location = "Saudi Arabia"; break;
+                    case "SN": $location = "Senegal"; break;
+                    case "RS": $location = "Serbia"; break;
+                    case "SC": $location = "Seychelles"; break;
+                    case "SL": $location = "Sierra Leone"; break;
+                    case "SG": $location = "Singapore"; break;
+                    case "SK": $location = "Slovakia"; break;
+                    case "SI": $location = "Slovenia"; break;
+                    case "SB": $location = "Solomon Islands"; break;
+                    case "SO": $location = "Somalia"; break;
+                    case "ZA": $location = "South Africa"; break;
+                    case "SS": $location = "South Sudan"; break;
+                    case "ES": $location = "Spain"; break;
+                    case "LK": $location = "Sri Lanka"; break;
+                    case "SD": $location = "Sudan"; break;
+                    case "SR": $location = "Suriname"; break;
+                    case "SZ": $location = "Swaziland"; break;
+                    case "SE": $location = "Sweden"; break;
+                    case "CH": $location = "Switzerland"; break;
+                    case "SY": $location = "Syria"; break;
+                    case "TW": $location = "Taiwan"; break;
+                    case "TJ": $location = "Tajikistan"; break;
+                    case "TZ": $location = "Tanzania"; break;
+                    case "TH": $location = "Thailand"; break;
+                    case "TG": $location = "Togo"; break;
+                    case "TO": $location = "Tonga"; break;
+                    case "TT": $location = "Trinidad and Tobago"; break;
+                    case "TN": $location = "Tunisia"; break;
+                    case "TR": $location = "Turkey"; break;
+                    case "TM": $location = "Turkmenistan"; break;
+                    case "TV": $location = "Tuvalu"; break;
+                    case "UG": $location = "Uganda"; break;
+                    case "UA": $location = "Ukraine"; break;
+                    case "AE": $location = "United Arab Emirates"; break;
+                    case "GB": $location = "United Kingdom"; break;
+                    case "US": $location = "United States of America"; break;
+                    case "UY": $location = "Uruguay"; break;
+                    case "UZ": $location = "Uzbekistan"; break;
+                    case "VU": $location = "Vanuatu"; break;
+                    case "VA": $location = "Vatican City (Holy See)"; break;
+                    case "VE": $location = "Venezuela"; break;
+                    case "VN": $location = "Vietnam"; break;
+                    case "YE": $location = "Yemen"; break;
+                    case "ZM": $location = "Zambia"; break;
+                    case "ZW": $location = "Zimbabwe"; break;
+                    default: $location = 'Parts Unknown';
+                }
+                
+                if (isset($json_decoded->response->players[0]->locstatecode) 
+                    && strcmp($location,'United States of America') == 0) {
+                    $userstate = $json_decoded->response->players[0]->locstatecode;
+                    switch($userstate) {
+                        case "AL": $location = "Alabama, " . $location; break;
+                        case "AK": $location = "Alaska, " . $location; break;
+                        case "AZ": $location = "Arizona, " . $location; break;
+                        case "AR": $location = "Arkansas, " . $location; break;
+                        case "CA": $location = "California, " . $location; break;
+                        case "CO": $location = "Colorado, " . $location; break;
+                        case "CT": $location = "Connecticut, " . $location; break;
+                        case "DE": $location = "Delaware, " . $location; break;
+                        case "FL": $location = "Florida, " . $location; break;
+                        case "GA": $location = "Georgia, " . $location; break;
+                        case "HI": $location = "Hawaii, " . $location; break;
+                        case "ID": $location = "Idaho, " . $location; break;
+                        case "IL": $location = "Illinois, " . $location; break;
+                        case "IN": $location = "Indiana, " . $location; break;
+                        case "IA": $location = "Iowa, " . $location; break;
+                        case "KS": $location = "Kansas, " . $location; break;
+                        case "KY": $location = "Kentucky, " . $location; break;
+                        case "LA": $location = "Louisiana, " . $location; break;
+                        case "ME": $location = "Maine, " . $location; break;
+                        case "MD": $location = "Maryland, " . $location; break;
+                        case "MA": $location = "Massachusetts, " . $location; break;
+                        case "MI": $location = "Michigan, " . $location; break;
+                        case "MN": $location = "Minnesota, " . $location; break;
+                        case "MS": $location = "Mississippi, " . $location; break;
+                        case "MO": $location = "Missouri, " . $location; break;
+                        case "MT": $location = "Montana, " . $location; break;
+                        case "NE": $location = "Nebraska, " . $location; break;
+                        case "NV": $location = "Nevada, " . $location; break;
+                        case "NH": $location = "New Hampshire, " . $location; break;
+                        case "NJ": $location = "New Jersey, " . $location; break;
+                        case "NM": $location = "New Mexico, " . $location; break;
+                        case "NY": $location = "New York, " . $location; break;
+                        case "NC": $location = "North Carolina, " . $location; break;
+                        case "ND": $location = "North Dakota, " . $location; break;
+                        case "OH": $location = "Ohio, " . $location; break;
+                        case "OK": $location = "Oklahoma, " . $location; break;
+                        case "OR": $location = "Oregon, " . $location; break;
+                        case "PA": $location = "Pennsylvania, " . $location; break;
+                        case "RI": $location = "Rhode Island, " . $location; break;
+                        case "SC": $location = "South Carolina, " . $location; break;
+                        case "SD": $location = "South Dakota, " . $location; break;
+                        case "TN": $location = "Tennessee, " . $location; break;
+                        case "TX": $location = "Texas, " . $location; break;
+                        case "UT": $location = "Utah, " . $location; break;
+                        case "VT": $location = "Vermont, " . $location; break;
+                        case "VA": $location = "Virginia, " . $location; break;
+                        case "WA": $location = "Washington, " . $location; break;
+                        case "WV": $location = "West Virginia, " . $location; break;
+                        case "WI": $location = "Wisconsin, " . $location; break;
+                        case "WY": $location = "Wyoming, " . $location; break;
+                    }
+                }
+            }
 
 		}
 
@@ -408,58 +406,16 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 
 		// Get User Profile Data
 		$id = $session->get('steam_id');
-		//$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
+
 		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
-		
-		if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
-		{
-            $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-            curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
-            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
-            //curl_setopt($this->ch, CURLOPT_URL, "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-            ob_start();
-            $json_object = curl_exec($this->ch);
-            echo $json_object;
-            $json_object = ob_get_clean();
-            $json_object = trim($json_object);
-            curl_close( $this->ch );
-            
-            if (strpos($json_object,'response:') !== false) {
-                $i = 0;
-                while (($i < 3) || ((strpos($json_object,'response:') !== false))) {
-                    $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-                    //curl_setopt($this->ch, CURLOPT_URL, "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-                    curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
-                    curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
-                    ob_start();
-                    $json_object = curl_exec($this->ch);
-                    echo $json_object;
-                    $json_object = ob_get_clean();
-                    $json_object = trim($json_object);
-                    $i++;
-                    sleep(3);
-                    curl_close( $this->ch );
-                }
-            
-            }
-		}
-		
-        else
-		{
-            $json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-            
-			if ($json_object === false) {
-				$i = 0;
-				while ($json_object === false && $i < 2) {
-					$json_object = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}" );
-					$i++;
-					sleep(1);
-				}
-			}
-		}
+        $profileUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='
+                       .$steamapikey
+                       .'&steamids='
+                       .$id
+                       .'&format=json';
+        $sHelper = new Steam_Helper_Steam();
+        $json_object = $sHelper->getJsonData($profileUrl);
         
 		$json_decoded = json_decode($json_object);
 		
@@ -709,25 +665,26 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 	private function updateUserStats($userId, $steamId) {
         $options = XenForo_Application::get('options');
 		$gamestatsreg = $options->steamGameStatsReg;
-		if ($gamestatsreg > 0)
-		{
-		$db = XenForo_Application::get('db');
-		$sHelper = new Steam_Helper_Steam();
-        $games = $sHelper->getUserGames($steamId);
-        foreach($games as $id => $data) {
-			// game info
-			$db->query("INSERT IGNORE INTO xf_steam_games(game_id, game_name, game_logo, game_link) VALUES($id, '{$data['name']}', '{$data['logo']}', '{$data['link']}');");
+		if ($gamestatsreg > 0) {
+            $db = XenForo_Application::get('db');
+            $sHelper = new Steam_Helper_Steam();
+            $games = $sHelper->getUserGames($steamId);
+            foreach($games as $id => $data) {
+                // game info
+                $db->query("INSERT IGNORE INTO xf_steam_games(game_id, game_name, game_logo, game_link) 
+                            VALUES($id, '{$data['name']}', '{$data['logo']}', '{$data['link']}');");
 
-			// update
-			$r = $db->fetchRow("SELECT * FROM xf_user_steam_games WHERE user_id = $userId AND game_id = $id;");
-			if($r == NULL) {
-				// Insert
-				$db->insert("xf_user_steam_games", array('user_id'=>$userId, 'game_id'=>$id, 'game_hours'=>$data['hours'], 'game_hours_recent'=>$data['hours_recent']));
-			} else {
-				// Update
-				$db->query("UPDATE xf_user_steam_games SET game_hours = {$data['hours']}, game_hours_recent = {$data['hours_recent']} WHERE user_id = $userId AND game_id = $id;");
-			}
-		}
+                // update
+                $r = $db->fetchRow("SELECT * FROM xf_user_steam_games WHERE user_id = $userId AND game_id = $id;");
+                if($r == NULL) {
+                    // Insert
+                    $db->insert("xf_user_steam_games", array('user_id'=>$userId, 'game_id'=>$id, 'game_hours'=>$data['hours'], 'game_hours_recent'=>$data['hours_recent']));
+                } else {
+                    // Update
+                    $db->query("UPDATE xf_user_steam_games SET game_hours = {$data['hours']}, game_hours_recent = {$data['hours_recent']} 
+                                WHERE user_id = $userId AND game_id = $id;");
+                }
+            }
 		}
 	}
 }
