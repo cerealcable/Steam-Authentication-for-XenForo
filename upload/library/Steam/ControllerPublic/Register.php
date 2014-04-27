@@ -85,61 +85,20 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			$this->_assertRegistrationActive();
 		}
 
-		$username = "";
+		$username = '';
 		//$xml = simplexml_load_file("http://steamcommunity.com/profiles/{$id}/?xml=1");
 		$options = XenForo_Application::get('options');
 		$steamapikey = $options->steamAPIKey;
 		if(empty($steamapikey)) {
             return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
         }
-		if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
-		{
-            $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-            curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
-            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
-            //curl_setopt($this->ch, CURLOPT_URL, "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-            ob_start();
-            $json_object = curl_exec($this->ch);
-            echo $json_object;
-            $json_object = ob_get_clean();
-            $json_object = trim($json_object);
-            curl_close( $this->ch );
-            
-            if (strpos($json_object,'response:') !== false) {
-                $i = 0;
-                while (($i < 3) || ((strpos($json_object,'response:') !== false))) {
-                    $this->ch = curl_init("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-                    //curl_setopt($this->ch, CURLOPT_URL, "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-                    curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($this->ch, CURLOPT_TIMEOUT, 6);
-                    curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
-                    ob_start();
-                    $json_object = curl_exec($this->ch);
-                    echo $json_object;
-                    $json_object = ob_get_clean();
-                    $json_object = trim($json_object);
-                    $i++;
-                    sleep(3);
-                    curl_close( $this->ch );
-                }
-            
-            }
-		}
-		
-        else
-		{
-            $json_object=file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}");
-            
-			if ($json_object === false) {
-				$i = 0;
-				while ($json_object === false && $i < 2) {
-					$json_object = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={$steamapikey}&steamids={$id}" );
-					$i++;
-					sleep(1);
-				}
-			}
-		}
+        $profileUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='
+                       .$steamapikey
+                       .'&steamids='
+                       .$id
+                       .'&format=json';
+        $sHelper = new Steam_Helper_Steam();
+        $json_object = $sHelper->getJsonData($profileUrl);
 		
         $json_decoded = json_decode($json_object);
 		
@@ -517,32 +476,8 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		if($doAssoc) {
         
             $userId = $this->_associateExternalAccount();
-            
-            /*
-            LEGACY XENFORO < 1.3.0
-            
-            $associate = $this->_input->filter(array(
-				'associate_login'		=> XenForo_Input::STRING,
-				'associate_password'	=> XenForo_Input::STRING
-			));
-
-			$loginModel = $this->_getLoginModel();
-
-			if($loginModel->requireLoginCaptcha($associate['associate_login'])) {
-				return $this->responseError(new XenForo_Phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
-			}
-
-			$userId = $userModel->validateAuthentication($associate['associate_login'], $associate['associate_password'], $error);
-			if(!$userId) {
-				$loginModel->logLoginAttempt($associate['associate_login']);
-				return $this->responseError($error);
-			}
-            */
-            
 			$userExternalModel->updateExternalAuthAssociation('steam', $id, $userId);
 
-			//$session->changeUserId($userId);
-			//XenForo_Visitor::setup($userId);
 			$this->updateUserStats($userId, $id);
 
 			return $this->responseRedirect(
@@ -550,8 +485,6 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 				$this->getDynamicRedirect(false, false)
 			);
 		}
-
-		//$this->_assertRegistrationActive();
 
 		$data = $this->_input->filter(array(
 			'username'	=> XenForo_Input::STRING,

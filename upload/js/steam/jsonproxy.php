@@ -56,82 +56,9 @@ $STEAM_GAMEBANNER = $options->steamDisplayBanner;
 $XF_IMAGE_KEY = $options->imageLinkProxyKey;
 $XF_IMAGE_PROXY = $options->imageLinkProxy['images'];
 
-/**
- * Decides to use cURL or file_get_contents to download JSON data from the
- * Steam Community API.
- *
- * @param string $profileUrl
- *
- * @return mixed The resulting JSON string, or false if the argument was not an array.
- */
-function getJsonData($profileUrl)
-{
-	if((function_exists('curl_version')) 
-        && !ini_get('safe_mode') 
-        && !ini_get('open_basedir')
-    ) {
-        $contentJson = getWebPage($profileUrl);
-    } else {
-        $contentJson = file_get_contents($profileUrl);
-        if ($contentJson === false) {
-            $i = 0;
-            while ($contentJson === false && $i < 2) {
-                $contentJson = file_get_contents($profileUrl);
-                $i++;
-                sleep(1);
-            }
-        }
-    }
-    return $contentJson;
-}
+$sHelper = new Steam_Helper_Steam();
 
-/**
- * Uses cURL to get JSON data from Steam Community API.
- * 
- * @param string $url
- *
- * @return mixed The resulting JSON string, or false if the argument was not an array.
- */
-function getWebPage($url) 
-{
-	$res = array();
-	$options = array( 
-		CURLOPT_RETURNTRANSFER => true,     // return web page
-		CURLOPT_HEADER         => false,    // do not return headers
-		CURLOPT_FOLLOWLOCATION => true,     // follow redirects
-		CURLOPT_USERAGENT      => "spider", // who am i
-		CURLOPT_AUTOREFERER    => true,     // set referer on redirect
-		CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect
-		CURLOPT_TIMEOUT        => 5,      // timeout on response
-		CURLOPT_MAXREDIRS      => 2,       // stop after 10 redirects
-		CURLOPT_ENCODING       => 'UTF-8',
-
-	); 
-	$ch      = curl_init( $url ); 
-	curl_setopt_array( $ch, $options ); 
-	$content = curl_exec( $ch ); 
-	$err     = curl_errno( $ch ); 
-	$errmsg  = curl_error( $ch ); 
-	$header  = curl_getinfo( $ch ); 
-	
-	if ($content === false) {
-		$i = 0;
-		while ($content === false && $i < 2) {
-			$content = curl_exec( $ch ); 
-			$err     = curl_errno( $ch ); 
-			$errmsg  = curl_error( $ch ); 
-			$header  = curl_getinfo( $ch ); 
-			$i++;
-			sleep(1);
-		}
-	}
-	curl_close( $ch ); 
-	
-	return $content;
-}
-
-if (!empty($_GET['steamids']))
-{
+if (!empty($_GET['steamids'])) {
 
     /*
      * Fetch profile data
@@ -143,33 +70,23 @@ if (!empty($_GET['steamids']))
                     .'&key=' 
                     .$STEAM_API_KEY;
     
-    $contentJson = getJsonData($profileData);
+    $contentJson = $sHelper->getJsonData($profileData);
     
-    if (isset($contentDecoded->response->players) || !empty($XF_IMAGE_PROXY) || $STEAM_GAMEBANNER > 0)
-    { 
+    if (isset($contentDecoded->response->players) || !empty($XF_IMAGE_PROXY) || $STEAM_GAMEBANNER > 0) { 
         $contentDecoded = json_decode($contentJson);
-        foreach ($contentDecoded->response->players as $rows)
-        {  
+        foreach ($contentDecoded->response->players as $rows) {  
             /*
              * Setup image proxy on avatar urls
              */
-            if (isset($rows->avatar) && !empty($XF_IMAGE_PROXY))
-            {
-                $avatar = $rows->avatar;
-                $hash = hash_hmac('md5', $avatar,
-                XenForo_Application::getConfig()->globalSalt . $XF_IMAGE_KEY
-                );
-                            
-                $avatarProxy = 'proxy.php?' . 'image' . '=' . urlencode($avatar) . '&hash=' . $hash;
-                            
+            if (isset($rows->avatar) && !empty($XF_IMAGE_PROXY)) {
+                $avatarProxy = $sHelper->getImageProxy($rows->avatar);   
                 $rows->avatar = $avatarProxy;
             }
             
             /*
              * Apply game image to SteamProfile and use image proxy if enabled
              */
-            if ($fullProfile == 1 && isset($rows->gameid) && $STEAM_GAMEBANNER > 0)
-            {
+            if ($fullProfile == 1 && isset($rows->gameid) && $STEAM_GAMEBANNER > 0) {
                 $appid = $rows->gameid;
                 $steamid64 = $rows->steamid;
                 
@@ -177,11 +94,10 @@ if (!empty($_GET['steamids']))
                                     .$steamid64
                                     .'&key='
                                     .$STEAM_API_KEY;
-                $gameInfo = getJsonData($profileGameData);
+                $gameInfo = $sHelper->getJsonData($profileGameData);
                 
                 $games_decoded = json_decode($gameInfo);
-                if ($games_decoded !== null)
-                {
+                if ($games_decoded !== null) {
                     foreach ($games_decoded->response->games as $rowsgames)
                     {
                         if ($rowsgames->appid == $appid)
@@ -201,24 +117,14 @@ if (!empty($_GET['steamids']))
                                 .$logo
                                 .'.jpg';
                         
-                        if (!empty($XF_IMAGE_PROXY))
-                        {
-                            $hash = hash_hmac('md5', $logo,
-                            XenForo_Application::getConfig()->globalSalt . $XF_IMAGE_KEY
-                            );
-                            
-                            $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logo) . '&hash=' . $hash;
-                            
+                        if (!empty($XF_IMAGE_PROXY)) {
+                            $logoProxy = $sHelper->getImageProxy($logo);
                             $rows->gameLogoSmall = $logoProxy;
-                        }
-                        else
-                        {
+                        } else {
                             $rows->gameLogoSmall = $logo;
                         }
                     }
-                }
-                else
-                {
+                } else {
                     $rows->gameLogoSmall = '';
                 }
             }
@@ -228,18 +134,15 @@ if (!empty($_GET['steamids']))
         $contentJson = json_encode($contentDecoded);
     }
 
-/*
- * Output JSON data
- */ 
-if (function_exists('gzcompress') && (!ini_get('zlib.output_compression')))
-{
-	ob_start('ob_gzhandler');
-}
-else
-{
-	ob_start();
-}
-echo $contentJson;
-ob_end_flush();
+    /*
+     * Output JSON data
+     */ 
+    if (function_exists('gzcompress') && (!ini_get('zlib.output_compression'))) {
+        ob_start('ob_gzhandler');
+    } else {
+        ob_start();
+    }
+    echo $contentJson;
+    ob_end_flush();
 }
 ?>
