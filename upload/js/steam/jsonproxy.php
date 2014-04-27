@@ -56,8 +56,6 @@ $STEAM_GAMEBANNER = $options->steamDisplayBanner;
 $XF_IMAGE_KEY = $options->imageLinkProxyKey;
 $XF_IMAGE_PROXY = $options->imageLinkProxy['images'];
 
-$sHelper = new Steam_Helper_Steam();
-
 if (!empty($_GET['steamids'])) {
 
     /*
@@ -70,6 +68,7 @@ if (!empty($_GET['steamids'])) {
                     .'&key=' 
                     .$STEAM_API_KEY;
     
+    $sHelper = new Steam_Helper_Steam();
     $contentJson = $sHelper->getJsonData($profileData);
     
     if (isset($contentDecoded->response->players) || !empty($XF_IMAGE_PROXY) || $STEAM_GAMEBANNER > 0) { 
