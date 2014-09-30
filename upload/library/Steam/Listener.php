@@ -38,7 +38,8 @@ class Steam_Listener {
     public static function init(XenForo_Dependencies_Abstract $dependencies, array $data)
     {
         XenForo_Template_Helper_Core::$helperCallbacks += array(
-            'steamid' => array('Steam_Helper_Steam', 'convertIdToString')
+            'steamid' => array('Steam_Helper_Steam', 'convertIdToString'),
+            'steamid3' => array('Steam_Helper_Steam', 'convertIdToSteam3')
         );
     }
 	

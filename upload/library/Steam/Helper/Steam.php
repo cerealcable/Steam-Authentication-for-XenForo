@@ -670,4 +670,27 @@ class Steam_Helper_Steam {
 
         return "STEAM_0:$steamId1:" . (($steamId2a + $steamId2b) / 2);
     }
+    
+    /**
+     * This function is used to convert a 64ID to a 32ID
+     * 
+     * Used in the following:
+     * Listener.php
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+	public static function convertIdToSteam3($id) {
+        $steamId1  = substr($id, -1) % 2;
+        $steamId2a = intval(substr($id, 0, 4)) - 7656;
+        $steamId2b = substr($id, 4) - 1197960265728;
+        $steamId2b = $steamId2b - $steamId1;
+
+        if($steamId2a <= 0 && $steamId2b <= 0) {
+            throw new SteamCondenserException("SteamID $id is too small.");
+        }
+        
+        return "[U:1:" . (($steamId2a + $steamId2b) + $steamId1) . "]";
+    }
 }
