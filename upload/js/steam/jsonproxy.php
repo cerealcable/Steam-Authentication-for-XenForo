@@ -1,37 +1,23 @@
 <?php
-/**
- * Grabs JSON data for SteamProfile
- *
- * This takes steamID64 from ajax/steamprofile.js or ajax/steamprofilestats.js
- * and grabs JSON data from the Steam Community API to populate the
- * SteamProfile badge with user's online status, avatar, and game banner 
- * background.
- *
- * Written by Nico Bergemann <barracuda415@yahoo.de>
- * Copyright 2011 Nico Bergemann
- *
- * Code updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
- * Copyright 2014 Michael Linback Jr.
- * Website: http://ragecagegaming.com 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *      
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *      
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 header('content-type: application/json; charset: utf-8'); 
 
 /**
- * Bridge to XenForo
+ *     Written by Nico Bergemann <barracuda415@yahoo.de>
+ *     Copyright 2011 Nico Bergemann
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 $startTime = microtime(true);
 $fileDir = '../../';
@@ -47,56 +33,124 @@ XenForo_Application::$externalDataPath = $fileDir . '/data';
 XenForo_Application::$externalDataUrl = $fileDir . '/data';
 XenForo_Application::$javaScriptUrl = $fileDir . '/js';
 
+$options = XenForo_Application::get('options');
+$API_KEY = $options->steamAPIKey;
+$STEAM_GAMEBANNER = $options->steamDisplayBanner;
+$IMAGE_KEY = $options->imageLinkProxyKey;
+$IMAGE_PROXY_FLAG = $options->imageLinkProxy['images'];
+
 restore_error_handler();
 restore_exception_handler();
 
-$options = XenForo_Application::get('options');
-$STEAM_API_KEY = $options->steamAPIKey;
-$STEAM_GAMEBANNER = $options->steamDisplayBanner;
-$XF_IMAGE_KEY = $options->imageLinkProxyKey;
-$XF_IMAGE_PROXY = $options->imageLinkProxy['images'];
+function get_web_page( $url ) {
+	$res = array();
+	$options = array( 
+		CURLOPT_RETURNTRANSFER => true,     // return web page 
+		CURLOPT_HEADER         => false,    // do not return headers 
+		CURLOPT_FOLLOWLOCATION => true,     // follow redirects 
+		CURLOPT_USERAGENT      => "spider", // who am i 
+		CURLOPT_AUTOREFERER    => true,     // set referer on redirect 
+		CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect 
+		CURLOPT_TIMEOUT        => 5,      // timeout on response 
+		CURLOPT_MAXREDIRS      => 2,       // stop after 10 redirects 
+		CURLOPT_ENCODING       => 'UTF-8',
 
-if (!empty($_GET['steamids'])) {
+	); 
+	$ch      = curl_init( $url ); 
+	curl_setopt_array( $ch, $options ); 
+	$content = curl_exec( $ch ); 
+	$err     = curl_errno( $ch ); 
+	$errmsg  = curl_error( $ch ); 
+	$header  = curl_getinfo( $ch ); 
+	
+	if ($content === false) {
+		$i = 0;
+		while ($content === false && $i < 2) {
+			$content = curl_exec( $ch ); 
+			$err     = curl_errno( $ch ); 
+			$errmsg  = curl_error( $ch ); 
+			$header  = curl_getinfo( $ch ); 
+			$i++;
+			sleep(1);
+		}
+	}
+	
+	curl_close( $ch ); 
+	
+	return $content;
+}
 
-    /*
-     * Fetch profile data
-     */
-    $steamIds = $_GET['steamids'];
-    $fullProfile = $_GET['fullprofile'];
-	$profileData = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids='
-                    .$steamIds 
-                    .'&key=' 
-                    .$STEAM_API_KEY;
+$content_json = '';
+$content_decoded = '';
+
+if (!empty($_GET['steamids']))
+{
     
-    $sHelper = new Steam_Helper_Steam();
-    $contentJson = $sHelper->getJsonData($profileData);
+	$steam_ids = $_GET['steamids'];
+	
+	if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
+    {
+        $content_json = get_web_page("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $steam_ids . "&key=$API_KEY" );
+    }
+    else
+    {
+        $content_json = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $steam_ids . "&key=$API_KEY" );
+        if ($content_json === false) {
+            $i = 0;
+            while ($content_json === false && $i < 2) {
+                $content_json = file_get_contents("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=" . $steam_ids . "&key=$API_KEY" );
+                $i++;
+                sleep(1);
+            }
+        }
+    }
+
+    $content_decoded = json_decode($content_json);
+    unset($content_json);
     
-    if (isset($contentDecoded->response->players) || !empty($XF_IMAGE_PROXY) || $STEAM_GAMEBANNER > 0) { 
-        $contentDecoded = json_decode($contentJson);
-        foreach ($contentDecoded->response->players as $rows) {  
-            /*
-             * Setup image proxy on avatar urls
-             */
-            if (isset($rows->avatar) && !empty($XF_IMAGE_PROXY)) {
-                $avatarProxy = $sHelper->getImageProxy($rows->avatar);   
+    if (isset($content_decoded->response->players))
+    { 
+        foreach ($content_decoded->response->players as $rows)
+        {  
+            if (isset($rows->avatar) && !empty($IMAGE_PROXY_FLAG))
+            {
+                $avatar = $rows->avatar;
+                $hash = hash_hmac('md5', $avatar,
+                XenForo_Application::getConfig()->globalSalt . $IMAGE_KEY
+                );
+                            
+                $avatarProxy = 'proxy.php?' . 'image' . '=' . urlencode($avatar) . '&hash=' . $hash;
+                            
                 $rows->avatar = $avatarProxy;
             }
             
-            /*
-             * Apply game image to SteamProfile and use image proxy if enabled
-             */
-            if ($fullProfile == 1 && isset($rows->gameid) && $STEAM_GAMEBANNER > 0) {
+            if (isset($rows->gameid) && $STEAM_GAMEBANNER > 0)
+            {
                 $appid = $rows->gameid;
                 $steamid64 = $rows->steamid;
                 
-                $profileGameData = 'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid='
-                                    .$steamid64
-                                    .'&key='
-                                    .$STEAM_API_KEY;
-                $gameInfo = $sHelper->getJsonData($profileGameData);
+                if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
+                {
+                    $game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
+                }
+                else
+                {
+                    $game_info = file_get_contents("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
+                    if ($game_info === false) {
+                        $i = 0;
+                        while ($game_info === false && $i < 2) {
+                            $game_info = file_get_contents("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
+                            $i++;
+                            sleep(1);
+                        }
+                    }
+                }
                 
-                $games_decoded = json_decode($gameInfo);
-                if ($games_decoded !== null) {
+                //DEBUG using cURL only
+                //$game_info = get_web_page("http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid=" . $steamid64 . "&key=$API_KEY" );
+                $games_decoded = json_decode($game_info);
+                if ($games_decoded !== null)
+                {
                     foreach ($games_decoded->response->games as $rowsgames)
                     {
                         if ($rowsgames->appid == $appid)
@@ -110,38 +164,48 @@ if (!empty($_GET['steamids'])) {
                     
                     if (!empty($logo))
                     {
-                        $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/'
-                                .$appid
-                                .'/'
-                                .$logo
-                                .'.jpg';
+                        $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/' . $appid . '/' . $logo . '.jpg';
                         
-                        if (!empty($XF_IMAGE_PROXY)) {
-                            $logoProxy = $sHelper->getImageProxy($logo);
+                        if (!empty($IMAGE_PROXY_FLAG))
+                        {
+                            $hash = hash_hmac('md5', $logo,
+                            XenForo_Application::getConfig()->globalSalt . $IMAGE_KEY
+                            );
+                            
+                            $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logo) . '&hash=' . $hash;
+                            
                             $rows->gameLogoSmall = $logoProxy;
-                        } else {
+                        }
+                        else
+                        {
                             $rows->gameLogoSmall = $logo;
                         }
                     }
-                } else {
+                }
+                else
+                {
                     $rows->gameLogoSmall = '';
                 }
             }
             
             $logo = '';
         }
-        $contentJson = json_encode($contentDecoded);
     }
 
-    /*
-     * Output JSON data
-     */ 
-    if (function_exists('gzcompress') && (!ini_get('zlib.output_compression'))) {
-        ob_start('ob_gzhandler');
-    } else {
-        ob_start();
-    }
-    echo $contentJson;
-    ob_end_flush();
+    //$content_json = json_encode($content_decoded);
+    //unset($content_decoded);
+
+if (function_exists('gzcompress') && (!ini_get('zlib.output_compression')))
+{
+	ob_start('ob_gzhandler');
+}
+else
+{
+	ob_start();
+}
+
+echo json_encode($content_decoded);
+unset($content_decoded);
+ob_end_flush();
 }
 ?>
