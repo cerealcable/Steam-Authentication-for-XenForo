@@ -27,7 +27,9 @@
 
         createProfile: function()
         {
-            $(document).find('.steamprofile').last().empty().append(XenForo.SteamProfile.profileTemplate);
+            setTimeout(function() {
+                $(document).find('.steamprofile').last().empty().append(XenForo.SteamProfile.profileTemplate);
+            }, 1500);
         }
     }
 
