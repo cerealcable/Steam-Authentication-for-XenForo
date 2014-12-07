@@ -5,6 +5,7 @@
 * Cleaned up code and added documentation
 * Fixed span tags (Thanks, Skiphs!)
 * Added Steam ID 32-bit helper {xen:helper steamid3, $value}
+* Added Steam CDN options for additional HTTPS support
 
 == Version 1.4.4 ==
 * Fixed bug "Fatal error: Call to undefined method" in user criteria

@@ -100,6 +100,12 @@ class Steam_Manufacture {
 
 		self::dropColumnIfExists('xf_user_profile', 'steam_auth_id');
 	}
+    
+    protected function _installVersion145() {
+        $db = $this->_getDb();
+        
+        $db->query("UPDATE xf_steam_games SET game_logo = REPLACE(game_logo, 'http://media.steampowered.com', '') WHERE game_logo LIKE 'http://media.steampowered.com%'");
+    }
 
 	public static function destroy() {
 		$lastUninstallStep = 1;

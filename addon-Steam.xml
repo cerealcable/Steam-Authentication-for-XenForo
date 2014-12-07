@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="Steam" title="Steam Auth" version_string="1.4.5-dev" version_id="142" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="Steam" title="Steam Auth" version_string="1.4.5-dev" version_id="152" url="http://xenforo.com/community/threads/steam-authentication-integration.42694/" install_callback_class="Steam_Manufacture" install_callback_method="build" uninstall_callback_class="Steam_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="steam" parent_navigation_id="" display_order="60" link="steam" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
     <navigation navigation_id="steam_info_users" parent_navigation_id="steam_information" display_order="1" link="steam/users" admin_permission_id="viewStatistics" debug_only="0" hide_no_children="0"/>
@@ -352,6 +352,23 @@
   <email_templates/>
   <optiongroups>
     <group group_id="SteamAuth" display_order="1" debug_only="0"/>
+    <option option_id="steamImageCDN" edit_format="radio" data_type="unsigned_integer" can_backup="1">
+        <default_value>0</default_value>
+        <edit_format_params>0={xen:phrase steam_use_CDN_akamai_both}
+        1={xen:phrase steam_use_CDN_akamai_HTTPS}
+        2={xen:phrase steam_use_CDN_akamai_HTTP}
+        3={xen:phrase steam_use_CDN_akamai_alt}
+        4={xen:phrase steam_use_CDN_local}</edit_format_params>
+        <sub_options></sub_options>
+        <relation group_id="SteamAuth" display_order="600"/>
+    </option>
+    <option option_id="steamJSONLink" edit_format="radio" data_type="unsigned_integer" can_backup="1">
+        <default_value>0</default_value>
+        <edit_format_params>0={xen:phrase steam_use_JSON_HTTP}
+        1={xen:phrase steam_use_JSON_HTTPS}</edit_format_params>
+        <sub_options></sub_options>
+        <relation group_id="SteamAuth" display_order="610"/>
+    </option>
     <option option_id="steamIncludeGames" edit_format="textbox" data_type="string" can_backup="1">
       <default_value></default_value>
       <edit_format_params></edit_format_params>
@@ -485,6 +502,10 @@
 	<phrase title="option_steamExcludeGames_explain" version_id="52" version_string="1.2.4"><![CDATA[Exclude display of steam statistics for appids in this list. Comma delimited. Example: 440,550,4000 would exclude stats from Team Fortress 2, Left 4 Dead 2, and Garry's Mod.]]></phrase>
     <phrase title="option_steamVisitorPanel" version_id="112" version_string="1.4.3"><![CDATA[Display Steam login bar on vistor panel]]></phrase>
     <phrase title="option_steamVisitorPanel_explain" version_id="112" version_string="1.4.3"><![CDATA[Displays the login bar underneath the "Sign up now!" button.]]></phrase>
+	<phrase title="option_steamImageCDN" version_id="146" version_string="1.4.5"><![CDATA[Steam Image Source]]></phrase>	
+	<phrase title="option_steamImageCDN_explain" version_id="146" version_string="1.4.5"><![CDATA[Controls the source of the images from the Steam CDN. Not all CDN options support HTTPS/SSL. Steamcdn-a.akamaihd.net (HTTPS/HTTP) is recommended, unless you have issues with protocol relative links.]]></phrase>
+	<phrase title="option_steamJSONLink" version_id="146" version_string="1.4.5"><![CDATA[Steam API Source]]></phrase>	
+	<phrase title="option_steamJSONLink_explain" version_id="146" version_string="1.4.5"><![CDATA[Controls the source of the API call. If you want to grab JSON over HTTPS instead of HTTP, change to HTTPS only if cURL is enabled and supports HTTPS OR openssl for PHP is installed if cURL is not enabled.]]></phrase>
     <phrase title="password_of_x_account_wish_to_associate_with_not_steam" version_id="1" version_string="1.0.0"><![CDATA[This is the password of the {board_title} account that you wish to associate with. It is not your Steam password.]]></phrase>
     <phrase title="login_with_steam" version_id="112" version_string="1.4.3"><![CDATA[Log in with Steam]]></phrase>
     <phrase title="sign_up_with_steam" version_id="1" version_string="1.0.0"><![CDATA[Sign up with Steam]]></phrase>
@@ -511,6 +532,13 @@
 	<phrase title="steam_stats_topUsersRecent" version_id="25" version_string="1.1.1"><![CDATA[Most Active Steam Users]]></phrase>
 	<phrase title="steam_stats_topUsersRecent_user" version_id="25" version_string="1.1.1"><![CDATA[User]]></phrase>
 	<phrase title="steam_stats_topUsersRecent_hours" version_id="25" version_string="1.1.1"><![CDATA[Hours]]></phrase>
+    <phrase title="steam_use_CDN_akamai_both" version_id="147" version_string="1.4.5"><![CDATA[steamcdn-a.akamaihd.net (HTTPS/HTTP)]]></phrase>
+    <phrase title="steam_use_CDN_akamai_HTTPS" version_id="147" version_string="1.4.5"><![CDATA[steamcdn-a.akamaihd.net (HTTPS Only)]]></phrase>
+    <phrase title="steam_use_CDN_akamai_HTTP" version_id="147" version_string="1.4.5"><![CDATA[steamcdn-a.akamaihd.net (HTTP Only)]]></phrase>
+    <phrase title="steam_use_CDN_akamai_alt" version_id="147" version_string="1.4.5"><![CDATA[cdn.akamai.steamstatic.com (HTTP Only)]]></phrase>
+    <phrase title="steam_use_CDN_local" version_id="152" version_string="1.4.5"><![CDATA[XenForo Image Proxy (if enabled)]]></phrase>
+    <phrase title="steam_use_JSON_HTTP" version_id="147" version_string="1.4.5"><![CDATA[Steam API via HTTP]]></phrase>
+    <phrase title="steam_use_JSON_HTTPS" version_id="147" version_string="1.4.5"><![CDATA[Steam API via HTTPS]]></phrase>
     <phrase title="your_account_is_not_currently_associated_with_steam_account" version_id="1" version_string="1.2.0"><![CDATA[Your account is not currently associated with a Steam account.]]></phrase>
     <phrase title="permission_SteamAuth_viewProfile" version_id="76" version_string="1.3.5"><![CDATA[Can view steam profiles]]></phrase>
 	<phrase title="permission_SteamAuth_viewStats" version_id="76" version_string="1.3.5"><![CDATA[Can view steam statistics]]></phrase>

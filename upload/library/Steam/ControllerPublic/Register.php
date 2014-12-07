@@ -87,18 +87,9 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 
 		$username = '';
 
-		$options = XenForo_Application::get('options');
-		$steamapikey = $options->steamAPIKey;
-		if(empty($steamapikey)) {
-            return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
-        }
-        $profileUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='
-                       .$steamapikey
-                       .'&steamids='
-                       .$id
-                       .'&format=json';
         $sHelper = new Steam_Helper_Steam();
-        $json_object = $sHelper->getJsonData($profileUrl);
+        $steamProfileAPI = $sHelper->getSteamProfileAPI($id);
+        $json_object = $sHelper->getJsonData($steamProfileAPI);
 		
         $json_decoded = json_decode($json_object);
 		
@@ -407,16 +398,9 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 		// Get User Profile Data
 		$id = $session->get('steam_id');
 
-		$options = XenForo_Application::get('options');
-		$steamapikey = $options->steamAPIKey;
-        $profileUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='
-                       .$steamapikey
-                       .'&steamids='
-                       .$id
-                       .'&format=json';
         $sHelper = new Steam_Helper_Steam();
-        $json_object = $sHelper->getJsonData($profileUrl);
-        
+        $steamProfileAPI = $sHelper->getSteamProfileAPI($id);
+        $json_object = $sHelper->getJsonData($steamProfileAPI);
 		$json_decoded = json_decode($json_object);
 		
 		if(!empty($json_decoded)) {
@@ -573,7 +557,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			return false;
 		}
 
-        if((function_exists('curl_version')) && !ini_get('safe_mode') && !ini_get('open_basedir'))
+        if(function_exists('curl_version'))
 		{
             
             $data = ($_SERVER['REQUEST_METHOD'] === 'POST') ? $_POST : $_GET;

@@ -51,49 +51,37 @@ restore_error_handler();
 restore_exception_handler();
 
 $options = XenForo_Application::get('options');
-$STEAM_API_KEY = $options->steamAPIKey;
 $STEAM_GAMEBANNER = $options->steamDisplayBanner;
-$XF_IMAGE_KEY = $options->imageLinkProxyKey;
-$XF_IMAGE_PROXY = $options->imageLinkProxy['images'];
 
 if (!empty($_GET['steamids'])) {
-
+    
     /*
      * Fetch profile data
      */
-    $steamIds = $_GET['steamids'];
-    $fullProfile = $_GET['fullprofile'];
-	$profileData = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids='
-                    .$steamIds 
-                    .'&key=' 
-                    .$STEAM_API_KEY;
-    
     $sHelper = new Steam_Helper_Steam();
-    $contentJson = $sHelper->getJsonData($profileData);
+    $steamProfileAPI = $sHelper->getSteamProfileAPI($_GET['steamids']);
+
+    $fullProfile = $_GET['fullprofile'];
     
-    if (isset($contentDecoded->response->players) || !empty($XF_IMAGE_PROXY) || $STEAM_GAMEBANNER > 0) { 
+    $contentJson = $sHelper->getJsonData($steamProfileAPI);
+    
+    if (isset($contentDecoded->response->players) || $STEAM_GAMEBANNER > 0) { 
         $contentDecoded = json_decode($contentJson);
         foreach ($contentDecoded->response->players as $rows) {  
             /*
-             * Setup image proxy on avatar urls
+             * Setup CDN on avatar URLs
              */
-            if (isset($rows->avatar) && !empty($XF_IMAGE_PROXY)) {
-                $avatarProxy = $sHelper->getImageProxy($rows->avatar);   
-                $rows->avatar = $avatarProxy;
-            }
+            $avatarPath = parse_url($rows->avatar);
+            $rows->avatar = $sHelper->getSteamCDNDomain($avatarPath["path"]);
             
             /*
-             * Apply game image to SteamProfile and use image proxy if enabled
+             * Apply game image to SteamProfile and use HTTPS if enabled
              */
             if ($fullProfile == 1 && isset($rows->gameid) && $STEAM_GAMEBANNER > 0) {
                 $appid = $rows->gameid;
                 $steamid64 = $rows->steamid;
-                
-                $profileGameData = 'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid='
-                                    .$steamid64
-                                    .'&key='
-                                    .$STEAM_API_KEY;
-                $gameInfo = $sHelper->getJsonData($profileGameData);
+                $steamGamesAPI = $sHelper->getSteamGameAPI($steamid64);
+                $gameInfo = $sHelper->getJsonData($steamGamesAPI);
                 
                 $games_decoded = json_decode($gameInfo);
                 if ($games_decoded !== null) {
@@ -110,18 +98,13 @@ if (!empty($_GET['steamids'])) {
                     
                     if (!empty($logo))
                     {
-                        $logo = 'http://media.steampowered.com/steamcommunity/public/images/apps/'
-                                .$appid
-                                .'/'
-                                .$logo
-                                .'.jpg';
                         
-                        if (!empty($XF_IMAGE_PROXY)) {
-                            $logoProxy = $sHelper->getImageProxy($logo);
-                            $rows->gameLogoSmall = $logoProxy;
-                        } else {
-                            $rows->gameLogoSmall = $logo;
-                        }
+                        $logoPath = '/steamcommunity/public/images/apps/'
+                                    .$appid
+                                    .'/'
+                                    .$logo
+                                    .'.jpg';
+                        $rows->gameLogoSmall = $sHelper->getSteamCDNDomain($logoPath);
                     }
                 } else {
                     $rows->gameLogoSmall = '';

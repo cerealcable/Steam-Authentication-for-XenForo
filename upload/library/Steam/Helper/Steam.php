@@ -28,7 +28,7 @@ class Steam_Helper_Steam {
     /**
      * Checks if image proxy settings need to be applied and applies them
      * 
-     * @param string $imgUrl
+     * @param string $logoProxy
      *
      * @return string
      */
@@ -43,6 +43,170 @@ class Steam_Helper_Steam {
         }
         return $logoProxy;
     }
+
+    /**
+     * Grabs the Steam CDN Image URL based on option in the ACP
+     *
+     * @param string $imagePath
+     *
+     * @return string
+     */
+    public function getSteamCDNDomain($imagePath)
+    {
+        
+        if(strpos($imagePath, 'styles/') !== false){
+            return $imagePath;
+        }
+        
+        $options = XenForo_Application::get('options');
+        $SteamCDNcase = $options->steamImageCDN;
+        $XF_IMAGE_PROXY = $options->imageLinkProxy['images'];
+
+        switch ($SteamCDNcase) {
+            case 0:
+                $SteamCDNDomain = '//steamcdn-a.akamaihd.net'
+                                .$imagePath;
+                break;
+            case 1:
+                $SteamCDNDomain = 'https://steamcdn-a.akamaihd.net'
+                                .$imagePath;
+                break;
+            case 2:
+                $SteamCDNDomain = 'http://steamcdn-a.akamaihd.net'
+                                .$imagePath;
+                break;
+            case 3:
+                $SteamCDNDomain = 'http://cdn.akamai.steamstatic.com'
+                                .$imagePath;
+                break;
+            case 4:
+                $SteamCDNDomain = 'http://cdn.akamai.steamstatic.com'
+                                .$imagePath;
+                if(!empty($XF_IMAGE_PROXY)) {
+                    $SteamCDNDomain = $this->getImageProxy($SteamCDNDomain);
+                }
+                break;
+            default:
+                $SteamCDNDomain = '//steamcdn-a.akamaihd.net'
+                                .$imagePath;
+                break;
+        }
+        return $SteamCDNDomain;
+    }
+    
+    /**
+     * Builds the base Steam API link
+     *
+     * @return string
+     */
+    
+    public function getSteamAPIBase()
+    {
+        $options = XenForo_Application::get('options');
+        $SteamAPIcase = $options->steamJSONLink;
+        switch ($SteamAPIcase) {
+            case 0:
+                $SteamAPIDomain = 'http://api.steampowered.com';
+                break;
+            case 1:
+                $SteamAPIDomain = 'https://api.steampowered.com';
+                break;
+            default:
+                $SteamAPIDomain = 'http://api.steampowered.com';
+                break;
+        }
+        
+        return $SteamAPIDomain;
+    }
+    
+    /**
+     * Builds the Steam Profile API link
+     * 
+     * @param string $steamids
+     *
+     * @return string
+     */
+    public function getSteamProfileAPI($steamids)
+    {
+        
+        $SteamAPIDomain = $this->getSteamAPIBase();
+        
+        if (!empty($steamids)) {
+            $options = XenForo_Application::get('options');
+            $SteamAPIkey = $options->steamAPIKey;
+            if(empty($SteamAPIkey)) {
+                return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
+            }
+            
+            $SteamAPI = $SteamAPIDomain
+                        .'/ISteamUser/GetPlayerSummaries/v0002/?steamids='
+                        .$steamids
+                        .'&key='
+                        .$SteamAPIkey;
+        }
+
+        return $SteamAPI;
+    }
+    
+    /**
+     * Builds the Steam Recent Games API link
+     * 
+     * @param string $steamids
+     *
+     * @return string
+     */
+    public function getSteamGameAPI($steamids)
+    {
+        
+        $SteamAPIDomain = $this->getSteamAPIBase();
+        
+        if (!empty($steamids)) {
+            $options = XenForo_Application::get('options');
+            $SteamAPIkey = $options->steamAPIKey;
+            if(empty($SteamAPIkey)) {
+                return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
+            }
+            
+            $SteamAPI = $SteamAPIDomain
+                        .'/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid='
+                        .$steamids
+                        .'&key='
+                        .$SteamAPIkey;
+        }
+        
+        return $SteamAPI;
+    }
+    
+    /**
+     * Builds the Steam Owned Games API link
+     * 
+     * @param string $steamids
+     *
+     * @return string
+     */
+    public function getSteamOwnedAPI($steamids)
+    {
+        
+        $SteamAPIDomain = $this->getSteamAPIBase();
+        
+        if (!empty($steamids)) {
+            $options = XenForo_Application::get('options');
+            $SteamAPIkey = $options->steamAPIKey;
+            if(empty($SteamAPIkey)) {
+                return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
+            }
+            
+            $SteamAPI = $SteamAPIDomain
+                        .'/IPlayerService/GetOwnedGames/v0001/?steamid='
+                        .$steamids
+                        .'&key='
+                        .$SteamAPIkey
+                        .'&include_appinfo=1'
+                        .'&include_played_free_games=1';
+        }
+        
+        return $SteamAPI;
+    }
     
     /**
      * Decides to use cURL or file_get_contents to download JSON data from the
@@ -54,10 +218,8 @@ class Steam_Helper_Steam {
      */
     public function getJsonData($profileUrl)
     {
-        if((function_exists('curl_version')) 
-            && !ini_get('safe_mode') 
-            && !ini_get('open_basedir')
-        ) {
+        if(function_exists('curl_version'))
+        {
             $contentJson = $this->getWebPage($profileUrl);
         } else {
             $contentJson = file_get_contents($profileUrl);
@@ -86,7 +248,7 @@ class Steam_Helper_Steam {
         $options = array( 
             CURLOPT_RETURNTRANSFER => true,     // return web page
             CURLOPT_HEADER         => false,    // do not return headers
-            CURLOPT_FOLLOWLOCATION => true,     // follow redirects
+            CURLOPT_FOLLOWLOCATION => false,     // follow redirects
             CURLOPT_USERAGENT      => "spider", // who am i
             CURLOPT_AUTOREFERER    => true,     // set referer on redirect
             CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect
@@ -130,23 +292,17 @@ class Steam_Helper_Steam {
      */
 	public function getUserInfo($steam_id) {
 		
-		$options = XenForo_Application::get('options');
-		$steamapikey = $options->steamAPIKey;
-        $profileUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='
-                       .$steamapikey
-                       .'&steamids='
-                       .$steam_id
-                       .'&format=json';
+        $profileUrl = $this->getSteamProfileAPI($steam_id);
         $json_object = $this->getJsonData($profileUrl);
 		$json_decoded = json_decode($json_object);
-        $logoProxy = $json_decoded->response->players[0]->avatar;
-        $logoProxy = $this->getImageProxy($logoProxy);
-		
+
 		if(!empty($json_decoded)) {
+            $avatarPath = parse_url($json_decoded->response->players[0]->avatar);
+            $logoFixed = $this->getSteamCDNDomain($avatarPath["path"]);
 			return array(
     	        'username' => $json_decoded->response->players[0]->personaname,
 	            'avatar' => $json_decoded->response->players[0]->avatarfull,
-				'icon' => $logoProxy,
+				'icon' => $logoFixed,
 				'state' => $json_decoded->response->players[0]->personastate
 
 			);
@@ -173,15 +329,8 @@ class Steam_Helper_Steam {
         $options = XenForo_Application::get('options');
 		$gamestats = $options->steamGameStats;
 		if ($gamestats > 0) {
-            $steamapikey = $options->steamAPIKey;
             $games = array();
-            $profileGamesUrl = 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key='
-                                .$steamapikey
-                                .'&steamid='
-                                .$steam_id
-                                .'&include_appinfo=1'
-                                .'&include_played_free_games=1'
-                                .'&format=json';
+            $profileGamesUrl = $this->getSteamOwnedAPI($steam_id);
 
             $json_object = $this->getJsonData($profileGamesUrl);
             $json_usergames = json_decode($json_object);
@@ -189,8 +338,8 @@ class Steam_Helper_Steam {
             /*
              * Full storeLink is not in JSON, however store links are just http://steamcommunity.com/app/<appid>
              *
-             * appLogo is no longer a full url in JSON. Needs to be this:
-             * http://media.steampowered.com/steamcommunity/public/images/apps/<appid>/<img_logo_url>.jpg
+             * appLogo is no longer a full url in JSON. Needs to be this something like this:
+             * <CDN Domain>/steamcommunity/public/images/apps/<appid>/<img_logo_url>.jpg
              *
              * playtime_forever and playtime_2weeks are now in minutes instead of hours like in the XML. Divide by 60.
              */
@@ -206,7 +355,7 @@ class Steam_Helper_Steam {
                     else
                     {
                         $appLogo = isset($game->img_logo_url) ? addslashes($game->img_logo_url) : '';
-                        $appLogo = 'http://media.steampowered.com/steamcommunity/public/images/apps/' 
+                        $appLogo = '/steamcommunity/public/images/apps/' 
                                     .$appId 
                                     .'/' 
                                     .$appLogo 
@@ -267,11 +416,11 @@ class Steam_Helper_Steam {
 		$row = $db->fetchRow("SELECT game_id, game_name, game_logo, game_link 
                             FROM xf_steam_games 
                             WHERE game_id = $id");
-		$logoProxy = $this->getImageProxy($row['game_logo']);
+		$logoFixed = $this->getSteamCDNDomain($row['game_logo']);
         $rVal = array(
 			'id' => $row['game_id'],
 			'name' => $row['game_name'],
-			'logo' => $logoProxy,
+			'logo' => $logoFixed,
 			'link' => $row['game_link']
 		);
         
@@ -431,11 +580,11 @@ class Steam_Helper_Steam {
         }
 		
 		foreach($results as $row) {
-            $logoProxy = $this->getImageProxy($row['game_logo']);
+            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
 			$rVal[$row['game_id']] = array(
 				'name' => $row['game_name'],
 				'count' => $row['count'],
-				'logo' => $logoProxy,
+				'logo' => $logoFixed,
 				'link' => $row['game_link']
 			);
 		}
@@ -497,11 +646,11 @@ class Steam_Helper_Steam {
         }
 		
 		foreach($results as $row) {
-			$logoProxy = $this->getImageProxy($row['game_logo']);
+            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
 			$rVal[$row['game_id']] = array(
 				'name' => $row['game_name'],
 				'hours' => $row['hours'],
-				'logo' => $logoProxy,
+				'logo' => $logoFixed,
 				'link' => $row['game_link']
 			);
 		}
@@ -564,11 +713,11 @@ class Steam_Helper_Steam {
         }
 		
         foreach($results as $row) {
-        	$logoProxy = $this->getImageProxy($row['game_logo']);
+            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
             $rVal[$row['game_id']] = array(
                 'name' => $row['game_name'],
                 'hours' => $row['hours'],
-                'logo' => $logoProxy,
+                'logo' => $logoFixed,
                 'link' => $row['game_link']
             );
         }
@@ -592,12 +741,12 @@ class Steam_Helper_Steam {
                                 FROM xf_steam_games 
                                 ORDER BY game_name;");
 		foreach($results as $row) {
-			$logoProxy = $this->getImageProxy($row['game_logo']);
+            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
             $rVal[] = array(
 				'id' => $row['game_id'],
 				'name' => $row['game_name'],
 				'link' => $row['game_link'],
-				'logo' => $logoProxy
+				'logo' => $logoFixed
 			);
 		}
 		return $rVal;
