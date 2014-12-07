@@ -32,7 +32,7 @@ class Steam_Model_Steam extends XenForo_Model
         $results = $db->fetchAll($this->limitQueryResults('SELECT game_id, game_name, game_link, game_logo FROM xf_steam_games ORDER BY game_name ASC', $limitOptions['limit'], $limitOptions['offset']));
 		foreach($results as $row) {
             $sHelper = new Steam_Helper_Steam();
-            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
+            $logoFixed = $sHelper->getSteamCDNDomain($row['game_logo']);
 			$rVal[] = array(
 				'id' => $row['game_id'],
 				'name' => $row['game_name'],
