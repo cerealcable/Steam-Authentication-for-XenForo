@@ -30,6 +30,7 @@ class Steam_Cron {
 		ignore_user_abort(1);
 		$options = XenForo_Application::get('options');
 		$gameStats = $options->steamGameStats;
+        $forceUpdate = $options->steamGameStatsForce;
 		if ($gameStats > 0) {
             $db = XenForo_Application::get('db');
             $sHelper = new Steam_Helper_Steam();
@@ -49,8 +50,15 @@ class Steam_Cron {
                 foreach($games as $id => $data) {
                     
                     // game info
-                    $db->query("INSERT IGNORE INTO xf_steam_games(game_id, game_name, game_logo, game_link) 
-                                VALUES($id, '{$data['name']}', '{$data['logo']}', '{$data['link']}');");
+                    if ($forceUpdate > 0) {
+                        $gameInfoQuery = "INSERT IGNORE INTO xf_steam_games(game_id, game_name, game_logo, game_link) 
+                                    VALUES($id, '{$data['name']}', '{$data['logo']}', '{$data['link']}')
+                                    ON DUPLICATE KEY UPDATE game_logo = '{$data['logo']}';";
+                    } else {
+                        $gameInfoQuery = "INSERT IGNORE INTO xf_steam_games(game_id, game_name, game_logo, game_link) 
+                                    VALUES($id, '{$data['name']}', '{$data['logo']}', '{$data['link']}');";
+                    }
+                    $db->query($gameInfoQuery);
 
                     // update
                     $r = $db->fetchRow("SELECT * FROM xf_user_steam_games 

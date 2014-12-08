@@ -7,6 +7,8 @@
 * Added Steam ID 32-bit helper {xen:helper steamid3, $value}
 * Added Steam CDN options for additional HTTPS support
 * Added Steam as an External Account to User's Extra tab in ACP
+* Added additional visitor panel button options
+* Added an option to force the cron to update game image links
 
 == Version 1.4.4 ==
 * Fixed bug "Fatal error: Call to undefined method" in user criteria

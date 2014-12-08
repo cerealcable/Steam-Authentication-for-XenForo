@@ -21,6 +21,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Elements of OpenID code used from LightOpenID by Mewp
+ * MIT License http://www.opensource.org/licenses/mit-license.php
  */
 
 class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Register {
@@ -536,12 +539,23 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
         $callbackUri = XenForo_Link::buildPublicLink('full:register/steam', false, array(
             'redirect' => $this->getDynamicRedirect()
         ));
+        
+        $hostUri = XenForo_Application::get('options')->boardUrl;
+        $parseHostUri = parse_url($hostUri);
+        $host = $parseHostUri["host"];
+        $trustRoot = (strpos($host, '://') ? $host : 'http://' . $host);
+        if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+            && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+        ) {
+            $trustRoot = (strpos($host, '://') ? $host : 'https://' . $host);
+        }
 
 		$params = array(
 			'openid.ns'			=> 'http://specs.openid.net/auth/2.0',
 			'openid.mode'		=> 'checkid_setup',
 			'openid.return_to'	=> $callbackUri,
-			'openid.realm'		=> (!empty($_SERVER['HTTPS']) && ($_SERVER["HTTPS"]!=="off") || ($_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'],
+			'openid.realm'		=> $trustRoot,
 			'openid.identity'	=> 'http://specs.openid.net/auth/2.0/identifier_select',
 			'openid.claimed_id'	=> 'http://specs.openid.net/auth/2.0/identifier_select'
 		);
@@ -593,7 +607,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $params);
             curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($this->ch, CURLOPT_HEADER, false);
-            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, TRUE);
+            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, false);
             //curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headercurl);
             curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
             curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
