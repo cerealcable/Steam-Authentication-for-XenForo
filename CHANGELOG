@@ -9,10 +9,6 @@
 * Added Steam as an External Account to User's Extra tab in ACP
 * Added additional visitor panel button options
 * Added an option to force the cron to update game image links
-* Improve template conditionals (Thanks, jenky!)
-* Update template modifications for login bar and login helper 
-  to make sure they work with different styles (Thanks, jenky!)
-* Fix Steam Profile bug with Quick reply (Thanks, jenky!)
 
 == Version 1.4.4 ==
 * Fixed bug "Fatal error: Call to undefined method" in user criteria
