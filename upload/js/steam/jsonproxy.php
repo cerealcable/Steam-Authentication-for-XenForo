@@ -64,9 +64,10 @@ if (!empty($_GET['steamids'])) {
     $fullProfile = $_GET['fullprofile'];
     
     $contentJson = $sHelper->getJsonData($steamProfileAPI);
+    $contentDecoded = json_decode($contentJson);
     
-    if (isset($contentDecoded->response->players) || $STEAM_GAMEBANNER > 0) { 
-        $contentDecoded = json_decode($contentJson);
+    if (isset($contentDecoded->response->players)) { 
+        
         foreach ($contentDecoded->response->players as $rows) {  
             /*
              * Setup CDN on avatar URLs

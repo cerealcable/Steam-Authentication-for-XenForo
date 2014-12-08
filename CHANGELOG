@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.5.1 ==
+* Fixed logic bug in jsonproxy.php
+
 == Version 1.5.0 ==
 * Consolidated jsonproxy.php and removed jsonproxystats.php
 * Cleaned up code and added documentation
