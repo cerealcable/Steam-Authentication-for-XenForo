@@ -17,7 +17,7 @@ already, you can upgrade to this addon without the need to re-install.
 Just follow the upgrade steps below.
 
 == IMPORANT NOTE ==
-Steam Authentication & Integration 1.4.0 only works on XenForo 1.3.0+
+Steam Authentication & Integration 1.4.0+ only works on XenForo 1.3.0+
 
 == Features ==
  * Single Sign On / Authentication via Steam
@@ -49,11 +49,10 @@ Steam Authentication & Integration 1.4.0 only works on XenForo 1.3.0+
 
 == Upgrade Steps ==
 
-== If your current version is < 1.3.5 ==
-    1. Delete root/js/steam directory
-    2. Delete root/library/Steam/ControllerPublic/Steam directory
-	3. Upload the upload directory to your forum (overwrite any files)
-    4. Upgrade the addon using the provided "addon-Steam.xml" file
+== If your current version is < 1.5.0 ==
+    1. Delete root/js/steam directory (optional)
+	2. Upload the upload directory to your forum (overwrite any files)
+    3. Upgrade the addon using the provided "addon-Steam.xml" file
 	
 == Configuration ==
 Steam Authentication & Integration can be configured in 
@@ -112,11 +111,6 @@ case they have similar issues.
 
 == Known Issues / Fixes ==
 
-* SteamProfile not loading after quick reply or editing a post *
-
-This is an issue with how XenForo loads this content. I'll have to look into 
-this further and see if there is a fix. There is no known method at this time.
-
 * Problems displaying user activity in Firefox *
 
 Firefox will not correctly report last seen on any page that has the SteamProfile 
@@ -171,6 +165,6 @@ github to fork, submit code, or even discuss the code.
 This fork was updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
 
 If you'd like to see a current working example, please visit my XenForo 
-forum at http://ragecagegaming.com
+forum at https://ragecagegaming.com
 
 This addon is in no affiliation with or endorsed by Steam or Valve Software.
