@@ -1,0 +1,3 @@
+/* Nov 15, 2014 at 2:49 AM */
+
+!function(a,b,c){XenForo.SteamProfile={profileTemplate:"",init:function(){a(c).bind("XFAjaxSuccess",a.context(this,"loadProfile")),a(c).on("QuickReplyComplete",a.context(this,"createProfile"))},loadProfile:function(b){if(XenForo.hasTemplateHtml(b.ajaxData)){var c=a(b.ajaxData.templateHtml),d=c.find(".steamprofile");d.length&&(XenForo.SteamProfile.profileTemplate=SteamProfile.load(d.attr("title")))}},createProfile:function(){setTimeout(function(){a(c).find(".steamprofile").last().empty().append(XenForo.SteamProfile.profileTemplate)},1500)}},a(function(){XenForo.SteamProfile.init()})}(jQuery,this,document);
