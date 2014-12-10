@@ -540,9 +540,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
             'redirect' => $this->getDynamicRedirect()
         ));
         
-        $hostUri = XenForo_Application::get('options')->boardUrl;
-        $parseHostUri = parse_url($hostUri);
-        $host = $parseHostUri["host"];
+        $host = $_SERVER['HTTP_HOST'];
         $trustRoot = (strpos($host, '://') ? $host : 'http://' . $host);
         if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
             || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
