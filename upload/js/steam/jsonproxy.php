@@ -63,8 +63,7 @@ if (!empty($_GET['steamids'])) {
 
     if (isset($_GET['fullprofile'])) {
         $fullProfile = $_GET['fullprofile'];
-    }
-    else {
+    } else {
         $fullProfile = 0;
     }
     
