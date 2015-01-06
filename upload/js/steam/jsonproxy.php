@@ -61,7 +61,13 @@ if (!empty($_GET['steamids'])) {
     $sHelper = new Steam_Helper_Steam();
     $steamProfileAPI = $sHelper->getSteamProfileAPI($_GET['steamids']);
 
-    $fullProfile = $_GET['fullprofile'];
+    if (isset($_GET['fullprofile'])) {
+        $fullProfile = $_GET['fullprofile'];
+    }
+    else
+    {
+        $fullProfile = 0;
+    }
     
     $contentJson = $sHelper->getJsonData($steamProfileAPI);
     $contentDecoded = json_decode($contentJson);

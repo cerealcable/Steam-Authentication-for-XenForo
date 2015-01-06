@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.5.3 ==
+* Fixed undefined index bug with jsonproxy.php
+
 == Version 1.5.2 ==
 * Fixed Steam login bug with the hostname and OpenID
 * Clarified alternate login button option
