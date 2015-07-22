@@ -1,7 +1,8 @@
 === CHANGE LOG ===
 
-== Version 1.5.3 ==
+== Version 1.6.0 ==
 * Fixed undefined index bug with jsonproxy.php
+* Added support for two-step verification
 
 == Version 1.5.2 ==
 * Fixed Steam login bug with the hostname and OpenID
