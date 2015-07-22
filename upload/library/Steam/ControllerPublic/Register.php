@@ -56,12 +56,16 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 
 		$stAssoc = $userExternalModel->getExternalAuthAssociation('steam', $id);
 		if($stAssoc && $userModel->getUserById($stAssoc['user_id'])) {
-			XenForo_Application::get('session')->changeUserId($stAssoc['user_id']);
-			XenForo_Visitor::setup($stAssoc['user_id']);
 			
+			/** @var XenForo_ControllerHelper_Login $loginHelper */
+			$loginHelper = $this->getHelper('Login');
+			$loginHelper->tfaRedirectIfRequiredPublic($stAssoc['user_id'], $redirect, true);
+            
 			/* Cookies */
+			XenForo_Visitor::setup($stAssoc['user_id']);
+            XenForo_Application::get('session')->changeUserId($stAssoc['user_id']);
 			$userModel->setUserRememberCookie($stAssoc['user_id']);
-			
+
 			return $this->responseRedirect(
 				XenForo_ControllerResponse_Redirect::SUCCESS,
 				$this->getDynamicRedirect(false, false)
