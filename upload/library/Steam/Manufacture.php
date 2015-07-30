@@ -45,6 +45,11 @@ class Steam_Manufacture {
 	}
 
 	public static function build($existingAddOn, $addOnData) {
+		// Check for XenForo 1.5.0
+		if (XenForo_Application::$versionId < 1050000) {
+            throw new XenForo_Exception('This add-on requires XenForo 1.5.0 Beta 1 or higher.', true);
+        }
+		
 		$startVersion = 1;
 		$endVersion = $addOnData['version_id'];
 
