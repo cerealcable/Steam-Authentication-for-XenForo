@@ -25,32 +25,40 @@
 
 class Steam_Helper_Criteria {
 	public static function criteriaUser($rule, array $data, array $user, &$returnValue) {
+		if (!$user)
+		{
+			$user = XenForo_Visitor::getInstance()->toArray();
+		}
+		if (!isset($user['externalAuth']))
+		{
+			$user['externalAuth'] = !empty($user['external_auth']) ? @unserialize($user['external_auth']) : array();
+		}
 		switch($rule) {
 			case 'steam_state':
-				if(XenForo_Visitor::getUserId() != 0) {
-					switch($data['state']) {
-						case 'associated':
-							if(!empty($user['externalAuth']['steam']) && $user['externalAuth']['steam'] > 0) {
-								$returnValue = true;
-							} else {
-								$returnValue = false;
-							}
-							break;
-						case 'deassociated':
-							if(empty($user['externalAuth']['steam']) || $user['externalAuth']['steam'] <= 0) {
-								$returnValue = true;
-							} else {
-								$returnValue = false;
-							}
-							break;
-						default:
+				switch($data['state']) {
+					case 'associated':
+						if(empty($user['externalAuth']['steam']))
+						{
 							$returnValue = false;
-							break;
-					}
+						} else {
+							$returnValue = true;
+						}
+						break;
+					case 'deassociated':
+						if(empty($user['externalAuth']['steam']))
+						{
+							$returnValue = true;
+						} else {
+							$returnValue = false;
+						}
+						break;
+					default:
+						$returnValue = false;
+						break;
 				}
 				break;
 			case 'steam_game':
-				if(array_key_exists('externalAuth', $user) && !empty($user['externalAuth']['steam']) && $user['externalAuth']['steam'] > 0) {
+				if(array_key_exists('externalAuth', $user) && !empty($user['externalAuth']['steam'])) {
 					// check if game is in users games table
 					$games = implode(",", $data['games']);
 					$db = XenForo_Application::get('db');
@@ -66,7 +74,7 @@ class Steam_Helper_Criteria {
 				}
 				break;
 			case 'steam_not_game':
-				if(array_key_exists('externalAuth', $user) && !empty($user['externalAuth']['steam']) && $user['externalAuth']['steam'] > 0) {
+				if(array_key_exists('externalAuth', $user) && !empty($user['externalAuth']['steam'])) {
 					// check if game is NOT in users games table
 					$games = implode(",", $data['games']);
 					$db = XenForo_Application::get('db');

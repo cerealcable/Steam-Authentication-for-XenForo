@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.6.1 ==
+* Fixed criteria bug for steam association
+
 == Version 1.6.0 ==
 * Fixed undefined index bug with jsonproxy.php
 * Added support for two-step verification
