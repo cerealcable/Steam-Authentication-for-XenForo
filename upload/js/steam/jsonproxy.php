@@ -78,6 +78,11 @@ if (!empty($_GET['steamids'])) {
              */
             $avatarPath = parse_url($rows->avatar);
             $rows->avatar = $sHelper->getSteamCDNDomain($avatarPath["path"]);
+			
+			/*
+			 * Sanitize Names
+			 */
+			$rows->personaname = htmlspecialchars($rows->personaname);
             
             /*
              * Apply game image to SteamProfile and use HTTPS if enabled

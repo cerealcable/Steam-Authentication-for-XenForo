@@ -1,5 +1,8 @@
 === CHANGE LOG ===
 
+== Version 1.6.2 ==
+* Fixed XSS exploit with SteamProfile badge (Thanks, kghector!)
+
 == Version 1.6.1 ==
 * Fixed criteria bug for steam association
 
