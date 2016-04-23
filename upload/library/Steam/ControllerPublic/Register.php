@@ -108,7 +108,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
 			$username = $json_decoded->response->players[0]->personaname;
 			
             if (!isset($json_decoded->response->players[0]->loccountrycode)) {
-                $location = 'Parts Unknown';
+                $location = ''; //No location
 			}
             
             if (isset($json_decoded->response->players[0]->loccountrycode)) {
@@ -311,7 +311,7 @@ class Steam_ControllerPublic_Register extends XFCP_Steam_ControllerPublic_Regist
                     case "YE": $location = "Yemen"; break;
                     case "ZM": $location = "Zambia"; break;
                     case "ZW": $location = "Zimbabwe"; break;
-                    default: $location = 'Parts Unknown';
+                    default: $location = ''; //No location
                 }
                 
                 if (isset($json_decoded->response->players[0]->locstatecode) 
