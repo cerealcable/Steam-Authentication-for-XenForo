@@ -2,6 +2,8 @@
 
 == Version 1.6.3 ==
 * Adjusted default case for no location set in Steam
+* Updated to latest official Steam OpenID login buttons
+* Fixed potential bug with banner not showing under the "Sign up now!" button
 
 == Version 1.6.2 ==
 * Fixed XSS exploit with SteamProfile badge (Thanks, kghector!)
