@@ -1,48 +1,309 @@
 <?php
 /**
- *      This file is part of Steam Authentication for XenForo
+ * This file is part of Steam Authentication for XenForo
  *
- *      Written by Morgan Humes <morgan@lanaddict.com>
- *      Copyright 2012 Morgan Humes
+ * Originally Written by Morgan Humes <morgan@lanaddict.com>
+ * Copyright 2012 Morgan Humes
  *
- *      Steam Authentication for XenForo is free software: you can redistribute
- *      it and/or modify it under the terms of the GNU General Public License
- *      as published by the Free Software Foundation, either version 3 of the
- *      License, or (at your option) any later version.
+ * Code updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+ * Copyright 2014 Michael Linback Jr.
+ * Website: http://ragecagegaming.com
  *
- *      Steam Authentication for XenForo is distributed in the hope that it
- *      will be useful, but WITHOUT ANY WARRANTY; without even the implied
- *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *      See the GNU General Public License for more details.
+ * Steam Authentication for XenForo is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
+ * Steam Authentication for XenForo is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 class Steam_Helper_Steam {
 
-	// cURL Variable
-	private $ch = null;
+    /**
+     * Checks if image proxy settings need to be applied and applies them
+     * 
+     * @param string $logoProxy
+     *
+     * @return string
+     */
+    public function getImageProxy($logoProxy)
+    {
+        if (!empty(XenForo_Application::getOptions()->imageLinkProxy['images']))
+        {
+            $hash = hash_hmac('md5', $logoProxy,
+            XenForo_Application::getConfig()->globalSalt . XenForo_Application::getOptions()->imageLinkProxyKey
+            );
+            $logoProxy = 'proxy.php?' . 'image' . '=' . urlencode($logoProxy) . '&hash=' . $hash;
+        }
+        return $logoProxy;
+    }
 
-	public function __construct() {
-		// Setup cURL
-		$this->ch = curl_init();
-		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($this->ch, CURLOPT_TIMEOUT, 4);
-	}	
+    /**
+     * Grabs the Steam CDN Image URL based on option in the ACP
+     *
+     * @param string $imagePath
+     *
+     * @return string
+     */
+    public function getSteamCDNDomain($imagePath)
+    {
+        
+        if(strpos($imagePath, 'styles/') !== false){
+            return $imagePath;
+        }
+        
+        $options = XenForo_Application::get('options');
+        $SteamCDNcase = $options->steamImageCDN;
+        $XF_IMAGE_PROXY = $options->imageLinkProxy['images'];
 
+        switch ($SteamCDNcase) {
+            case 0:
+                $SteamCDNDomain = '//steamcdn-a.akamaihd.net'
+                                .$imagePath;
+                break;
+            case 1:
+                $SteamCDNDomain = 'https://steamcdn-a.akamaihd.net'
+                                .$imagePath;
+                break;
+            case 2:
+                $SteamCDNDomain = 'http://steamcdn-a.akamaihd.net'
+                                .$imagePath;
+                break;
+            case 3:
+                $SteamCDNDomain = 'http://cdn.akamai.steamstatic.com'
+                                .$imagePath;
+                break;
+            case 4:
+                $SteamCDNDomain = 'http://cdn.akamai.steamstatic.com'
+                                .$imagePath;
+                if(!empty($XF_IMAGE_PROXY)) {
+                    $SteamCDNDomain = $this->getImageProxy($SteamCDNDomain);
+                }
+                break;
+            default:
+                $SteamCDNDomain = '//steamcdn-a.akamaihd.net'
+                                .$imagePath;
+                break;
+        }
+        return $SteamCDNDomain;
+    }
+    
+    /**
+     * Builds the base Steam API link
+     *
+     * @return string
+     */
+    
+    public function getSteamAPIBase()
+    {
+        $options = XenForo_Application::get('options');
+        $SteamAPIcase = $options->steamJSONLink;
+        switch ($SteamAPIcase) {
+            case 0:
+                $SteamAPIDomain = 'http://api.steampowered.com';
+                break;
+            case 1:
+                $SteamAPIDomain = 'https://api.steampowered.com';
+                break;
+            default:
+                $SteamAPIDomain = 'http://api.steampowered.com';
+                break;
+        }
+        
+        return $SteamAPIDomain;
+    }
+    
+    /**
+     * Builds the Steam Profile API link
+     * 
+     * @param string $steamids
+     *
+     * @return string
+     */
+    public function getSteamProfileAPI($steamids)
+    {
+        
+        $SteamAPIDomain = $this->getSteamAPIBase();
+        
+        if (!empty($steamids)) {
+            $options = XenForo_Application::get('options');
+            $SteamAPIkey = $options->steamAPIKey;
+            if(empty($SteamAPIkey)) {
+                return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
+            }
+            
+            $SteamAPI = $SteamAPIDomain
+                        .'/ISteamUser/GetPlayerSummaries/v0002/?steamids='
+                        .$steamids
+                        .'&key='
+                        .$SteamAPIkey;
+        }
+
+        return $SteamAPI;
+    }
+    
+    /**
+     * Builds the Steam Recent Games API link
+     * 
+     * @param string $steamids
+     *
+     * @return string
+     */
+    public function getSteamGameAPI($steamids)
+    {
+        
+        $SteamAPIDomain = $this->getSteamAPIBase();
+        
+        if (!empty($steamids)) {
+            $options = XenForo_Application::get('options');
+            $SteamAPIkey = $options->steamAPIKey;
+            if(empty($SteamAPIkey)) {
+                return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
+            }
+            
+            $SteamAPI = $SteamAPIDomain
+                        .'/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid='
+                        .$steamids
+                        .'&key='
+                        .$SteamAPIkey;
+        }
+        
+        return $SteamAPI;
+    }
+    
+    /**
+     * Builds the Steam Owned Games API link
+     * 
+     * @param string $steamids
+     *
+     * @return string
+     */
+    public function getSteamOwnedAPI($steamids)
+    {
+        
+        $SteamAPIDomain = $this->getSteamAPIBase();
+        
+        if (!empty($steamids)) {
+            $options = XenForo_Application::get('options');
+            $SteamAPIkey = $options->steamAPIKey;
+            if(empty($SteamAPIkey)) {
+                return $this->responseError('Missing API Key for Steam Authentication. Please contact the forum administrator with this error.');
+            }
+            
+            $SteamAPI = $SteamAPIDomain
+                        .'/IPlayerService/GetOwnedGames/v0001/?steamid='
+                        .$steamids
+                        .'&key='
+                        .$SteamAPIkey
+                        .'&include_appinfo=1'
+                        .'&include_played_free_games=1';
+        }
+        
+        return $SteamAPI;
+    }
+    
+    /**
+     * Decides to use cURL or file_get_contents to download JSON data from the
+     * Steam Community API.
+     *
+     * @param string $profileUrl
+     *
+     * @return mixed The resulting JSON string, or false if the argument was not an array.
+     */
+    public function getJsonData($profileUrl)
+    {
+        if(function_exists('curl_version'))
+        {
+            $contentJson = $this->getWebPage($profileUrl);
+        } else {
+            $contentJson = file_get_contents($profileUrl);
+            if ($contentJson === false) {
+                $i = 0;
+                while ($contentJson === false && $i < 2) {
+                    $contentJson = file_get_contents($profileUrl);
+                    $i++;
+                    sleep(1);
+                }
+            }
+        }
+        return $contentJson;
+    }
+
+    /**
+     * Uses cURL to get JSON data from Steam Community API.
+     * 
+     * @param string $url
+     *
+     * @return mixed The resulting JSON string, or false if the argument was not an array.
+     */
+    public function getWebPage($url) 
+    {
+        $res = array();
+        $options = array( 
+            CURLOPT_RETURNTRANSFER => true,     // return web page
+            CURLOPT_HEADER         => false,    // do not return headers
+            CURLOPT_FOLLOWLOCATION => false,     // follow redirects
+            CURLOPT_USERAGENT      => "spider", // who am i
+            CURLOPT_AUTOREFERER    => true,     // set referer on redirect
+            CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect
+            CURLOPT_TIMEOUT        => 5,      // timeout on response
+            CURLOPT_MAXREDIRS      => 2,       // stop after 10 redirects
+            CURLOPT_ENCODING       => 'UTF-8',
+
+        ); 
+        $ch      = curl_init( $url ); 
+        curl_setopt_array( $ch, $options ); 
+        $content = curl_exec( $ch ); 
+        $err     = curl_errno( $ch ); 
+        $errmsg  = curl_error( $ch ); 
+        $header  = curl_getinfo( $ch ); 
+        
+        if ($content === false) {
+            $i = 0;
+            while ($content === false && $i < 2) {
+                $content = curl_exec( $ch ); 
+                $err     = curl_errno( $ch ); 
+                $errmsg  = curl_error( $ch ); 
+                $header  = curl_getinfo( $ch ); 
+                $i++;
+                sleep(1);
+            }
+        }
+        curl_close( $ch ); 
+        
+        return $content;
+    }
+
+    /**
+     * Get profile info for a provided steam ID
+     * 
+     * Used in the following:
+     * ControllerPublic/Account.php
+     *
+     * @param int $steam_id
+     *
+     * @return array
+     */
 	public function getUserInfo($steam_id) {
-		// cURL
-		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/{$steam_id}/?xml=1");
-		$result = curl_exec($this->ch);
-		$xml = simplexml_load_string($result);
+		
+        $profileUrl = $this->getSteamProfileAPI($steam_id);
+        $json_object = $this->getJsonData($profileUrl);
+		$json_decoded = json_decode($json_object);
 
-        if(!empty($xml)) {
+		if(!empty($json_decoded)) {
+            $avatarPath = parse_url($json_decoded->response->players[0]->avatar);
+            $logoFixed = $this->getSteamCDNDomain($avatarPath["path"]);
 			return array(
-    	        'username' => $xml->steamID,
-	            'avatar' => $xml->avatarFull,
-				'icon' => $xml->avatarIcon,
-				'state' => $xml->onlineState
+    	        'username' => $json_decoded->response->players[0]->personaname,
+	            'avatar' => $json_decoded->response->players[0]->avatarfull,
+				'icon' => $logoFixed,
+				'state' => $json_decoded->response->players[0]->personastate
 
 			);
         } else {
@@ -53,64 +314,137 @@ class Steam_Helper_Steam {
 		}
 	}
 
+    /**
+     * Get game info for a provided steam ID
+     * 
+     * Used in the following:
+     * ControllerPublic\Register.php
+     * Steam\Cron.php
+     *
+     * @param int $steam_id
+     *
+     * @return array
+     */
     public function getUserGames($steam_id) {
-        $games = array();
+        $options = XenForo_Application::get('options');
+		$gamestats = $options->steamGameStats;
+		if ($gamestats > 0) {
+            $games = array();
+            $profileGamesUrl = $this->getSteamOwnedAPI($steam_id);
 
-		// cURL
-		curl_setopt($this->ch, CURLOPT_URL, "http://steamcommunity.com/profiles/$steam_id/games/?xml=1");
-		$result = curl_exec($this->ch);
-		$xml = simplexml_load_string($result);
+            $json_object = $this->getJsonData($profileGamesUrl);
+            $json_usergames = json_decode($json_object);
+            
+            /*
+             * Full storeLink is not in JSON, however store links are just http://steamcommunity.com/app/<appid>
+             *
+             * appLogo is no longer a full url in JSON. Needs to be this something like this:
+             * <CDN Domain>/steamcommunity/public/images/apps/<appid>/<img_logo_url>.jpg
+             *
+             * playtime_forever and playtime_2weeks are now in minutes instead of hours like in the XML. Divide by 60.
+             */
+            
+            if(!empty($json_usergames->response->games)) {
+                foreach($json_usergames->response->games as $game) {
+                    $appId = isset($game->appid) ? $game->appid : 0;
+                    $appName = isset($game->name) ? addslashes($game->name) : '';
+                    if (strcmp($game->img_logo_url,'') == 0)
+                    {
+                        $appLogo = 'styles/default/steamauth/unknown_game.png';
+                    }
+                    else
+                    {
+                        $appLogo = isset($game->img_logo_url) ? addslashes($game->img_logo_url) : '';
+                        $appLogo = '/steamcommunity/public/images/apps/' 
+                                    .$appId 
+                                    .'/' 
+                                    .$appLogo 
+                                    .'.jpg';
+                    }
 
-        if(!empty($xml)) {
-			if(isset($xml->games)) {
-	            foreach($xml->games->children() as $game) {
-                	$appId = isset($game->appID) ? $game->appID : 0;
-            	    $appName = isset($game->name) ? addslashes($game->name) : "";
-        	        $appLogo = isset($game->logo) ? addslashes($game->logo) : "";
-    	            $appLink = isset($game->storeLink) ? addslashes($game->storeLink) : "";
-	                $hours = isset($game->hoursOnRecord) ? $game->hoursOnRecord : 0;
-					$hoursRecent = isset($game->hoursLast2Weeks) ? $game->hoursLast2Weeks : 0;
+                    $appLink = 'http://steamcommunity.com/app/' . $appId;
+                    $hours = isset($game->playtime_forever) ? $game->playtime_forever : 0;
+                    $hoursRecent = isset($game->playtime_2weeks) ? $game->playtime_2weeks : 0;
 
-            	    if($appId == 0 || $appName == "") {
-        	            continue;
-    	            }
+                    $hours = ($hours / 60);
+                    $hoursRecent = ($hoursRecent / 60);
+                    
+                    if($appId == 0 || $appName == '') {
+                        continue;
+                    }
 
-	                $games["$appId"] = array (
-                    	'name'  => $appName,
-                	    'logo'  => $appLogo,
-            	        'link'  => $appLink,
-        	            'hours' => $hours,
-						'hours_recent' => $hoursRecent
-    	            );
-	            }
-			}
+                    $games["$appId"] = array (
+                        'name'  => $appName,
+                        'logo'  => $appLogo,
+                        'link'  => $appLink,
+                        'hours' => $hours,
+                        'hours_recent' => $hoursRecent
+                    );
+                }
+            }
         }
 
         return $games;
     }
 
-	public function deleteSteamData($user_id) {
+    /**
+     * Deletes steam stats data for user
+     * 
+     * Used in the following:
+     * ControllerPublic\Account.php
+     *
+     * @param int $user_id
+     */
+    public function deleteSteamData($user_id) {
         $db = XenForo_Application::get('db');
-		$db->query("DELETE FROM xf_user_steam_games WHERE user_id = $user_id");
+		$db->query("DELETE FROM xf_user_steam_games 
+                    WHERE user_id = $user_id");
 	}
 
-	public function getGameInfo($id) {
+    /**
+     * Get individual game stats
+     * 
+     * Used in the following:
+     * ControllerAdmin\Steam.php
+     *
+     * @param int $id
+     *
+     * @return array
+     */
+    public function getGameInfo($id) {
 		$db = XenForo_Application::get('db');
-		$row = $db->fetchRow("SELECT game_id, game_name, game_logo, game_link FROM xf_steam_games WHERE game_id = $id");
-		$rVal = array(
+		$row = $db->fetchRow("SELECT game_id, game_name, game_logo, game_link 
+                            FROM xf_steam_games 
+                            WHERE game_id = $id");
+		$logoFixed = $this->getSteamCDNDomain($row['game_logo']);
+        $rVal = array(
 			'id' => $row['game_id'],
 			'name' => $row['game_name'],
-			'logo' => $row['game_logo'],
+			'logo' => $logoFixed,
 			'link' => $row['game_link']
 		);
-
+        
         return $rVal;
 	}
 
-	public function getGameOwners($id) {
+    /**
+     * Get all users that own a particular steam game
+     * 
+     * Used in the following:
+     * ControllerAdmin\Steam.php
+     *
+     * @param int $id
+     *
+     * @return array
+     */
+    public function getGameOwners($id) {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT u.user_id, u.username, g.game_hours, g.game_hours_recent FROM xf_user_steam_games g, xf_user u WHERE g.user_id = u.user_id AND g.game_id = $id");
+		$results = $db->fetchAll("SELECT u.user_id, u.username, g.game_hours, g.game_hours_recent 
+                                FROM xf_user_steam_games g, xf_user u 
+                                WHERE g.user_id = u.user_id 
+                                AND g.game_id = $id 
+                                AND u.is_banned NOT IN (1)");
 		foreach($results as $row) {
 			$rVal[] = array(
 				'user_id' => $row['user_id'],
@@ -119,35 +453,204 @@ class Steam_Helper_Steam {
 				'hours_recent' => $row['game_hours_recent']
 			);
 		}
-
-		return $rVal;
+		
+        return $rVal;
 	}
-
-	public function getGameStatistics($limit=25) {
+	
+    /**
+     * Get all users that own a particular steam game
+     * 
+     * Used in the following:
+     * ControllerPublic\Steam.php
+     *
+     * @param int $limit
+     *
+     * @return array
+     */
+	public function getGameOwnersHours($limit) {
+		$options = XenForo_Application::get('options');
+		$steamapikey = $options->steamAPIKey;
+		$includelist = $options->steamIncludeGames;
+		$excludelist = $options->steamExcludeGames;
 		$rVal = array();
-		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC LIMIT $limit;");
-        foreach($results as $row) {
+		
+		if (empty($includelist) && empty($excludelist))
+		{
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours 
+                                    FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g 
+                                    WHERE g.user_id = u.user_id 
+                                    AND g.user_id = p.user_id 
+                                    AND p.provider = 'steam' 
+                                    AND u.is_banned NOT IN (1) 
+                                    GROUP BY u.user_id 
+                                    ORDER BY hours DESC, u.user_id ASC 
+                                    LIMIT $limit;");
+        } elseif (!empty($includelist)) {
+			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours 
+                                    FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g 
+                                    WHERE g.user_id = u.user_id 
+                                    AND g.user_id = p.user_id 
+                                    AND p.provider = 'steam' 
+                                    AND g.game_id IN ($includelist) 
+                                    AND u.is_banned NOT IN (1) 
+                                    GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC 
+                                    LIMIT $limit;");
+		} else {
+			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT u.user_id, u.username, gravatar, avatar_date, p.provider_key, SUM(g.game_hours_recent) AS hours 
+                                    FROM xf_user u, xf_user_external_auth p, xf_user_steam_games g 
+                                    WHERE g.user_id = u.user_id 
+                                    AND g.user_id = p.user_id 
+                                    AND p.provider = 'steam' 
+                                    AND g.game_id NOT IN ($excludelist) 
+                                    AND u.is_banned NOT IN (1) 
+                                    GROUP BY u.user_id ORDER BY hours DESC, u.user_id ASC
+                                    LIMIT $limit;");
+		}
+		
+		foreach($results as $row) {
+            $rVal[$row['user_id']] = array(
+                'hours' => $row['hours'],
+				'user_id' => $row['user_id'],
+				'username' => $row['username'],
+				'gravatar' => $row['gravatar'],
+				'avatar_date' => $row['avatar_date'],
+				'steamprofileid' => $row['provider_key']
+            );
+        }
+
+        return $rVal;
+	}
+    
+    /**
+     * Get count of all games people own
+     * 
+     * Used in the following:
+     * ControllerAdmin\Steam.php
+     * ControllerPublic\Steam.php
+     *
+     * @param int $limit
+     *
+     * @return array
+     */
+	public function getGameStatistics($limit) {
+		$options = XenForo_Application::get('options');
+		$includelist = $options->steamIncludeGames;
+		$excludelist = $options->steamExcludeGames;
+		$rVal = array();
+		
+		if (empty($includelist) && empty($excludelist)) {
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id 
+                                    ORDER BY count DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        } elseif (!empty($includelist)) {
+			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND g.game_id IN ($includelist) 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id 
+                                    ORDER BY count DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        } else {
+			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, COUNT(*) AS count 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND g.game_id 
+                                    NOT IN ($excludelist) 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id ORDER BY count DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        }
+		
+		foreach($results as $row) {
+            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
 			$rVal[$row['game_id']] = array(
 				'name' => $row['game_name'],
 				'count' => $row['count'],
-				'logo' => $row['game_logo'],
+				'logo' => $logoFixed,
 				'link' => $row['game_link']
 			);
 		}
 
 		return $rVal;
 	}
-
-	public function getGamePlayedStatistics($limit=25) {
+	
+    /**
+     * Get total hours for games
+     * 
+     * Used in the following:
+     * ControllerAdmin\Steam.php
+     * ControllerPublic\Steam.php
+     *
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getGamePlayedStatistics($limit) {
+		$options = XenForo_Application::get('options');
+		$includelist = $options->steamIncludeGames;
+		$excludelist = $options->steamExcludeGames;
 		$rVal = array();
-		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+		
+		if (empty($includelist) && empty($excludelist)) {
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id 
+                                    ORDER BY hours DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        } elseif (!empty($includelist)) {
+			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND g.game_id IN ($includelist) 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id 
+                                    ORDER BY hours DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        } else {
+			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours) AS hours 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND g.game_id 
+                                    NOT IN ($excludelist) 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        }
+		
 		foreach($results as $row) {
+            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
 			$rVal[$row['game_id']] = array(
 				'name' => $row['game_name'],
 				'hours' => $row['hours'],
-				'logo' => $row['game_logo'],
+				'logo' => $logoFixed,
 				'link' => $row['game_link']
 			);
 		}
@@ -155,45 +658,138 @@ class Steam_Helper_Steam {
 		return $rVal;
 	}
 
-	public function getGamePlayedRecentStatistics($limit=25) {
-        $rVal = array();
-        $db = XenForo_Application::get('db');
-        $results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours FROM xf_user_steam_games u, xf_steam_games g WHERE u.game_id = g.game_id GROUP BY u.game_id ORDER BY hours DESC, g.game_id ASC LIMIT $limit;");
+    /**
+     * Get total hours for recently played games
+     * 
+     * Used in the following:
+     * ControllerAdmin\Steam.php
+     * ControllerPublic\Steam.php
+     *
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getGamePlayedRecentStatistics($limit) {
+		$options = XenForo_Application::get('options');
+		$includelist = $options->steamIncludeGames;
+		$excludelist = $options->steamExcludeGames;
+		$rVal = array();
+		
+		if (empty($includelist) && empty($excludelist)) {
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id 
+                                    ORDER BY hours DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        } elseif (!empty($includelist)) {
+			$includelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $includelist);
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND g.game_id 
+                                    IN ($includelist) 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id 
+                                    ORDER BY hours DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        } else {
+			$excludelist = preg_replace('/[^,;0-9_-]|[,;]$/s', '', $excludelist);
+			$db = XenForo_Application::get('db');
+			$results = $db->fetchAll("SELECT g.game_id, g.game_name, g.game_logo, g.game_link, SUM(u.game_hours_recent) AS hours 
+                                    FROM xf_user_steam_games u, xf_user p, xf_steam_games g 
+                                    WHERE p.user_id = u.user_id 
+                                    AND u.game_id = g.game_id 
+                                    AND g.game_id NOT IN ($excludelist) 
+                                    AND p.is_banned NOT IN (1) 
+                                    GROUP BY u.game_id 
+                                    ORDER BY hours DESC, g.game_id ASC 
+                                    LIMIT $limit;");
+        }
+		
         foreach($results as $row) {
+            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
             $rVal[$row['game_id']] = array(
                 'name' => $row['game_name'],
                 'hours' => $row['hours'],
-                'logo' => $row['game_logo'],
+                'logo' => $logoFixed,
                 'link' => $row['game_link']
             );
         }
 
         return $rVal;
 	}
-
-	public function getAvailableGames() {
+    
+    /**
+     * Lists all games in the database
+     * 
+     * Used in the following:
+     * ControllerAdmin\Steam.php
+     * Listener.php
+     *
+     * @return array
+     */
+    public function getAvailableGames() {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT game_id, game_name, game_link, game_logo FROM xf_steam_games ORDER BY game_name;");
+		$results = $db->fetchAll("SELECT game_id, game_name, game_link, game_logo 
+                                FROM xf_steam_games 
+                                ORDER BY game_name;");
 		foreach($results as $row) {
-			$rVal[] = array(
+            $logoFixed = $this->getSteamCDNDomain($row['game_logo']);
+            $rVal[] = array(
 				'id' => $row['game_id'],
 				'name' => $row['game_name'],
 				'link' => $row['game_link'],
-				'logo' => $row['game_logo']
+				'logo' => $logoFixed
 			);
 		}
 		return $rVal;
 	}
-
-	public function getSteamUsers() {
+    
+    /**
+     * Count all games in the database
+     * 
+     * Used in the following:
+     * ControllerAdmin\Steam.php
+     *
+     * @return int
+     */
+    public function getAvailableGamesCount() {
 		$rVal = array();
 		$db = XenForo_Application::get('db');
-		$results = $db->fetchAll("SELECT u.user_id, u.username, p.steam_auth_id FROM xf_user u, xf_user_profile p WHERE u.user_id = p.user_id AND p.steam_auth_id > 0 ORDER BY u.username;");
+        $results = $db->fetchAll('SELECT COUNT(*) as total_count FROM xf_steam_games');
+		foreach($results as $row) {
+            $gameCount = $row['total_count'];
+		}
+		return $gameCount;
+	}
+
+    /**
+     * List all steam users in the database
+     * 
+     * Used in the following:
+     * ControllerAdmin\Steam.php
+     *
+     * @return array
+     */
+    public function getSteamUsers() {
+		$rVal = array();
+		$db = XenForo_Application::get('db');
+		$results = $db->fetchAll("SELECT u.provider_key, p.user_id, p.username 
+                                FROM xf_user_external_auth u, xf_user p 
+                                WHERE u.user_id = p.user_id 
+                                AND u.provider = 'steam' 
+                                ORDER BY p.username;");
 		foreach($results as $row) {
 			$rVal[] = array(
-				'id' => Steam_Helper_Steam::convertIdToString($row['steam_auth_id']),
-				'id64' => $row['steam_auth_id'],
+				'id' => Steam_Helper_Steam::convertIdToString($row['provider_key']),
+				'id64' => $row['provider_key'],
 				'username' => $row['username'],
 				'user_id' => $row['user_id']
 			);
@@ -201,6 +797,16 @@ class Steam_Helper_Steam {
 		return $rVal;
 	}
 
+    /**
+     * This function is used to convert a 64ID to a STEAMID
+     * 
+     * Used in the following:
+     * Listener.php
+     *
+     * @param int $id
+     *
+     * @return string
+     */
 	public static function convertIdToString($id) {
         $steamId1  = substr($id, -1) % 2;
         $steamId2a = intval(substr($id, 0, 4)) - 7656;
@@ -213,6 +819,27 @@ class Steam_Helper_Steam {
 
         return "STEAM_0:$steamId1:" . (($steamId2a + $steamId2b) / 2);
     }
-}
+    
+    /**
+     * This function is used to convert a 64ID to a 32ID
+     * 
+     * Used in the following:
+     * Listener.php
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+	public static function convertIdToSteam3($id) {
+        $steamId1  = substr($id, -1) % 2;
+        $steamId2a = intval(substr($id, 0, 4)) - 7656;
+        $steamId2b = substr($id, 4) - 1197960265728;
+        $steamId2b = $steamId2b - $steamId1;
 
-?>
+        if($steamId2a <= 0 && $steamId2b <= 0) {
+            throw new SteamCondenserException("SteamID $id is too small.");
+        }
+        
+        return "[U:1:" . (($steamId2a + $steamId2b) + $steamId1) . "]";
+    }
+}

@@ -1,7 +1,13 @@
 Steam Authentication for XenForo
 
-Written by Morgan Humes <morgan@lanaddict.com>
+Original Code Written by Morgan Humes <morgan@lanaddict.com>
 Copyright 2012 Morgan Humes
+
+Code Forked and Updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+Copyright 2014 Michael Linback Jr.
+Website: http://ragecagegaming.com
+
+JSON steam profile badge idea by Luke Foreman
 
 Steam Authentication for XenForo is free software: you can redistribute
 it and/or modify it under the terms of the GNU General Public License

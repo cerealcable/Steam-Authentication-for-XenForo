@@ -2,92 +2,147 @@ Steam Authentication & Integration
   A XenForo Addon
 
 == Description ==
-This addon provides Steam Integration allowing new & existing users to establish
-accounts via their Steam accounts. This is similar to the Twitter (New) plugin
-which adds no custom template code by hand and instead properly creates
-templates and implements them using hooks.
+Authenticate to your XenForo forum with Steam! Steam Authentication & 
+Integration allows new and existing users to establish accounts via 
+their Steam accounts using the Steam Web API. There are additional 
+features such as: Steam statistics for your users; Generate notices 
+for users based on steam data (ex. notices for people who own a 
+specific game); Create trophies based on steam data (ex. trophy for 
+associating a steam account to your xenforo account). Best of all, 
+there are no template edits required!
 
-== Prerequisites ==
- * cURL
- * BCMath (PHP Extension, usually installed already)
+This addon is a continuation of the original Steam Authentication & 
+Integration addon created by Morgan. If you have this version installed 
+already, you can upgrade to this addon without the need to re-install. 
+Just follow the upgrade steps below.
 
-== Installation Steps ==
-    1. Install Prerequisites
-         CentOS / Redhat:
-           * yum install php-bcmath
-
-         Debian / Ubuntu:
-           * apt-get install php5-curl
-
-    2. Upload files in the upload directory to your forum
-    3. Make the folder "js/steam/cache" world writable (chmod 0777)
-    4. Install using the provided "addon-Steam.xml"
-    5. Change options for "Steam Integration" as necessary
+== IMPORANT NOTE ==
+Steam Authentication & Integration 1.6.0+ only works on XenForo 1.5.0+
 
 == Features ==
  * Single Sign On / Authentication via Steam
  * Statistics
  * Notices
+ * SteamProfile
+ * Power by the Steam Web API
+ * No Template Hooks or Editing Required
 
-== Need Help? ==
-Glad you've decided to use Steam Authentication and Integration, but please do
-not ask me directly for help via a Conversation. We are all working on building
-our communities so unless you have sensitive information to share (which you
-shouldn't share with me anyways) then don't make a conversation and instead post
-in the discussion!
+== Minimum Requirements ==
+ * BCMath (PHP Extension, usually installed already)
+ * Steam Web API Key (http://steamcommunity.com/dev/apikey)
+ * allow_url_fopen = 1 (On by default in PHP)
+ 
+== Recommended Requirements ==
+ * BCMath (PHP Extension, usually installed already)
+ * Steam Web API Key (http://steamcommunity.com/dev/apikey)
+ * cURL
+
+== Installation Steps ==
+	1. Install Configure Prerequisites (if necessary)
+		CentOS / Redhat:
+			* yum install php-bcmath
+		Debian / Ubuntu:
+			* apt-get install php5-curl
+	2. Upload files in the upload directory to your forum
+	3. Install using the provided "addon-Steam.xml"
+	4. Change options for "Steam Integration" as necessary
+
+== Upgrade Steps ==
+
+== If your current version is < 1.5.0 ==
+    1. Delete root/js/steam directory (optional)
+	2. Upload the upload directory to your forum (overwrite any files)
+    3. Upgrade the addon using the provided "addon-Steam.xml" file
+	
+== Configuration ==
+Steam Authentication & Integration can be configured in 
+Home > Options > Steam Integration under the Admin Control Panel.
+
+>> IMPORTANT <<
+
+Make sure that you have a STEAM API KEY entered into the configuration 
+options. This addon will NOT function properly without a valid API key.
+
+>> /IMPORTANT <<
+
+If you choose to display the steam statistics navbar tab, make sure to 
+also give allow permissions to the appropriate user groups or users. 
+Otherwise, they will not be able to view statistics. Permissions can be 
+changed under the Users section in the ACP.
+
+The same goes for steam profile banners. Permissions need to be 
+configured to display them to users/groups.
+
+== Troubleshooting ==
+Please do not ask me (HowIChrgeLazer) directly for help via a Conversation. 
+Unless you have sensitive information to share (which you shouldn't share 
+with me anyways) then don't make a conversation and instead post in the 
+resource discussion! It also provides public documentation for others in 
+case they have similar issues.
 
   Steps to take BEFORE asking for help:
-    * Read your log files!
-      Don't know where they are or what they mean? Well then this is a good
-      time to research. You should be familiar with your forums environment
-      before installing an addon (and if you are not, you should become familiar
-      or consider contracting the work).
+    * If you are using files from the develop branch on GitHub
+      I use GitHub as a way to track my progress and save my edits as I 
+	  develop the addon. There will be some occasions where commits to develop 
+	  branch will break features of the addon, or break it entirely. If you use 
+	  files from that branch, you do so at YOUR OWN RISK. I will accept bug 
+	  reports, but I will not support the develop branch of the addon.
 
-    * Read your log files!
-      Pretty please???
+    * Read your log files
+      Don't know where they are or what they mean? Well then this is a good time 
+	  to research. You should be familiar with your forums environment before 
+	  installing an addon (and if you are not, you should become familiar or 
+	  consider contracting the work).
 
-    * Read the entire description & readme file!
-      They contain instructions and hints which you may have missed or need to
-      do before you can continue!
+    * Read the entire description & readme file
+      They contain instructions and hints which you may have missed or need to 
+	  do before you can continue.
 
-    * Read the discussions! (available on the XenForo Community / Releases)
-      Someone else probably already had the same exact issue...go hunt through
-      the thread to see if that is the case.
+    * Read the resource discussion (available on the XenForo Community / Releases)
+      It is possible that someone else probably already has experience the same 
+	  exact issue. Go hunt through the thread to see if that is the case.
 
     * Ask your question in the discussion!
-      I'll answer any questions there, and if you start a conversation asking
-      for help with your installation, I'll only tell you to post in the
-      discussion thread. I will respond in the discussion I promise!
+      If none of the above solved your problem, ask your question in the 
+	  resource discussion. I'll answer any questions there, and if you start a 
+	  conversation asking for help with your installation, I'll only tell you to 
+	  post in the discussion thread. I will try to respond in the discussion, 
+	  I promise.
+
+== Known Issues / Fixes ==
+
+* Problems displaying user activity in Firefox *
+
+Firefox will not correctly report last seen on any page that has the SteamProfile 
+javascript.
+
+* Failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized *
+
+This means that a SteamAPI key has not been configured or is invaild. 
+Please read the configuration section for information on getting the API 
+key configured.
+
+* Name or service not known *
+
+This can happen if you're having DNS issues with your webserver. Make 
+sure steam community URLs can resolve correctly.
 
 == Like this Addon? ==
 Awesome! Leave a review and tell me how much you like it and why! Feedback is
 important so you might as well give it so those who develop for this addon can
 make it better and others can see your opinions.
 
-== Common Issues (and fixes) ==
-  * Invalid profile data
-    This occurs when the AJAX calls fail when using the "steamprofile" library.
-    Check your error log to set the appropriate permissions but likely files in
-    the "js" folder are writable.
-
-  * How do I migrate from other Steam Integration Addons?
-    Uninstalling the previous addon usually leaves Steam as an external
-    authentication source if you look in xf_user_external_auth after you
-    uninstall your users will still have Steam listed). Then you'll want to
-    also remove the custom field you created for the older add-on as it is no
-    longer used then follow the install process. It will use the existing data
-    stored within the xf_user_external_auth table so once you've completed the
-    migration your users will likely not notice the change.
-
-    Also, you'll need to revert any templates you had to change such as the part
-    for the login_bar. You should just reference the old addons install steps to
-    find exactly what to remove.
-
 == License ==
 Steam Authentication for XenForo
 
-Written by Morgan Humes <morgan@lanaddict.com>
+Original Code Written by Morgan Humes <morgan@lanaddict.com>
 Copyright 2012 Morgan Humes
+
+Code Forked and Updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+Copyright 2014 Michael Linback Jr.
+Website: http://ragecagegaming.com
+
+JSON steam profile badge idea by Luke Foreman
 
 Steam Authentication for XenForo is free software: you can redistribute
 it and/or modify it under the terms of the GNU General Public License
@@ -100,8 +155,16 @@ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with SteamProfile. If not, see <http://www.gnu.org/licenses/>.
+along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
 
 == Source Code ==
 Steam Authentication for XenForo is open source! Visit our git repository at
 github to fork, submit code, or even discuss the code.
+
+== Additional Information ==
+This fork was updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+
+If you'd like to see a current working example, please visit my XenForo 
+forum at https://ragecagegaming.com
+
+This addon is in no affiliation with or endorsed by Steam or Valve Software.

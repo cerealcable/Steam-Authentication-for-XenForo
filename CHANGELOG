@@ -1,0 +1,224 @@
+=== CHANGE LOG ===
+
+== Version 1.6.3 ==
+* Adjusted default case for no location set in Steam
+* Updated to latest official Steam OpenID login buttons
+* Fixed potential bug with banner not showing under the "Sign up now!" button
+
+== Version 1.6.2 ==
+* Fixed XSS exploit with SteamProfile badge (Thanks, kghector!)
+
+== Version 1.6.1 ==
+* Fixed criteria bug for steam association
+
+== Version 1.6.0 ==
+* Fixed undefined index bug with jsonproxy.php
+* Added support for two-step verification
+
+== Version 1.5.2 ==
+* Fixed Steam login bug with the hostname and OpenID
+* Clarified alternate login button option
+
+== Version 1.5.1 ==
+* Fixed logic bug in jsonproxy.php
+
+== Version 1.5.0 ==
+* Consolidated jsonproxy.php and removed jsonproxystats.php
+* Cleaned up code and added documentation
+* Fixed span tags (Thanks, Skiphs!)
+* Added Steam ID 32-bit helper {xen:helper steamid3, $value}
+* Added Steam CDN options for additional HTTPS support
+* Added Steam as an External Account to User's Extra tab in ACP
+* Added additional visitor panel button options
+* Added an option to force the cron to update game image links
+* Improve template conditionals (Thanks, jenky!)
+* Update template modifications for login bar and login helper 
+  to make sure they work with different styles (Thanks, jenky!)
+* Fix Steam Profile bug with Quick reply (Thanks, jenky!)
+* Moved Steam Integration options order in ACP (under Google)
+
+== Version 1.4.4 ==
+* Fixed bug "Fatal error: Call to undefined method" in user criteria
+
+== Version 1.4.3 ==
+* Added HTTPS support through XenForo's Image Proxy
+* Added an alternative option for login bar to match XenForo
+* Added option to display login bar in the sidebar visitor panel
+* Added login bar to the Xenforo login page
+* Now hiding banned users' SteamProfiles and omitting them from statistics
+* Paginated Steam games list in ACP (will eventually add search features)
+
+== Version 1.4.2 ==
+* Reintroduced template options back into addon configuration page
+* Added option to disable grabbing avatar from steam upon user registration
+
+== Version 1.4.1 ==
+* Made Template Modification descriptions more user friendly
+
+== Version 1.4.0 ==
+* Migrated Steam Integration to External Accounts for Xenforo 1.3
+* Fixed bug with recent game hours re-sync when re-associating account
+* Removed majority of template hooks, now using XenForo's Template Modifications system
+* Fixed registration bug (Undefined variable: location)
+
+== Version 1.3.6 ==
+* Fixed bug with cURL and OpenID verification
+
+== Version 1.3.5 ==
+* JavaScript animation tweak for SteamProfile slider (Thanks, silence!)
+* Moved SteamProfile CSS to XenForo Template Manager
+* Deleted unused style.css files
+* Removed themes folder from JS directory, moved to styles\default\steamauth
+* Removed unnecessary templates pre-loads from and fixed a bug in Listener.php
+* Cleaned up ControllerPublic and Routes
+* Added permissions for viewing SteamProfile banner
+* Added cURL to Register.php to use first over file_get_contents()
+* Compressed Javascript for SteamProfile
+
+== Version 1.3.4 ==
+* Fixed check for page compression on jsonproxy files
+* HTML errors fixed in some templates
+
+== Version 1.3.3 ==
+* Install error fixed (Thanks, SchmitzIT)
+* Turned off word wrap on SteamProfile to keep long usernames from breaking the status
+* 'Powered By Steam' now only shows on main forum list and any page with Steam API usage
+* Added PHP output buffering to SteamProfile requests (As requested by silence)
+* Fixed Divide By Zero error in Library\Steam\ControllerAdmin\Steam.php
+* Reduced the amount of pages javascript and CSS was included on
+
+== Version 1.3.2 ==
+* Attempt to fix possible bug with avatar display on steam statistics page
+* Fixed rendering of SteamProfile on member view page
+
+== Version 1.3.1 ==
+* Fixed bug for in-game banners if cURL was not enabled
+* Very small text changes on options page
+
+== Version 1.3.0 ==
+* Added the ability to filter games shown on the steam stats pages
+* Another empty index fix for SteamProfile (Thanks, Chris Deeming!)
+* Added option to show in-game banners on SteamProfile (1 API request per user in game)
+* Removed unnecessary divs in SteamProfile XML
+* Fixed SteamProfile javascript for Xenforo 1.2 support
+* Fixed a bug with IE rendering issues for SteamProfile
+
+== Version 1.2.3 ==
+* Updated no image available thumbnail
+* Empty index fix for SteamProfile (Thanks, Chris Deeming!)
+
+== Version 1.2.2 ==
+* Added cookies for people who log in via steamcommunity (Thanks, Adshi!)
+* Steam profile images compressed a little further (Thanks, Binari0!)
+
+== Version 1.2.1 ==
+* cURL reimplemented for performance and will only be used if it can be
+* Added retry methods incase JSON data times out
+* Added a place holder image for games that don't have a banner
+* Added new icons to SteamProfile badge
+* Removed all unused SteamProfile files
+
+== Version 1.2.0 ==
+* All data is requested through the SteamAPI. No more unreliable SteamCommunity XML!
+* Removed cURL from SteamBadge. Code now uses file_get_contents
+* cURL is no longer used and is not a requirement for this add-on to work
+
+== Version 1.1.6 ==
+* Added county code case statement check for user location
+* Fixed HTTPS redirection as reported in the previous addon
+
+== Version 1.1.5 ==
+* Fixes by Chris Deeming
+	- Added basic session activity details
+	- Fixed database queries on the installer (Manufacture.php)
+
+== Version 1.1.4 ==
+* Added option to ACP for statistics gathering on user registration. Can 
+  increase performance if disabled. However, stats aren't generated for 
+  the user until the cron runs.
+
+== Version 1.1.3 ==
+* Added steamid helper to convert SteamID64 to SteamID. Called in a template 
+  with {xen:helper steamid, $value}
+
+== Version 1.1.2 ==
+* URL and JS fix for forums without Friendly URLs
+
+== Version 1.1.1 ==
+* Added public steam statistics pages
+* Added a permission for the public steam stats
+* Added an option to show or hide the steam statistics navbar tab
+* Added an exception throw if the cron fails to update a user's XML data
+* Organized Steam Integration options in the admin CP
+* Created a second steamprofile JS to render just avatars and online state
+
+== Version 1.1.0 ==
+* Added retry logic for Steam Community XML game data. Will try up to three
+  times, and wait five seconds in between each attempt.
+* Fixed language bug in steamprofile.js (reported by Kartus)
+* Updated German translations in steamprofile.js
+* Removed example pictures from next .zip release on Xenforo
+
+== Version 1.0.9 ==
+* Implemented JSON Steam Profile suggested by Luke Foreman
+    - This improves loading time of steamprofile badges greatly (one query
+	  versus several)
+* Tweaked the steamprofile.js and default style.css to display user states
+  correctly in the steam profile
+
+== Version 1.0.8 ==
+* Changed authentication process information Steam Web API w/ JSON instead 
+  of XML
+* Fixed a MySQL query error when user has >= 1000 hours of game time on a 
+  single game
+* Solved errors by nulling any XML return for game statistics when the steam
+  community is unavailable
+
+== Version 1.0.7c-v2 ==
+* Attempted to fix XML parsing errors for Steam.php for good by running the 
+  xml through a buffer and trimming it.
+
+== Version 1.0.7c ==
+* Fixed XML parsing errors for Cron.php by adding a ?> at the end of the file
+* Disabled trimming of the XML games feed to help with parsing errors
+* Fixed a rare bug with steam profiles not always displaying on a page
+
+== Version 1.0.7b ==
+* Fixed "Unknown Steam Account" in the User CP
+* Fixed errors with Game Statistic updates
+* Added a PHP check to use cURL if CURLOPT_FOLLOWLOCATION can be used
+* If so, xml data is loaded via simplexml_load_string
+* If not, xml data is loaded via simplexml_load_file (less efficient, but it 
+  works)
+* Fixed an installation bug where database operations were being preformed 
+  before a necessarily column was created
+* Changed to a newer version of steamprofile
+* Steam profile CSS fix (thanks Binari0!)
+
+-- OLD VERSION OF STEAM AUTHENTICATION --
+
+== Version 1.0.7 ==
+* Created Admin Tap & Prefix (Steam)
+    - All previous items under Tools were moved here
+* Games List
+    - Click a game to see who owns what game & other details
+* Top Owned Games
+* Top Played Games (all time)
+* Top Recently Played Games (two weeks)
+* User List
+
+== Version 1.0.6 ==
+* Visitors receive error when a notice implementing a Steam Game is 
+  defined
+* Admin phrases not defined for Admin->Tools->Steam->Top 25 Games
+
+== Version 1.0.5 ==
+* Game notices and Tools now gained a "Steam" section (which will 
+  gain more capabilities later).
+  
+== Version 1.0.4 ==
+* Fixed permissions typo in "Steam Statistics"
+* Import data from Steam during registration & association
+
+== Version 1.0.3 ==
+* Added Statistics

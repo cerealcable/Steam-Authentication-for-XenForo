@@ -1,52 +1,64 @@
 <?php
 /**
- *      This file is part of Steam Authentication for XenForo
+ * This file is part of Steam Authentication for XenForo
  *
- *      Written by Morgan Humes <morgan@lanaddict.com>
- *      Copyright 2012 Morgan Humes
+ * Originally Written by Morgan Humes <morgan@lanaddict.com>
+ * Copyright 2012 Morgan Humes
  *
- *      Steam Authentication for XenForo is free software: you can redistribute
- *      it and/or modify it under the terms of the GNU General Public License
- *      as published by the Free Software Foundation, either version 3 of the
- *      License, or (at your option) any later version.
+ * Code updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+ * Copyright 2014 Michael Linback Jr.
+ * Website: http://ragecagegaming.com
  *
- *      Steam Authentication for XenForo is distributed in the hope that it
- *      will be useful, but WITHOUT ANY WARRANTY; without even the implied
- *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *      See the GNU General Public License for more details.
+ * Steam Authentication for XenForo is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
+ * Steam Authentication for XenForo is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 class Steam_Helper_Criteria {
 	public static function criteriaUser($rule, array $data, array $user, &$returnValue) {
+		if (!$user)
+		{
+			$user = XenForo_Visitor::getInstance()->toArray();
+		}
+		if (!isset($user['externalAuth']))
+		{
+			$user['externalAuth'] = !empty($user['external_auth']) ? @unserialize($user['external_auth']) : array();
+		}
 		switch($rule) {
 			case 'steam_state':
-				if(XenForo_Visitor::getUserId() != 0) {
-					switch($data['state']) {
-						case 'associated':
-							if($user['steam_auth_id'] > 0) {
-								$returnValue = true;
-							} else {
-								$returnValue = false;
-							}
-							break;
-						case 'deassociated':
-							if($user['steam_auth_id'] <= 0) {
-								$returnValue = true;
-							} else {
-								$returnValue = false;
-							}
-							break;
-						default:
+				switch($data['state']) {
+					case 'associated':
+						if(empty($user['externalAuth']['steam']))
+						{
 							$returnValue = false;
-							break;
-					}
+						} else {
+							$returnValue = true;
+						}
+						break;
+					case 'deassociated':
+						if(empty($user['externalAuth']['steam']))
+						{
+							$returnValue = true;
+						} else {
+							$returnValue = false;
+						}
+						break;
+					default:
+						$returnValue = false;
+						break;
 				}
 				break;
 			case 'steam_game':
-				if(array_key_exists('steam_auth_id', $user) && $user['steam_auth_id'] > 0) {
+				if(array_key_exists('externalAuth', $user) && !empty($user['externalAuth']['steam'])) {
 					// check if game is in users games table
 					$games = implode(",", $data['games']);
 					$db = XenForo_Application::get('db');
@@ -62,7 +74,7 @@ class Steam_Helper_Criteria {
 				}
 				break;
 			case 'steam_not_game':
-				if(array_key_exists('steam_auth_id', $user) && $user['steam_auth_id'] > 0) {
+				if(array_key_exists('externalAuth', $user) && !empty($user['externalAuth']['steam'])) {
 					// check if game is NOT in users games table
 					$games = implode(",", $data['games']);
 					$db = XenForo_Application::get('db');

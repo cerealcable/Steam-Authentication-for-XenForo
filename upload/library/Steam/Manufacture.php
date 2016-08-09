@@ -1,24 +1,28 @@
 <?php
 /**
- *      This file is part of Steam Authentication for XenForo
+ * This file is part of Steam Authentication for XenForo
  *
- *      Written by Morgan Humes <morgan@lanaddict.com>
- *      Copyright 2012 Morgan Humes
+ * Originally Written by Morgan Humes <morgan@lanaddict.com>
+ * Copyright 2012 Morgan Humes
  *
- *      Steam Authentication for XenForo is free software: you can redistribute
- *      it and/or modify it under the terms of the GNU General Public License
- *      as published by the Free Software Foundation, either version 3 of the
- *      License, or (at your option) any later version.
+ * Code updated by Michael Linback Jr. <webmaster@ragecagegaming.com>
+ * Copyright 2014 Michael Linback Jr.
+ * Website: http://ragecagegaming.com
  *
- *      Steam Authentication for XenForo is distributed in the hope that it
- *      will be useful, but WITHOUT ANY WARRANTY; without even the implied
- *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *      See the GNU General Public License for more details.
+ * Steam Authentication for XenForo is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
+ * Steam Authentication for XenForo is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SteamProfile.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
 class Steam_Manufacture {
 
 	private static $_instance;
@@ -41,6 +45,11 @@ class Steam_Manufacture {
 	}
 
 	public static function build($existingAddOn, $addOnData) {
+		// Check for XenForo 1.5.0
+		if (XenForo_Application::$versionId < 1050000) {
+            throw new XenForo_Exception('This add-on requires XenForo 1.5.0 Beta 1 or higher.', true);
+        }
+		
 		$startVersion = 1;
 		$endVersion = $addOnData['version_id'];
 
@@ -61,15 +70,6 @@ class Steam_Manufacture {
 	}
 
 	protected function _installVersion1() {
-		$db = $this->_getDb();
-
-		// Create the steam auth item
-		try {
-			$db->query("ALTER TABLE xf_user_profile ADD steam_auth_id BIGINT( 20 ) UNSIGNED NOT NULL DEFAULT 0 AFTER facebook_auth_id");
-		} catch(Exception $e) {}
-		
-		// Sync external auth in case of previous addons
-		$db->query("UPDATE xf_user_profile p1 JOIN xf_user_external_auth p2 ON(p1.user_id = p2.user_id) SET p1.steam_auth_id = p2.provider_key WHERE provider = 'steam'");
 	}
 
 	protected function _installVersion4() {
@@ -91,16 +91,26 @@ class Steam_Manufacture {
 						PRIMARY KEY (user_id, game_id)
 					)");
 
-		// Run Initial Cron Job for Steam!
-		Steam_Cron::update();
 	}
 
 	protected function _installVersion8() {
 		$db = $this->_getDb();
 
-		// Add columns to steam user games table
-		$db->query("ALTER TABLE xf_user_steam_games ADD game_hours_recent int unsigned NOT NULL DEFAULT 0 AFTER game_hours");
+		// Add columns to steam user games table		
+		self::addColumnIfNotExists('xf_user_steam_games', 'game_hours_recent', 'INT UNSIGNED NOT NULL DEFAULT 0', 'game_hours');
 	}
+    
+    protected function _installVersion93() {
+		$db = $this->_getDb();
+
+		self::dropColumnIfExists('xf_user_profile', 'steam_auth_id');
+	}
+    
+    protected function _installVersion145() {
+        $db = $this->_getDb();
+        
+        $db->query("UPDATE xf_steam_games SET game_logo = REPLACE(game_logo, 'http://media.steampowered.com', '') WHERE game_logo LIKE 'http://media.steampowered.com%'");
+    }
 
 	public static function destroy() {
 		$lastUninstallStep = 1;
@@ -120,18 +130,54 @@ class Steam_Manufacture {
 	protected function _uninstallStep1() {
 		$db = $this->_getDb();
 
-		$db->query("ALTER TABLE xf_user_profile DROP steam_auth_id");
+		self::dropColumnIfExists('xf_user_profile', 'steam_auth_id');
 	}
 
 	protected function _uninstallStep4() {
 		$db = $this->_getDb();
 
 		// Drop xf_steam_games
-		$db->query("DROP TABLE xf_steam_games");
+		$db->query("DROP TABLE IF EXISTS xf_steam_games");
 		
 		// Drop xf_user_steam_games
-		$db->query("DROP TABLE xf_user_steam_games");
+		$db->query("DROP TABLE IF EXISTS xf_user_steam_games");
 	}
+    
+    public static function dropColumnIfExists($tableName, $fieldName)
+    {
+    	$db = XenForo_Application::get('db');
+    
+    	$exists = $db->fetchRow("
+			SHOW COLUMNS
+			FROM {$tableName}
+			WHERE Field = ?
+		", $fieldName);
+    
+    	if ($exists)
+    	{
+    		$db->query("
+    				ALTER TABLE {$tableName} DROP {$fieldName}
+    		");
+    	}
+    }
+	
+    public static function addColumnIfNotExists($tableName, $fieldName, $fieldDef, $after)
+    {
+    	$db = XenForo_Application::get('db');
+    
+    	$exists = $db->fetchRow("
+			SHOW COLUMNS
+			FROM {$tableName}
+			WHERE Field = ?
+		", $fieldName);
+    
+    	if (!$exists)
+    	{
+    		$db->query("
+    				ALTER TABLE {$tableName} ADD {$fieldName} {$fieldDef} AFTER {$after}
+    		");
+    	}
+    }	
 
 }
 
